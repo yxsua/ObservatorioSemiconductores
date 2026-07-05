@@ -1,0 +1,35 @@
+services:
+
+  nginx:
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  frontend:
+
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+    command: npm run dev
+
+    environment:
+      VITE_API_URL: /api
+
+  backend:
+
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+    command: npm run dev
+
+    ports:
+      - "3001:3001"
+
+  postgres:
+
+    ports:
+      - "5432:5432"

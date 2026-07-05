@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    networks:
+      - observatorio
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+
+    env_file:
+      - .env
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    networks:
+      - observatorio
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+
+    env_file:
+      - .env
+
+    networks:
+      - observatorio
+
+  nginx:
+    image: nginx:alpine
+
+    depends_on:
+      - frontend
+      - backend
+
+    networks:
+      - observatorio
+
+volumes:
+  postgres_data:
+
+networks:
+  observatorio:
