@@ -1,18 +1,28 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [health, setHealth] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/health")
+      .then((res) => res.json())
+      .then(setHealth)
+      .catch(console.error);
+  }, []);
+
   return (
     <div className="card">
-      <h1>¡Frontend Funcionando Exitosamente!</h1>
-      <p>¡La sincronización con Docker y el script de compilación están operando de forma correcta!</p>
-      <p><small>Entorno de desarrollo con recarga rápida activo.</small></p>
+      <h1>Frontend funcionando</h1>
+
+      <pre>{JSON.stringify(health, null, 2)}</pre>
     </div>
-  )
+  );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-)
+);
