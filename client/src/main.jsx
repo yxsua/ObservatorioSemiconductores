@@ -14,7 +14,7 @@ function App() {
 
   return (
     <div className="card">
-      <h1>Frontend funcionando</h1>
+      <h1>Frontend funcionando!</h1>
 
       <pre>{JSON.stringify(health, null, 2)}</pre>
     </div>

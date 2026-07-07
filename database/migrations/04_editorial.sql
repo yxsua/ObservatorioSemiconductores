@@ -1,94 +1,100 @@
-CREATE TABLE contents (
-    id_content          BIGSERIAL PRIMARY KEY,
-    title               VARCHAR(250) NOT NULL,
-    slug                VARCHAR(300) NOT NULL UNIQUE,
-    excerpt             TEXT,
-    content_markdown    TEXT NOT NULL,
-    content_html        TEXT,
-    id_content_type     SMALLINT NOT NULL REFERENCES content_types(id_content_type),
-    id_content_status   SMALLINT NOT NULL REFERENCES content_statuses(id_content_status),
-    id_featured_file    BIGINT REFERENCES files(id_file),
-    id_author           BIGINT NOT NULL REFERENCES users(id_user),
-    id_editor           BIGINT REFERENCES users(id_user),
-    is_featured         BOOLEAN NOT NULL DEFAULT FALSE,
-    published_at        TIMESTAMP,
-    created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at          TIMESTAMP NOT NULL DEFAULT NOW(),
-    deleted_at          TIMESTAMP
+CREATE TABLE media (
+    id_media BIGSERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    original_filename VARCHAR(255),
+    mime_type VARCHAR(120),
+    extension VARCHAR(20),
+    storage_path TEXT NOT NULL,
+    size_bytes BIGINT,
+    checksum VARCHAR(64),
+    uploaded_by BIGINT REFERENCES users(id_user),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_public BOOLEAN DEFAULT TRUE,
+    storage_provider VARCHAR(40),
+    storage_bucket VARCHAR(100),
+    created_by BIGINT REFERENCES users(id_user),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE content_versions (
-    id_content_version  BIGSERIAL PRIMARY KEY,
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    version_number      INTEGER NOT NULL,
-    title               VARCHAR(250) NOT NULL,
-    content_markdown    TEXT NOT NULL,
-    content_html        TEXT,
-    id_editor           BIGINT REFERENCES users(id_user),
-    created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
-    CONSTRAINT uq_content_version
-        UNIQUE(id_content, version_number)
+CREATE TABLE content (
+    id_content BIGSERIAL PRIMARY KEY,
+    content_type_id INTEGER NOT NULL REFERENCES content_types(id_content_type),
+    status_id INTEGER NOT NULL REFERENCES content_statuses(id_content_status),
+    author_id BIGINT NOT NULL REFERENCES users(id_user),
+    title VARCHAR(250) NOT NULL,
+    slug VARCHAR(250) UNIQUE NOT NULL,
+    summary TEXT,
+    featured_media_id BIGINT REFERENCES media(id_media),
+    published_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE files (
-    id_file             BIGSERIAL PRIMARY KEY,
-    original_name       VARCHAR(255) NOT NULL,
-    stored_name         VARCHAR(255) NOT NULL,
-    file_path           TEXT NOT NULL,
-    mime_type           VARCHAR(120),
-    extension           VARCHAR(20),
-    size_bytes          BIGINT,
-    checksum            VARCHAR(128),
-    id_uploaded_by      BIGINT REFERENCES users(id_user),
-    created_at          TIMESTAMP DEFAULT NOW()
+CREATE TABLE content_version (
+    id_content_version BIGSERIAL PRIMARY KEY,
+    content_id BIGINT NOT NULL REFERENCES content(id_content) ON DELETE CASCADE,
+    version_number INTEGER NOT NULL,
+    created_by BIGINT NOT NULL REFERENCES users(id_user),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    change_summary TEXT,
+    UNIQUE (content_id, version_number)
 );
 
-CREATE TABLE content_files (
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    id_file             BIGINT NOT NULL REFERENCES files(id_file) ON DELETE CASCADE,
-    relation_type       VARCHAR(50),
-    sort_order          INTEGER DEFAULT 0,
-    PRIMARY KEY(id_content, id_file)
+CREATE TABLE content_section (
+    id_content_section BIGSERIAL PRIMARY KEY,
+    content_version_id BIGINT NOT NULL REFERENCES content_version(id_content_version) ON DELETE CASCADE,
+    title VARCHAR(150),
+    section_type_id INTEGER REFERENCES section_types(id_section_type),
+    position INTEGER NOT NULL,
+    is_collapsible BOOLEAN DEFAULT FALSE,
+    is_visible BOOLEAN DEFAULT TRUE,
+    settings JSONB DEFAULT '{}' :: jsonb
 );
 
-CREATE TABLE tags (
-    id_tag              BIGSERIAL PRIMARY KEY,
-    name                VARCHAR(100) NOT NULL UNIQUE,
-    description         TEXT
+CREATE TABLE content_block (
+    id_content_block BIGSERIAL PRIMARY KEY,
+    section_id BIGINT NOT NULL REFERENCES content_section(id_content_section) ON DELETE CASCADE,
+    block_type_id INTEGER NOT NULL REFERENCES block_type(id_block_type),
+    position INTEGER NOT NULL,
+    data JSONB NOT NULL,
+    settings JSONB DEFAULT '{}' :: jsonb,
+    is_visible BOOLEAN DEFAULT TRUE,
+    css_class VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE content_tags (
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    id_tag              BIGINT NOT NULL REFERENCES tags(id_tag) ON DELETE CASCADE,
-    PRIMARY KEY(id_content, id_tag)
+CREATE TABLE content_category (
+    content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES categories(id_category) ON DELETE CASCADE,
+    PRIMARY KEY(content_id, category_id)
 );
 
-CREATE TABLE pages (
-    id_page             BIGSERIAL PRIMARY KEY,
-    title               VARCHAR(200) NOT NULL,
-    slug                VARCHAR(250) NOT NULL UNIQUE,
-    content_markdown    TEXT,
-    content_html        TEXT,
-    published           BOOLEAN NOT NULL DEFAULT TRUE,
-    id_created_by       BIGINT REFERENCES users(id_user),
-    created_at          TIMESTAMP DEFAULT NOW(),
-    updated_at          TIMESTAMP DEFAULT NOW()
+CREATE TABLE content_relation (
+    source_content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    target_content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    relation_type_id INTEGER REFERENCES content_relation_types(id_content_relation_type) ON DELETE CASCADE,
+    PRIMARY KEY(
+        source_content_id,
+        target_content_id,
+        relation_type_id
+    )
 );
 
-CREATE TABLE content_signals (
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    id_signal           BIGINT NOT NULL REFERENCES signals(id_signal) ON DELETE CASCADE,
-    PRIMARY KEY(id_content, id_signal)
+CREATE TABLE content_signal (
+    content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    signal_id BIGINT REFERENCES signals(id_signal) ON DELETE CASCADE,
+    PRIMARY KEY(content_id, signal_id)
 );
 
-CREATE TABLE content_trends (
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    id_trend            BIGINT NOT NULL REFERENCES trends(id_trend) ON DELETE CASCADE,
-    PRIMARY KEY(id_content, id_trend)
+CREATE TABLE content_alert (
+    content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    alert_id BIGINT REFERENCES alerts(id_alert) ON DELETE CASCADE,
+    PRIMARY KEY(content_id, alert_id)
 );
 
-CREATE TABLE content_alerts (
-    id_content          BIGINT NOT NULL REFERENCES contents(id_content) ON DELETE CASCADE,
-    id_alert            BIGINT NOT NULL REFERENCES alerts(id_alert) ON DELETE CASCADE,
-    PRIMARY KEY(id_content, id_alert)
+CREATE TABLE content_trend (
+    content_id BIGINT REFERENCES content(id_content) ON DELETE CASCADE,
+    trend_id BIGINT REFERENCES trends(id_trend) ON DELETE CASCADE,
+    PRIMARY KEY(content_id, trend_id)
 );
