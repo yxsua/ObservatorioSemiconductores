@@ -1,15 +1,13 @@
-BEGIN;
-
 ------------------------------------------------------------
 -- FACTORES CRÍTICOS DE VIGILANCIA
 ------------------------------------------------------------
 
 CREATE TABLE fcv (
-    id              SMALLSERIAL PRIMARY KEY,
-    code            VARCHAR(20) UNIQUE NOT NULL,
-    name            VARCHAR(120) NOT NULL,
-    description     TEXT,
-    active          BOOLEAN NOT NULL DEFAULT TRUE
+    id_fcv              SMALLSERIAL PRIMARY KEY,
+    code                VARCHAR(20) UNIQUE NOT NULL,
+    name                VARCHAR(120) NOT NULL,
+    description         TEXT,
+    active              BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 ------------------------------------------------------------
@@ -17,13 +15,13 @@ CREATE TABLE fcv (
 ------------------------------------------------------------
 
 CREATE TABLE categories (
-    id              SMALLSERIAL PRIMARY KEY,
-    fcv_id          SMALLINT NOT NULL REFERENCES fcv(id),
-    name            VARCHAR(120) NOT NULL,
-    description     TEXT,
-    active          BOOLEAN NOT NULL DEFAULT TRUE,
+    id_category         SMALLSERIAL PRIMARY KEY,
+    id_fcv              SMALLINT NOT NULL REFERENCES fcv(id_fcv),
+    name                VARCHAR(120) NOT NULL,
+    description         TEXT,
+    active              BOOLEAN NOT NULL DEFAULT TRUE,
 
-    CONSTRAINT uq_category UNIQUE(fcv_id, name)
+    CONSTRAINT uq_category UNIQUE(id_fcv, name)
 );
 
 ------------------------------------------------------------
@@ -31,9 +29,9 @@ CREATE TABLE categories (
 ------------------------------------------------------------
 
 CREATE TABLE source_types (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(50) UNIQUE NOT NULL,
-    description     TEXT
+    id_source_type      SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(50) UNIQUE NOT NULL,
+    description         TEXT
 );
 
 ------------------------------------------------------------
@@ -41,9 +39,9 @@ CREATE TABLE source_types (
 ------------------------------------------------------------
 
 CREATE TABLE signal_types (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(30) UNIQUE NOT NULL,
-    description     TEXT
+    id_signal_type      SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(30) UNIQUE NOT NULL,
+    description         TEXT
 );
 
 ------------------------------------------------------------
@@ -51,9 +49,9 @@ CREATE TABLE signal_types (
 ------------------------------------------------------------
 
 CREATE TABLE impacts (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(30) UNIQUE NOT NULL,
-    weight          SMALLINT NOT NULL CHECK(weight BETWEEN 1 AND 3)
+    id_impact           SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(30) UNIQUE NOT NULL,
+    weight              SMALLINT NOT NULL CHECK (weight BETWEEN 1 AND 3)
 );
 
 ------------------------------------------------------------
@@ -61,9 +59,9 @@ CREATE TABLE impacts (
 ------------------------------------------------------------
 
 CREATE TABLE urgencies (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(30) UNIQUE NOT NULL,
-    weight          SMALLINT NOT NULL CHECK(weight BETWEEN 1 AND 3)
+    id_urgency          SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(30) UNIQUE NOT NULL,
+    weight              SMALLINT NOT NULL CHECK (weight BETWEEN 1 AND 3)
 );
 
 ------------------------------------------------------------
@@ -71,8 +69,8 @@ CREATE TABLE urgencies (
 ------------------------------------------------------------
 
 CREATE TABLE scopes (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_scope            SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -80,9 +78,9 @@ CREATE TABLE scopes (
 ------------------------------------------------------------
 
 CREATE TABLE signal_statuses (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL,
-    description     TEXT
+    id_signal_status    SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL,
+    description         TEXT
 );
 
 ------------------------------------------------------------
@@ -90,9 +88,9 @@ CREATE TABLE signal_statuses (
 ------------------------------------------------------------
 
 CREATE TABLE trend_maturity (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(50) UNIQUE NOT NULL,
-    description     TEXT
+    id_trend_maturity   SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(50) UNIQUE NOT NULL,
+    description         TEXT
 );
 
 ------------------------------------------------------------
@@ -100,8 +98,8 @@ CREATE TABLE trend_maturity (
 ------------------------------------------------------------
 
 CREATE TABLE trend_statuses (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_trend_status     SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -109,8 +107,8 @@ CREATE TABLE trend_statuses (
 ------------------------------------------------------------
 
 CREATE TABLE trend_directions (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_trend_direction  SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -118,9 +116,9 @@ CREATE TABLE trend_directions (
 ------------------------------------------------------------
 
 CREATE TABLE alert_levels (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(30) UNIQUE NOT NULL,
-    color           VARCHAR(20)
+    id_alert_level      SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(30) UNIQUE NOT NULL,
+    color               VARCHAR(20)
 );
 
 ------------------------------------------------------------
@@ -128,8 +126,18 @@ CREATE TABLE alert_levels (
 ------------------------------------------------------------
 
 CREATE TABLE alert_statuses (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_alert_status     SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
+);
+
+
+------------------------------------------------------------
+-- ORIGEN DE ALERTA
+------------------------------------------------------------
+
+CREATE TABLE alert_origins (
+    id_alert_origin     SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -137,8 +145,8 @@ CREATE TABLE alert_statuses (
 ------------------------------------------------------------
 
 CREATE TABLE audiences (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(60) UNIQUE NOT NULL
+    id_audience         SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(60) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -146,8 +154,8 @@ CREATE TABLE audiences (
 ------------------------------------------------------------
 
 CREATE TABLE content_types (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_content_type     SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -155,8 +163,8 @@ CREATE TABLE content_types (
 ------------------------------------------------------------
 
 CREATE TABLE content_statuses (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_content_status   SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -164,8 +172,8 @@ CREATE TABLE content_statuses (
 ------------------------------------------------------------
 
 CREATE TABLE file_types (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(40) UNIQUE NOT NULL
+    id_file_type        SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(40) UNIQUE NOT NULL
 );
 
 ------------------------------------------------------------
@@ -173,8 +181,6 @@ CREATE TABLE file_types (
 ------------------------------------------------------------
 
 CREATE TABLE actor_types (
-    id              SMALLSERIAL PRIMARY KEY,
-    name            VARCHAR(50) UNIQUE NOT NULL
+    id_actor_type       SMALLSERIAL PRIMARY KEY,
+    name                VARCHAR(50) UNIQUE NOT NULL
 );
-
-COMMIT;
