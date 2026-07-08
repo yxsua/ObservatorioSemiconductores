@@ -7,6 +7,7 @@ SELECT
     description
 FROM
     source_types;
+GO
 
 CREATE VIEW vw_categories AS
 SELECT
@@ -23,6 +24,7 @@ FROM
     categories c
     INNER JOIN fcv f ON f.id_fcv = c.id_fcv
     LEFT JOIN categories p ON p.id_category = c.parent_category_id;
+GO
 
 CREATE VIEW vw_fcv AS
 SELECT
@@ -33,6 +35,7 @@ SELECT
     active
 FROM
     fcv;
+GO
 
 CREATE VIEW vw_block_types AS
 SELECT
@@ -45,6 +48,7 @@ SELECT
     schema
 FROM
     block_type;
+GO
 
 CREATE VIEW vw_signal_types AS
 SELECT
@@ -54,6 +58,7 @@ SELECT
     description
 FROM
     signal_types;
+GO
 
 CREATE VIEW vw_impacts AS
 SELECT
@@ -63,6 +68,7 @@ SELECT
     weight
 FROM
     impacts;
+GO
 
 CREATE VIEW vw_urgencies AS
 SELECT
@@ -72,6 +78,7 @@ SELECT
     weight
 FROM
     urgencies;
+GO
 
 CREATE VIEW vw_scopes AS
 SELECT
@@ -80,6 +87,7 @@ SELECT
     name
 FROM
     scopes;
+GO
 
 CREATE VIEW vw_signal_statuses AS
 SELECT
@@ -89,6 +97,7 @@ SELECT
     description
 FROM
     signal_statuses;
+GO
 
 CREATE VIEW vw_trend_maturity AS
 SELECT
@@ -98,6 +107,7 @@ SELECT
     description
 FROM
     trend_maturity;
+GO
 
 CREATE VIEW vw_trend_statuses AS
 SELECT
@@ -106,6 +116,7 @@ SELECT
     name
 FROM
     trend_statuses;
+GO
 
 CREATE VIEW vw_trend_directions AS
 SELECT
@@ -114,6 +125,7 @@ SELECT
     name
 FROM
     trend_directions;
+GO
 
 CREATE VIEW vw_alert_levels AS
 SELECT
@@ -123,6 +135,7 @@ SELECT
     color
 FROM
     alert_levels;
+GO
 
 CREATE VIEW vw_alert_statuses AS
 SELECT
@@ -131,6 +144,7 @@ SELECT
     name
 FROM
     alert_statuses;
+GO
 
 CREATE VIEW vw_alert_origins AS
 SELECT
@@ -139,6 +153,7 @@ SELECT
     name
 FROM
     alert_origins;
+GO
 
 CREATE VIEW vw_audiences AS
 SELECT
@@ -147,6 +162,7 @@ SELECT
     name
 FROM
     audiences;
+GO
 
 CREATE VIEW vw_content_types AS
 SELECT
@@ -155,6 +171,7 @@ SELECT
     name
 FROM
     content_types;
+GO
 
 CREATE VIEW vw_content_statuses AS
 SELECT
@@ -163,6 +180,7 @@ SELECT
     name
 FROM
     content_statuses;
+GO
 
 CREATE VIEW vw_file_types AS
 SELECT
@@ -171,6 +189,7 @@ SELECT
     name
 FROM
     file_types;
+GO
 
 CREATE VIEW vw_actor_types AS
 SELECT
@@ -179,6 +198,7 @@ SELECT
     name
 FROM
     actor_types;
+GO
 
 CREATE VIEW vw_content_relation_types AS
 SELECT
@@ -188,6 +208,7 @@ SELECT
     description
 FROM
     content_relation_types;
+GO
 
 CREATE VIEW vw_section_types AS
 SELECT
@@ -196,6 +217,7 @@ SELECT
     name
 FROM
     section_types;
+GO
 
 -- VISTAS DE USUARIOS
 CREATE VIEW vw_users AS
@@ -294,8 +316,7 @@ FROM
     sources s
     INNER JOIN source_types st ON st.id_source_type = s.id_source_type;
 
-CREATE
-OR REPLACE VIEW vw_keywords AS
+CREATE OR REPLACE VIEW vw_keywords AS
 SELECT
     id_keyword,
     name
