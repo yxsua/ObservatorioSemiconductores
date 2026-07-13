@@ -1,0 +1,146 @@
+,Benchmark Observatorios,,,,,,,,,,,
+,Información General,,,,Arquitectura,,,,UI / UX,,,
+#,Nombre del observatorio,Institución responsable,País,Sector,Menú principal,Módulos,Navegación,Organización de contenidos,Diseño general,Facilidad de navegación,Elementos destacados,Áreas de oportunidad
+1,Observatorio de Industrias Manufactureras Sostenibles,Institute of Advanced Materials for Sustainable Manufacturing y Escuela de Gobierno y Transformación Pública (Tec de Monterrey),México (y América Latina),Transformación (manufactura),,"Industrias Manufactureras (explorar estructura industrial, cadenas de suministro, sostenibilidad industrial)
+Rutas de descarbonización (Emisiones, Agricultura, Ganado, etc.)
+Investigación aplicada","Aterrizaje
+- Nosotros
+- Industrias manufactureras
+-- Estructura regional
+-- Localización industrial
+-- Cadenas de suministro
+-- Sostenibilidad Industrial
+- Rutas de descarbonización
+-- Emisiones
+-- Agricultura
+-- Ganado
+...
+-- IPPU
+- Investigación aplicada
+-> Buscador de artículos
+- Contacto",,"Simple, elegante, letras grandes, gráficos y tarjetas. No muy dinámico, consistente entre páginas/modulos","5 de 5, 2 niveles de profundidad máximo, menús comunes e intuitivos","Muchas gráficas, elementos interactivos, información grande y legible. Landing page muy atractivo y moderno","En los artículos, la información es demasiado texto y no es tan legible como en otras secciones. En la página inicial no se destaca la parte más interactiva de la página (gráficas), lo cuál puede llegar a ser más atractivo y mejorar retención"
+2,Observatorio Parques y Zonas Industriales México,CANACINTRA Nacional,México,Múltiples sectores,,"Directorio industrial
+Blog industria viva
+Observatorio Parques y Zonas Industriales México","Inicio
+- Directorio industrial
+-- Industria y manufactura
+-- Parques y zonas industriales
+-- Construcción e infraestructura
+-- Agroindustria
+...
+-- Eventos y networking
+- Blog industria viva
+- Contáctanos
+- Observatorio Parques y Zonas Industriales
+-> Ubicación y mapeo
+-> Plataforma para desarrollo
+-> Iniciativas, noticias y artículos
+
+",,"Muy gráfico, institucional, limpio. Diseño simple de entender e información clara y legible","3 de 5, 2 niveles de profundidad máximo, menús comunes. No es tan interactiva, el navbar no es consistente entre páginas, y algunas navegaciones en la misma página no funcionan","Muchas imágenes, gráficos y elementos visualmente atractivos, información grande, marca institucional muy presente. Múltiples conexiones con información externa para gente interesada, directorio bastante completo, mapa interactivo de ubicación geográfica muy buena. ","Demasiadas animaciones (que cargan solo al mover - da impresion de que tarda en cargar mas que parecer dinámico), botones que no sirven o no tienen una función bien definida, inconsistencia en navegación entre páginas, observatorio no parece parte del navbar, hitbox de botones mas pequeña de lo que se ve, La sección de noticias (equivalente a señales) está muy oculta"
+3,Observatorio Tecnológico (Economía Azul),Centro Tecnológico Naval y del Mar,España,Marítimo-Naval,,"Noticias
+Recursos
+Servicios
+Economía azul","Landing (Observatorio tecnológico)
+-> Noticias recientes
+-> Contenido multimedia
+-> Servicios
+--> Vigilancia tecnológica e informes sectoriales
+- Noticias
+-- Eventos
+-- Licitaciones
+-- Convocatorias
+-- Formación
+-- Concursos
+- Recursos
+-> Informes, artículos, Proyectos, Datasets, Bases de datos
+- Servicios
+-- Informes a medida
+-- Boletines a medida
+- Sobre nosotros
+- Contacto
+- Economía Azul",,"Elegante, moderno, minimalista, colorido. ","2.5 de 5, 3 niveles de profundidad, no todos los elementos son accesibles desde el menú principal y para llegar a algunos requieres pasar por una página en específico, no todos los elementos que aparecen funcionan","Elementos gráficos visualmente atractivos, marca clara y presente a lo largo de toda la página, gran variedad de contenidos e información muy completa, incluyendo datos, datasets, medios de contacto, boletines, artículos, blog, etc.","Tarda mucho en cargar, elementos no existentes. Si existe un blog y boletines, y el blog no permite a externos publicar, entonces es redudante. Los elementos pueden ser algo abrumadores al ser muy grandes. La navegación es más compleja y no tan intuitiva"
+4,Observatorio Tecnológico,Universidad de Guadalajara,México,"Múltiples sectores, énfasis en TICs",,"Servicios
+Sectores
+LABINAR (Laboratorio de Inteligencia Artificial)
+Biblioteca","Landing
+-> iframe de redes sociales
+- Nosotros
+- Servicios
+- Sectores
+-> Noticias
+- LABINAR
+- Biblioteca
+-> Libros y publicaciones
+-> Estudios sectoriales
+-> Herramientas
+- Contacto",,"Poco coherente, las animaciones varian mucho entre página y página, el diseño y la paleta no es del todo consistente, la estética es más bien anticuada y no presenta características que se esperarían de una página tecnológica. ","3 de 5, 2 niveles de profunidad, no todos los elementos son accesibles desde el menú principal, no se menciona de inicio noticias o artículos, hay que entrar a sectores para visualizarlo","Múltiples recursos (biblioteca, noticias, laboratorio) disponibles, información bastante completa y buena diversidad de contenido.","Muy pesadas las animaciones, paleta de colores poco atractiva, elementos gráficos no parecen modernos y no parece una página con enfoque tecnológico (en especial, enfocado a IA y BI). No parece haber ninguna sección de noticias, alertas o boletines visible, tienes que entrar a sectores para verlo"
+5,Observatorio Tecnológico de la Universidad de Alicante,Universidad de Alicante,España,"Múltiples sectores, más fuerte las TICs",,"Información sectorial
+Noticias
+Actividades
+Herramientas
+Guías
+Recursos
+Boletines
+Sectores
+","Inicio
+-> Información sectorial (múltiples sectores)
+-> Noticias
+-> Actividades
+- Observatorio
+- Herramientas IA
+- Observa
+- Guías
+- Recursos
+- Boletines
+- Sectores
+",,"Coherente entre las páginas, minimalista, elegante e institucional. Anticuado, no muy llamativo visualmente.","4 de 5, 2 niveles de profundidad, no todos los elementos son accesibles desde la barra de navegación (noticias).","Cantidad impresionante de recursos, actividades, noticias, artículos, boletines de múltiples sectores y temas. Alianzas fuertes con industria y academia, guías, recursos. Tema consistente a lo largo de la página. Maneja por separado noticias y boletines","Navegación poco clara, algunas secciones hay que entrar a una página para poder llegar a ellas (noticias). Diseño plano y poco interactivo"
+6,Observatorio de Transformación Digital,Campus to Business,España,STEM,,"Próximos eventos y noticias
+Conversaciones
+Webinars
+Artículos
+","Landing
+- Próximos eventos y noticias
+- Conversaciones
+- Webinars
+- Artículos
+- Contacta",,"Simple, paleta definida de colores y consistencia entre páginas.","1 de 5, la navegación no funciona en su totalidad","Noticias estilo blog, definición clara del objetivo de la página y del motivo de la creación","Navegación totalmente rota, diseño muy simple y nada atractivo. Página sin terminar"
+7,Observatorio de Desarrollo Digital,Comisión Económica para América Latina y el Caribe CEPAL,América Latina y el Caribe,TICs,,"Datos y hechos
+Digitalización para el desarrollo
+Indicadores
+Agendas Digitales
+LACME (Explorador de marketplaces)
+Publicaciones","Landing
+- Datos y hechos
+- Digitalización para el desarrollo
+- Indicadores
+- Agendas Digitales
+- LACME (Explorador de marketplaces)
+- Países
+- Temas
+- Publicaciones
+",,"Visualmente atractivo, paleta de colores variada (no necesariamente positivo), muchas gráficas y elementos interactivos","5 de 5, 2 niveles de profundidad máximo, menús comunes e intuitivos, todo visible y fácilmente accesible","Mucha información y muy completa, varios recursos, datos, gráficas, publicaciones, fuertemente basado en datos, métricas e indicadores","Un poco disperso el flujo, si bien todo está claro podrían condensarse algunas secciones utilizando un panel con varios filtros para acceder a ello."
+8,Observatorio de Cibermedios,Universitat Pompeu Fabra,España,Comunicación y periodismo,,"Guía revistas
+Actualidad yTendencias
+Recursos
+Artículos
+Informes","
+Landing
+- Guía revistas
+- Tendencias
+- Recursos
+- Temas
+- Informes
+- Acerca de ",,"Gráfico, alto impacto, consistente entre páginas, fácilmente legible, diseño simple","4.5 de 5, fácil de navegar y con 2 niveles de profundidad. Algunos de los enlaces de navegación no reflejan con total precisión la página que visitas","Buena navegación, diseño consistente y con una paleta apropiada. Consistente con la temática (periodismo digital), información muy completa y con bastantes publicaciones","Información completa pero no muy variada en formato, la mayoría tiene una presentación de artículo/noticia/blog, sin mucho contenido interactivo, dinámico o multimedia fuera de imágenes."
+9,GIP Digital Watch Observatory,Geneva Internet Platform,Suiza,"TICs, comunicación, periodismo, humanidades", ,"Observatorio
+Iniciativa propia (evento)
+Eventos
+Archivo","Inicio
+- Digital Watch (observatorio)
+- Geneva Engage (iniciativa - premiación)
+- Eventos
+- Archivo
+- Acerca de ",,"Simple, elegante, consistente entre páginas. Aquellas páginas completas tienen información bastante completa y el concepto se refleja con éxito","3.5 de 5, 3 niveles de navegación, algo confuso y demasiado específico","Respaldado por una institución de mucha importancia global, cuenta con sus propios eventos y varias entradas de información relevante.","No todas las secciones tienen información, y algunas están demasiado cargadas de texto. No hay mucha variedad en el contenido. "
+10,QUT Digital Observatory,Queensland University of Technology's,Australia,Humanidades y Ciencias Sociales,,"Recursos
+Blog","Landing
+- Recursos
+- Blog",,"Simple, básico, consistente entre páginas","5 de 5, muy simple de navegar, directo e intuitivo","Fácil de navegar, y entender, muy claro. Diseño sencillo e intuitivo","Contenido muy básico, no contiene noticias, realmente es el mínimo que podría ser llamado un observatorio. No muestra claras alertas o señales. Diseño muy básico igualmente"

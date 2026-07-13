@@ -1,0 +1,84 @@
+3 - Definición del MVP
+3.1 Alcance del MVP
+El Producto Mínimo Viable (MVP) del Observatorio de Semiconductores tendrá como objetivo central proporcionar una plataforma digital que concentre, organice y comunique información estratégica relacionada con la industria de semiconductores, permitiendo a actores académicos, industriales y gubernamentales acceder a información relevante para apoyar la toma de decisiones.
+
+La primera versión del MVP priorizará la consulta y visualización de información sobre el ecosistema regional, la vigilancia tecnológica y la generación de conocimiento especializado. Asimismo, se integrarán herramientas que faciliten el acceso a recursos, indicadores, noticias y publicaciones relacionadas con el sector.
+
+El MVP no contempla, en esta etapa, funcionalidades avanzadas como la generación automatizada de alertas tempranas, comparaciones internacionales complejas o análisis geoespaciales avanzados, las cuales podrán incorporarse en futuras iteraciones del proyecto.
+
+
+3.2 Módulos preliminares
+
+La propuesta inicial del observatorio estará conformada por los siguientes módulos
+
+3.2.1 Dashboard Ejecutivo
+Presentará indicadores estratégicos mediante visualizaciones gráficas y tableros que permitan comprender rápidamente el estado actual del ecosistema de semiconductores.
+
+3.2.2 Vigilancia Tecnológica
+Permitirá monitorear tendencias, avances tecnológicos, cambios regulatorios y acontecimientos relevantes que puedan impactar el desarrollo del sector.
+
+3.2.3 Señales del Sector
+Concentrará eventos, anuncios y sucesos que representen posibles cambios relevantes para la industria y que sirvan como base para futuras alertas tempranas.
+
+3.2.4 Indicadores de Pertinencia
+Mostrará indicadores relacionados con la formación académica, investigación, desarrollo tecnológico y vinculación con la industria.
+
+3.2.5 Industria de Semiconductores
+Funcionará como una sección introductoria que permitirá comprender los conceptos fundamentales, terminología y estructura general de la industria.
+
+3.2.6 Ecosistema Regional
+Presentará los actores clave de la región, incluyendo empresas, instituciones de educación superior, centros de investigación y organismos de apoyo.
+
+3.2.7 Cadena de valor
+Ayudará a mostrar procesos, actores y relaciones de la industria mediante la explicación de los eslabones y actores de la cadena de valor.
+
+3.2.8 Inversiones y Expansión
+Permitirá dar seguimiento a nuevas inversiones, proyectos de expansión y crecimiento industrial relacionados con el sector.
+
+3.2.9 Buscador Inteligente
+Facilitará la localización rápida de información mediante mecanismos centralizados de búsqueda.
+
+3.2.10 Eventos y Convocatorias
+Concentrará actividades, cursos, convocatorias y oportunidades de participación relevantes para los usuarios.
+
+3.2.11 Noticias y Tendencias
+Mantendrá actualizada a la comunidad mediante la difusión de noticias y acontecimientos relevantes.
+
+3.2.12 Publicaciones e Informes
+Funcionará como repositorio de estudios, reportes e investigaciones especializadas.
+
+3.2.13 Recursos y Bases de Datos
+Proporcionará acceso a documentos, datasets y materiales de consulta complementarios.
+
+
+3.3 Arquitectura general
+La arquitectura del observatorio se organizará en cuatro capas funcionales
+
+3.3.1 Capa de presentación
+Corresponde a la interfaz web con la que interactúan los usuarios. Permitirá la navegación entre módulos, la consulta de información y el acceso a las distintas herramientas disponibles.
+
+3.3.2 Capa de aplicación
+Gestionará la lógica de negocio y coordinará el funcionamiento interno del observatorio, incluyendo la búsqueda de contenido, clasificación de información y organización de módulos.
+
+3.3.3 Capa de información y vigilancia
+Se encargará de recopilar, procesar, organizar y actualizar la información proveniente de diversas fuentes relacionadas con la industria de semiconductores.
+
+3.3.4 Capa de almacenamiento
+Almacenará la información estructurada del observatorio, incluyendo noticias, indicadores, publicaciones, recursos, actores regionales y señales detectadas.
+
+El flujo general de información seguirá el siguiente esquema
+Fuentes de información → Procesamiento y clasificación → Almacenamiento → Visualización en módulos → Consulta por parte de los usuarios.
+
+
+3.4 Consideraciones de software
+
+El desarrollo del observatorio deberá considerar los siguientes aspectos
+
+Diseñar una interfaz intuitiva y de fácil navegación.
+Mantener una estructura visual consistente entre todos los módulos.
+Garantizar la escalabilidad para incorporar nuevas funcionalidades en futuras versiones.
+Permitir la actualización periódica de la información.
+Facilitar la integración de nuevas fuentes de datos.
+Priorizar la accesibilidad y legibilidad del contenido.
+Evitar la sobrecarga visual y la duplicidad de información.
+Mantener tiempos de respuesta adecuados para la consulta de información.
