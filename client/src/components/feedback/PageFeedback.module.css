@@ -1,0 +1,14 @@
+.feedback {
+  display: grid;
+  gap: var(--space-4);
+  max-inline-size: 42rem;
+  padding-block: var(--space-12);
+}
+
+.feedback p {
+  color: var(--color-text-muted);
+}
+
+.feedback button {
+  justify-self: start;
+}

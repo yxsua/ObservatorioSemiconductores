@@ -73,3 +73,6 @@ pnpm-lock.yaml
 # Si usas pnpm:
 package-lock.json
 yarn.lock
+
+# El frontend usa npm y su imagen ejecuta npm ci.
+!client/package-lock.json

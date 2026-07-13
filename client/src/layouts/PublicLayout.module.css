@@ -1,0 +1,283 @@
+.shell {
+  display: grid;
+  min-block-size: 100vh;
+  grid-template-rows: auto 1fr auto;
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 100;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-text);
+  color: var(--color-surface);
+  translate: 0 -150%;
+}
+
+.skipLink:focus {
+  color: var(--color-surface);
+  translate: 0;
+}
+
+.header {
+  position: sticky;
+  z-index: 20;
+  inset-block-start: 0;
+  border-block-end: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  backdrop-filter: blur(0.75rem);
+}
+
+.headerInner {
+  display: flex;
+  inline-size: min(100% - 2rem, var(--content-max-width));
+  min-block-size: 5rem;
+  margin-inline: auto;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.brand {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 750;
+  line-height: 1.15;
+  text-decoration: none;
+}
+
+.brandMark {
+  display: grid;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  margin-inline-end: var(--space-3);
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.navigationPanel {
+  display: flex;
+  min-inline-size: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-6);
+}
+
+.navigation,
+.accountActions {
+  display: flex;
+  margin: 0;
+  align-items: center;
+}
+
+.navigation {
+  padding: 0;
+  gap: clamp(var(--space-3), 1.8vw, var(--space-6));
+  list-style: none;
+}
+
+.accountActions {
+  padding-inline-start: var(--space-6);
+  border-inline-start: 1px solid var(--color-border);
+  gap: var(--space-4);
+}
+
+.navigation a,
+.accountActions a {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navigation a {
+  display: block;
+  padding-block: 1.8rem;
+  border-block-end: 0.2rem solid transparent;
+}
+
+.navigation a:hover,
+.accountActions a:hover,
+.navigation .active {
+  color: var(--color-primary);
+}
+
+.navigation .active {
+  border-block-end-color: var(--color-primary);
+}
+
+.registerLink {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast) !important;
+}
+
+.menuToggle {
+  display: none;
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+  gap: var(--space-2);
+}
+
+.menuIcon {
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+
+.main {
+  inline-size: min(100% - 2rem, var(--content-max-width));
+  margin-inline: auto;
+}
+
+.footer {
+  margin-block-start: var(--space-16);
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+}
+
+.footerInner {
+  display: grid;
+  inline-size: min(100% - 2rem, var(--content-max-width));
+  margin-inline: auto;
+  padding-block: var(--space-10);
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-10);
+}
+
+.footerIntro {
+  display: grid;
+  max-inline-size: 28rem;
+  align-content: start;
+  gap: var(--space-3);
+}
+
+.footerIntro strong,
+.footerNavigation strong {
+  color: var(--color-text);
+}
+
+.footerNavigation ul {
+  display: grid;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.footerNavigation a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.footerNavigation a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.footerLegal {
+  display: flex;
+  inline-size: min(100% - 2rem, var(--content-max-width));
+  min-block-size: 4rem;
+  margin-inline: auto;
+  align-items: center;
+  justify-content: space-between;
+  border-block-start: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  gap: var(--space-4);
+}
+
+@media (max-width: 68rem) {
+  .headerInner {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-block: var(--space-3);
+  }
+
+  .menuToggle {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .navigationPanel {
+    display: none;
+    inline-size: 100%;
+    flex: 0 0 100%;
+    align-items: stretch;
+    padding-block: var(--space-3) var(--space-4);
+    border-block-start: 1px solid var(--color-border);
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .navigationPanelOpen {
+    display: flex;
+  }
+
+  .navigation,
+  .accountActions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .navigation a,
+  .accountActions a {
+    display: block;
+    padding: var(--space-3);
+    border: 0;
+    border-radius: var(--radius-control);
+  }
+
+  .navigation .active {
+    background: var(--color-primary-soft);
+  }
+
+  .accountActions {
+    padding-block-start: var(--space-3);
+    padding-inline-start: 0;
+    border-block-start: 1px solid var(--color-border);
+    border-inline-start: 0;
+  }
+
+  .accountActions button {
+    align-self: flex-start;
+    margin: var(--space-2) var(--space-3);
+  }
+
+  .registerLink {
+    background: transparent;
+    color: var(--color-primary) !important;
+  }
+}
+
+@media (max-width: 46rem) {
+  .footerInner {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .footerLegal {
+    padding-block: var(--space-4);
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

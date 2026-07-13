@@ -1,0 +1,32 @@
+.intro {
+  margin-block-start: var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.modules {
+  display: grid;
+  margin-block-start: var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-4);
+}
+
+.modules a {
+  display: grid;
+  min-block-size: 8rem;
+  padding: var(--space-4);
+  align-content: center;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.modules a:hover {
+  border-color: var(--color-primary);
+}
+
+.modules span {
+  color: var(--color-text-muted);
+}

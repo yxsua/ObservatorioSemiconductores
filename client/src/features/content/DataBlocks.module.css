@@ -1,0 +1,22 @@
+.tableRegion { inline-size:100%; overflow-x:auto; border:1px solid var(--color-border); border-radius:var(--radius-control); background:var(--color-surface); }
+.tableRegion:focus { outline:3px solid color-mix(in srgb,var(--color-primary) 35%,transparent); outline-offset:2px; }
+.tableRegion table { inline-size:100%; min-inline-size:36rem; border-collapse:collapse; }
+.tableRegion caption { padding:var(--space-4); color:var(--color-text); font-size:var(--font-size-lg); font-weight:750; text-align:left; }
+.tableRegion th,.tableRegion td { padding:var(--space-3) var(--space-4); border-block-start:1px solid var(--color-border); text-align:left; vertical-align:top; }
+.tableRegion th { background:var(--color-background); color:var(--color-text-muted); font-size:var(--font-size-sm); }
+.tableRegion tbody tr:nth-child(even) { background:color-mix(in srgb,var(--color-background) 55%,transparent); }
+.emptyTable { min-inline-size:36rem; padding:var(--space-5); color:var(--color-text-muted); text-align:center; }
+.chart { inline-size:100%; margin:0; padding:var(--space-6); border:1px solid var(--color-border); border-radius:var(--radius-card); background:var(--color-surface); }
+.chart figcaption { margin-block-end:var(--space-4); font-size:var(--font-size-xl); font-weight:750; }
+.chart svg { display:block; inline-size:100%; block-size:auto; overflow:visible; }
+.axis { stroke:var(--color-border-strong); stroke-width:1; vector-effect:non-scaling-stroke; }
+.axisLabel { fill:var(--color-text-muted); font-size:12px; }
+.legend { display:flex; margin:var(--space-4) 0 0; padding:0; flex-wrap:wrap; gap:var(--space-3) var(--space-5); list-style:none; font-size:var(--font-size-sm); }
+.legend li { display:flex; align-items:center; gap:var(--space-2); }.legend span { inline-size:.75rem; block-size:.75rem; border-radius:.2rem; }
+.chartData { margin-block-start:var(--space-5); border-block-start:1px solid var(--color-border); }
+.chartData summary { padding-block:var(--space-4); font-weight:750; cursor:pointer; }
+@media (max-width:42rem) {
+  .chart { padding:var(--space-4); }
+  .chart svg { min-block-size:15rem; }
+  .legend { align-items:flex-start; flex-direction:column; }
+}

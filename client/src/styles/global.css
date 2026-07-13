@@ -1,0 +1,87 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-inline-size: 20rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 100%;
+}
+
+body {
+  min-block-size: 100vh;
+  margin: 0;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+#root {
+  min-block-size: 100vh;
+}
+
+.standalone-feedback {
+  inline-size: min(100% - 2rem, var(--content-max-width));
+  margin-inline: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-block: 0;
+}
+
+h2,
+h3 {
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-3xl));
+  line-height: 1.15;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

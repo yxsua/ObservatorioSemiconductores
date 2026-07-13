@@ -138,6 +138,16 @@ Gracias a este componente el usuario únicamente interactuará con un único pun
 
 Todos los servicios del observatorio serán ejecutados dentro de contenedores Docker.
 
+Para iniciar el entorno de desarrollo:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml --env-file .env.development up
+```
+
+El archivo de desarrollo descarta explícitamente el `build` productivo del frontend y usa la imagen oficial
+`node:22-alpine`. No debe eliminarse ese `!reset`: evita que la imagen final de Nginx sea construida y etiquetada
+accidentalmente como la imagen de Node al combinar ambos archivos Compose.
+
 Esta estrategia ofrece diversas ventajas:
 
 * Independencia del sistema operativo.
@@ -218,6 +228,16 @@ En versiones posteriores podrá incorporarse Redis como sistema de caché para m
 \---
 
 # Organización del Proyecto
+
+## Cuenta administrativa local predeterminada
+
+Las instalaciones nuevas creadas mediante las migraciones incluyen una cuenta para visualización y desarrollo:
+
+- correo: admin@admin.com
+- contraseña inicial: l14Ar56@Bx16Z8!w
+
+La contraseña se persiste como hash bcrypt y la cuenta recibe el rol ADMIN. Esta credencial es conocida y debe cambiarse antes de exponer el sistema en un entorno compartido o productivo.
+
 
 La estructura del proyecto sigue una organización modular que facilita el mantenimiento y separación de responsabilidades.
 

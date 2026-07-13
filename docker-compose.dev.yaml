@@ -8,7 +8,11 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
 
   frontend:
+    # El archivo base construye la imagen productiva (Nginx). En desarrollo
+    # necesitamos descartar ese `build` para no etiquetarla como node:22-alpine.
+    build: !reset null
     image: node:22-alpine
+    pull_policy: always
     volumes:
       - ./client:/app
       - /app/node_modules
@@ -17,6 +21,7 @@ services:
     command: sh -c "npm install && npm run dev"
     environment:
       VITE_API_URL: /api
+      CHOKIDAR_USEPOLLING: "true"
 
   backend:
 

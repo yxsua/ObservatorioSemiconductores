@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: API del Observatorio de Semiconductores
-  version: 0.5.6
+  version: 0.5.7
   description: >-
     Contrato de autenticación, catálogos y las verticales de señales,
     tendencias, alertas y las APIs editorial interna y pública, incluida la
@@ -13,6 +13,7 @@ tags:
   - name: Health
   - name: Auth
   - name: Catalogs
+  - name: Admin Sources
   - name: Signals
   - name: Admin Signals
   - name: Trends
@@ -355,13 +356,16 @@ paths:
                     items: { $ref: "#/components/schemas/SignalHistoryEntry" }
   /admin/sources:
     get:
-      tags: [Admin Signals]
-      summary: Lista fuentes activas disponibles para captura
-      operationId: listActiveSources
+      tags: [Admin Sources]
+      summary: Lista fuentes; por defecto sólo las activas
+      operationId: listSources
       security:
         - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Search"
+        - name: active
+          in: query
+          schema: { type: string, enum: ["true", "false", all], default: "true" }
       responses:
         "200":
           description: Fuentes activas
@@ -375,20 +379,72 @@ paths:
                   message: { type: string }
                   data:
                     type: array
-                    items:
-                      type: object
-                      required: [id, type, name]
-                      properties:
-                        id: { type: integer, format: int64 }
-                        type: { $ref: "#/components/schemas/CatalogValue" }
-                        name: { type: string }
-                        website: { type: [string, "null"], format: uri }
-                        country: { type: [string, "null"] }
-                        historicalReliability: { type: [number, "null"] }
+                    items: { $ref: "#/components/schemas/Source" }
         "401":
           $ref: "#/components/responses/AuthenticationError"
         "403":
           $ref: "#/components/responses/PermissionError"
+    post:
+      tags: [Admin Sources]
+      summary: Registra una fuente
+      operationId: createSource
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSourceInput" }
+      responses:
+        "201": { description: Fuente creada, content: { application/json: { schema: { $ref: "#/components/schemas/SourceResponse" } } } }
+  /admin/sources/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer, format: int64, minimum: 1 }
+    get:
+      tags: [Admin Sources]
+      summary: Obtiene una fuente interna
+      operationId: getSource
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Fuente, content: { application/json: { schema: { $ref: "#/components/schemas/SourceResponse" } } } }
+    patch:
+      tags: [Admin Sources]
+      summary: Actualiza una fuente activa con control de versión
+      operationId: updateSource
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateSourceInput" }
+      responses:
+        "200": { description: Fuente actualizada, content: { application/json: { schema: { $ref: "#/components/schemas/SourceResponse" } } } }
+        "409": { $ref: "#/components/responses/ConflictError" }
+  /admin/sources/{id}/deactivate:
+    post:
+      tags: [Admin Sources]
+      summary: Desactiva una fuente conservando sus relaciones históricas
+      operationId: deactivateSource
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [updatedAt]
+              properties:
+                updatedAt: { type: string, format: date-time }
+      responses:
+        "200": { description: Fuente desactivada, content: { application/json: { schema: { $ref: "#/components/schemas/SourceResponse" } } } }
+        "409": { $ref: "#/components/responses/ConflictError" }
   /trends:
     get:
       tags: [Trends]
@@ -1613,6 +1669,51 @@ components:
       properties:
         code: { type: string }
         name: { type: string }
+    Source:
+      type: object
+      required: [id, type, name, active, createdAt, updatedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        type: { $ref: "#/components/schemas/CatalogValue" }
+        name: { type: string }
+        website: { type: [string, "null"], format: uri }
+        country: { type: [string, "null"] }
+        rssUrl: { type: [string, "null"], format: uri }
+        apiUrl: { type: [string, "null"], format: uri }
+        historicalReliability: { type: [number, "null"], minimum: 0, maximum: 1 }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    SourceResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: { $ref: "#/components/schemas/Source" }
+    CreateSourceInput:
+      type: object
+      required: [typeCode, name]
+      properties:
+        typeCode: { type: string }
+        name: { type: string, maxLength: 200 }
+        website: { type: [string, "null"], format: uri }
+        country: { type: [string, "null"], maxLength: 100 }
+        rssUrl: { type: [string, "null"], format: uri }
+        apiUrl: { type: [string, "null"], format: uri }
+        historicalReliability: { type: [number, "null"], minimum: 0, maximum: 1 }
+    UpdateSourceInput:
+      type: object
+      required: [updatedAt]
+      properties:
+        typeCode: { type: string }
+        name: { type: string, maxLength: 200 }
+        website: { type: [string, "null"], format: uri }
+        country: { type: [string, "null"], maxLength: 100 }
+        rssUrl: { type: [string, "null"], format: uri }
+        apiUrl: { type: [string, "null"], format: uri }
+        historicalReliability: { type: [number, "null"], minimum: 0, maximum: 1 }
+        updatedAt: { type: string, format: date-time }
     Signal:
       type: object
       required:

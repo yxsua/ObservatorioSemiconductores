@@ -27,7 +27,7 @@ No es necesario esperar a que el backend esté “cerrado” para comenzar el fr
 | Consulta pública | Lista | Listados y detalles publicados, resolución segura de referencias y exclusión de datos internos. |
 | Medios | Parcial | Entrega pública de imágenes y descarga autenticada; falta carga y catálogo administrativo. |
 | Exportaciones | Listas | CSV y JSON para señales, tendencias, alertas y contenido, con historial por usuario. |
-| Contrato | Listo | `docs/openapi.yaml` 0.5.6 y convenciones uniformes de respuestas, errores y paginación. |
+| Contrato | Listo | `docs/API-docs/openapi.yaml` 0.5.6 y convenciones uniformes de respuestas, errores y paginación. |
 
 ## Reglas de integración que debe respetar el frontend
 

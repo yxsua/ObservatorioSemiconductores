@@ -1,0 +1,125 @@
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { INTERNAL_PERMISSIONS } from "@/app/permissions";
+import { PRIMARY_PUBLIC_MODULES, PUBLIC_MODULES } from "@/app/public-modules";
+import { RouteMetadata } from "@/components/navigation/RouteMetadata";
+import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/features/auth/AuthContext";
+import styles from "./PublicLayout.module.css";
+
+export function PublicLayout() {
+  const auth = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
+
+  const logout = () => {
+    auth.logout();
+    navigate("/", { replace: true });
+  };
+
+  return (
+    <div className={styles.shell}>
+      <RouteMetadata />
+      <a className={styles.skipLink} href="#main-content">Saltar al contenido</a>
+      <header className={styles.header}>
+        <div className={styles.headerInner}>
+          <Link aria-label="Observatorio de Semiconductores, inicio" className={styles.brand} to="/">
+            <span aria-hidden="true" className={styles.brandMark}>OS</span>
+            <span>Observatorio de<br />Semiconductores</span>
+          </Link>
+          <button
+            aria-controls="public-navigation"
+            aria-expanded={menuOpen}
+            className={styles.menuToggle}
+            onClick={() => setMenuOpen((open) => !open)}
+            type="button"
+          >
+            <span>{menuOpen ? "Cerrar" : "Menú"}</span>
+            <span aria-hidden="true" className={styles.menuIcon}>{menuOpen ? "×" : "☰"}</span>
+          </button>
+          <div
+            className={`${styles.navigationPanel} ${menuOpen ? styles.navigationPanelOpen : ""}`}
+            id="public-navigation"
+          >
+            <nav aria-label="Navegación principal">
+              <ul className={styles.navigation}>
+                <li>
+                  <NavLink className={({ isActive }) => isActive ? styles.active : undefined} end to="/">
+                    Inicio
+                  </NavLink>
+                </li>
+                {PRIMARY_PUBLIC_MODULES.map((module) => (
+                  <li key={module.id}>
+                    <NavLink className={({ isActive }) => isActive ? styles.active : undefined} to={module.path}>
+                      {module.shortLabel}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <div className={styles.accountActions}>
+              {auth.status === "authenticated" ? (
+                <>
+                  {auth.hasAnyPermission(INTERNAL_PERMISSIONS) && (
+                    <NavLink to="/admin">Área interna</NavLink>
+                  )}
+                  <NavLink to="/cuenta">Mi cuenta</NavLink>
+                  <Button onClick={logout}>Cerrar sesión</Button>
+                </>
+              ) : (
+                <>
+                  <NavLink to="/iniciar-sesion">Iniciar sesión</NavLink>
+                  <NavLink className={styles.registerLink} to="/registro">Crear cuenta</NavLink>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className={styles.main} id="main-content" tabIndex={-1}>
+        <Outlet />
+      </main>
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <div className={styles.footerIntro}>
+            <strong>Observatorio de Semiconductores</strong>
+            <p>Información confiable para comprender el sector y apoyar la toma de decisiones.</p>
+          </div>
+          <nav aria-label="Módulos del observatorio" className={styles.footerNavigation}>
+            <strong>Módulos</strong>
+            <ul>
+              {PUBLIC_MODULES.map((module) => (
+                <li key={module.id}><Link to={module.path}>{module.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
+          <nav aria-label="Recursos del portal" className={styles.footerNavigation}>
+            <strong>Explorar</strong>
+            <ul>
+              <li><Link to="/contenido">Todo el contenido</Link></li>
+              <li><Link to="/senales">Señales</Link></li>
+              <li><Link to="/tendencias">Tendencias</Link></li>
+              <li><Link to="/alertas">Alertas</Link></li>
+            </ul>
+          </nav>
+        </div>
+        <div className={styles.footerLegal}>
+          <span>Observatorio de Semiconductores</span>
+          <span>Consulta pública · Exportaciones con cuenta</span>
+        </div>
+      </footer>
+    </div>
+  );
+}

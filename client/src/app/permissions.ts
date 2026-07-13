@@ -1,0 +1,42 @@
+export const INTERNAL_PERMISSIONS = [
+  "signals:read-internal",
+  "signals:create",
+  "signals:update-own",
+  "signals:update-any",
+  "signals:submit",
+  "signals:validate",
+  "signals:archive",
+  "sources:read-internal",
+  "sources:create",
+  "sources:update",
+  "sources:deactivate",
+  "trends:read-internal",
+  "trends:create",
+  "trends:update",
+  "trends:link-signals",
+  "trends:submit",
+  "trends:validate",
+  "trends:activate",
+  "trends:archive",
+  "alerts:read-internal",
+  "alerts:create",
+  "alerts:update",
+  "alerts:link-evidence",
+  "alerts:submit",
+  "alerts:validate",
+  "alerts:publish",
+  "alerts:close",
+  "content:read-internal",
+  "content:create",
+  "content:update",
+  "content:approve",
+  "content:publish"
+] as const;
+
+export const MODULE_PERMISSIONS = {
+  signals: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("signals:")),
+  sources: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("sources:")),
+  trends: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("trends:")),
+  alerts: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("alerts:")),
+  content: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("content:"))
+} as const;
