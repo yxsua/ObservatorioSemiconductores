@@ -24,6 +24,9 @@ export function AdminIndexPage() {
         <Can anyOf={MODULE_PERMISSIONS.content}>
           <Link to="/admin/contenido"><strong>Contenido</strong><span>Edición y publicación.</span></Link>
         </Can>
+        <Can permission="media:read-internal">
+          <Link to="/admin/medios"><strong>Medios</strong><span>Imágenes y archivos editoriales.</span></Link>
+        </Can>
       </div>
     </section>
   );

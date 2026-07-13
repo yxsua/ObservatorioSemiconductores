@@ -312,6 +312,8 @@ Criterio de cierre:
 
 #### FE-P6.0 — Contenido, versiones y flujo
 
+**Estado:** cerrado el 13 de julio de 2026. Véase `docs/frontend-development-logs/MVP-FE-P6.0-editorial-flow.md`.
+
 - listado y filtros internos;
 - creación con o sin plantilla;
 - metadatos, detalle, historial y versiones;
@@ -319,6 +321,8 @@ Criterio de cierre:
 - enviar, aprobar, publicar y archivar según permiso.
 
 #### FE-P6.1 — Constructor de composición
+
+**Estado:** cerrado el 13 de julio de 2026. Véase `docs/frontend-development-logs/MVP-FE-P6.1-composition-builder.md`.
 
 - agregar, editar, duplicar, eliminar y reordenar secciones y bloques;
 - formularios derivados de los descriptores de `/admin/editorial/block-types`;
@@ -328,6 +332,8 @@ Criterio de cierre:
 
 #### FE-P6.2 — Vista previa y publicación
 
+**Estado:** cerrado el 13 de julio de 2026. Véase `docs/frontend-development-logs/MVP-FE-P6.2-preview-publication.md`.
+
 - preview fiel al mismo registro de renderers públicos;
 - resumen de validaciones antes de enviar o publicar;
 - comparación clara entre versión de trabajo y versión publicada;
@@ -335,11 +341,13 @@ Criterio de cierre:
 
 #### FE-P6.3 — Medios editoriales
 
+**Estado:** cerrado el 13 de julio de 2026. Véase `docs/frontend-development-logs/MVP-FE-P6.3-editorial-media.md`.
+
 - selector, carga y metadatos de imágenes/archivos;
 - integración de `image`, `file` y medio destacado;
 - progreso, límites, tipos admitidos y errores de carga.
 
-FE-P6.3 queda bloqueado hasta que el backend exponga la administración de medios. El resto de FE-P6 puede avanzar con referencias existentes y fixtures.
+La dependencia de medios quedó resuelta con `database/migrations/21_media_management.sql` y `/api/admin/media`.
 
 Criterio de cierre:
 
@@ -370,7 +378,7 @@ Criterio de cierre:
 
 | Dependencia | Afecta | Estrategia |
 | --- | --- | --- |
-| API administrativa de medios | FE-P6.3 | Definir contrato antes de diseñar el selector; avanzar otros bloques en paralelo. |
+| API administrativa de medios | FE-P6.3 | Resuelta el 13 de julio de 2026. |
 | `docker/nginx/production.conf` | FE-P7 | No bloquea desarrollo; sí bloquea validación productiva. |
 | Plantillas/datos iniciales | FE-P6.0 | Definir fixtures y semillas representativas antes de cerrar UX editorial. |
 | Refresh/recovery de cuenta | FE-P4 | Mantener como mejora opcional; el MVP puede trabajar con expiración y nuevo login. |

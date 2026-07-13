@@ -1418,6 +1418,69 @@ paths:
         "401": { $ref: "#/components/responses/AuthenticationError" }
         "403": { $ref: "#/components/responses/PermissionError" }
         "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/media:
+    get:
+      tags: [Admin Editorial]
+      summary: Lista la biblioteca interna de medios
+      operationId: listAdminMedia
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { in: query, name: page, schema: { type: integer, minimum: 1 } }
+        - { in: query, name: pageSize, schema: { type: integer, minimum: 1, maximum: 100 } }
+        - { in: query, name: search, schema: { type: string } }
+        - { in: query, name: kind, schema: { type: string, enum: [image, file] } }
+        - { in: query, name: public, schema: { type: boolean } }
+      responses:
+        "200": { description: Biblioteca paginada }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+    post:
+      tags: [Admin Editorial]
+      summary: Carga un medio editorial
+      operationId: createAdminMedia
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+                title: { type: string, maxLength: 250 }
+                altText: { type: string, maxLength: 500 }
+                description: { type: string, maxLength: 5000 }
+                isPublic: { type: boolean, default: false }
+      responses:
+        "201": { description: Medio cargado }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+  /admin/media/{id}:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene un medio interno
+      operationId: getAdminMedia
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/MediaId" }]
+      responses:
+        "200": { description: Medio obtenido }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+    patch:
+      tags: [Admin Editorial]
+      summary: Actualiza metadatos y visibilidad de un medio
+      operationId: updateAdminMedia
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/MediaId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateAdminMediaInput" }
+      responses:
+        "200": { description: Medio actualizado }
+        "409": { $ref: "#/components/responses/ConflictError" }
 components:
   securitySchemes:
     bearerAuth:
@@ -1583,6 +1646,34 @@ components:
           - updatedAt
           - -updatedAt
   schemas:
+    AdminMedia:
+      type: object
+      required: [id, kind, filename, isPublic, createdAt, updatedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        kind: { type: string, enum: [image, file] }
+        title: { type: [string, "null"] }
+        altText: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+        filename: { type: string }
+        originalFilename: { type: [string, "null"] }
+        mimeType: { type: [string, "null"] }
+        sizeBytes: { type: [integer, "null"], format: int64 }
+        checksum: { type: [string, "null"] }
+        isPublic: { type: boolean }
+        url: { type: [string, "null"] }
+        downloadUrl: { type: [string, "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    UpdateAdminMediaInput:
+      type: object
+      required: [updatedAt]
+      properties:
+        title: { type: [string, "null"], maxLength: 250 }
+        altText: { type: [string, "null"], maxLength: 500 }
+        description: { type: [string, "null"], maxLength: 5000 }
+        isPublic: { type: boolean }
+        updatedAt: { type: string, format: date-time }
     RegisterInput:
       type: object
       additionalProperties: false
@@ -2606,6 +2697,7 @@ components:
         position: { type: integer, minimum: 1 }
         data: { type: object, additionalProperties: true }
         settings: { type: object, additionalProperties: true }
+        resolved: { $ref: "#/components/schemas/ResolvedBlock" }
         isVisible: { type: boolean }
         cssClass: { type: [string, "null"] }
         createdAt: { type: string, format: date-time }

@@ -238,6 +238,14 @@ Las instalaciones nuevas creadas mediante las migraciones incluyen una cuenta pa
 
 La contraseña se persiste como hash bcrypt y la cuenta recibe el rol ADMIN. Esta credencial es conocida y debe cambiarse antes de exponer el sistema en un entorno compartido o productivo.
 
+Para probar la separación entre edición, validación y publicación también se incluye una cuenta local secundaria:
+
+- correo: validator@validator.com
+- contraseña inicial: Validador@2026!MVP
+- roles: VALIDATOR y PUBLISHER
+
+La combinación permite validar los registros de vigilancia y, con una identidad distinta del editor, aprobar y publicar contenido editorial. También es una credencial conocida que debe rotarse fuera del desarrollo local.
+
 
 La estructura del proyecto sigue una organización modular que facilita el mantenimiento y separación de responsabilidades.
 

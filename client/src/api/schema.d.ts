@@ -964,10 +964,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lista la biblioteca interna de medios */
+        get: operations["listAdminMedia"];
+        put?: never;
+        /** Carga un medio editorial */
+        post: operations["createAdminMedia"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/media/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Obtiene un medio interno */
+        get: operations["getAdminMedia"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Actualiza metadatos y visibilidad de un medio */
+        patch: operations["updateAdminMedia"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AdminMedia: {
+            /** Format: int64 */
+            id: number;
+            /** @enum {string} */
+            kind: "image" | "file";
+            title?: string | null;
+            altText?: string | null;
+            description?: string | null;
+            filename: string;
+            originalFilename?: string | null;
+            mimeType?: string | null;
+            /** Format: int64 */
+            sizeBytes?: number | null;
+            checksum?: string | null;
+            isPublic: boolean;
+            url?: string | null;
+            downloadUrl?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        UpdateAdminMediaInput: {
+            title?: string | null;
+            altText?: string | null;
+            description?: string | null;
+            isPublic?: boolean;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         RegisterInput: {
             firstName: string;
             lastName: string;
@@ -1681,6 +1747,7 @@ export interface components {
             settings: {
                 [key: string]: unknown;
             };
+            resolved?: components["schemas"]["ResolvedBlock"];
             isVisible: boolean;
             cssClass?: string | null;
             /** Format: date-time */
@@ -3743,6 +3810,111 @@ export interface operations {
             401: components["responses"]["AuthenticationError"];
             403: components["responses"]["PermissionError"];
             404: components["responses"]["NotFoundError"];
+        };
+    };
+    listAdminMedia: {
+        parameters: {
+            query?: {
+                page?: number;
+                pageSize?: number;
+                search?: string;
+                kind?: "image" | "file";
+                public?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Biblioteca paginada */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            401: components["responses"]["AuthenticationError"];
+            403: components["responses"]["PermissionError"];
+        };
+    };
+    createAdminMedia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    title?: string;
+                    altText?: string;
+                    description?: string;
+                    /** @default false */
+                    isPublic?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Medio cargado */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            400: components["responses"]["ValidationError"];
+            401: components["responses"]["AuthenticationError"];
+            403: components["responses"]["PermissionError"];
+        };
+    };
+    getAdminMedia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["MediaId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Medio obtenido */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            404: components["responses"]["NotFoundError"];
+        };
+    };
+    updateAdminMedia: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["MediaId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAdminMediaInput"];
+            };
+        };
+        responses: {
+            /** @description Medio actualizado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            409: components["responses"]["ConflictError"];
         };
     };
 }

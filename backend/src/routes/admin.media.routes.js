@@ -1,0 +1,12 @@
+const express=require("express");
+const controller=require("../controllers/adminMedia.controller");
+const {authenticate}=require("../middleware/auth.middleware");
+const {requirePermissions}=require("../middleware/permission.middleware");
+const {asyncHandler}=require("../utils/asyncHandler");
+const {mediaUpload}=require("../middleware/mediaUpload.middleware");
+const router=express.Router();router.use(authenticate);
+router.get("/",requirePermissions("media:read-internal"),asyncHandler(controller.list));
+router.get("/:id",requirePermissions("media:read-internal"),asyncHandler(controller.get));
+router.post("/",requirePermissions("media:create"),mediaUpload,asyncHandler(controller.create));
+router.patch("/:id",requirePermissions("media:update"),asyncHandler(controller.update));
+module.exports=router;

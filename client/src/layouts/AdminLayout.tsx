@@ -32,6 +32,9 @@ export function AdminLayout() {
             <Can anyOf={MODULE_PERMISSIONS.content}>
               <li><NavLink to="/admin/contenido">Contenido</NavLink></li>
             </Can>
+            <Can permission="media:read-internal">
+              <li><NavLink to="/admin/medios">Medios</NavLink></li>
+            </Can>
           </ul>
         </nav>
       </aside>

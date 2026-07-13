@@ -1,5 +1,6 @@
 const { z } = require("zod");
 const contentRepository = require("../repositories/content.repository");
+const blockResolverService = require("./blockResolver.service");
 const {
     createContentSchema,
     updateContentSchema,
@@ -228,12 +229,37 @@ class ContentService {
 
     async preview(rawId) {
         const content = await this.getById(rawId);
+        const sourceSections = content.currentVersion.sections.map((section) => ({
+            ...section,
+            _source: section,
+            id_content_section: section.id,
+            type_code: section.type?.code ?? null,
+            type_name: section.type?.name ?? null,
+            blocks: section.blocks.map((block) => ({
+                ...block,
+                _source: block,
+                id_content_block: block.id,
+                type_code: block.type.code,
+                type_name: block.type.name
+            }))
+        }));
+        const resolvedSections = await blockResolverService.resolveSections(sourceSections);
+        const version = {
+            ...content.currentVersion,
+            sections: resolvedSections.map((section) => ({
+                ...section._source,
+                blocks: section.blocks.map((block) => ({
+                    ...block._source,
+                    ...(block.resolved === undefined ? {} : { resolved: block.resolved })
+                }))
+            }))
+        };
         return {
             id: content.id,
             slug: content.slug,
             type: content.type,
             status: content.status,
-            version: content.currentVersion,
+            version,
             preview: true
         };
     }

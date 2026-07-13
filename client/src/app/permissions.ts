@@ -29,8 +29,13 @@ export const INTERNAL_PERMISSIONS = [
   "content:read-internal",
   "content:create",
   "content:update",
+  "content:submit",
   "content:approve",
-  "content:publish"
+  "content:publish",
+  "content:archive",
+  "media:read-internal",
+  "media:create",
+  "media:update"
 ] as const;
 
 export const MODULE_PERMISSIONS = {
@@ -38,5 +43,6 @@ export const MODULE_PERMISSIONS = {
   sources: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("sources:")),
   trends: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("trends:")),
   alerts: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("alerts:")),
-  content: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("content:"))
+  content: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("content:")),
+  media: INTERNAL_PERMISSIONS.filter((permission) => permission.startsWith("media:"))
 } as const;

@@ -25,7 +25,6 @@ import { HomePage } from "@/pages/HomePage";
 import { ModuleLandingPage } from "@/pages/ModuleLandingPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PermissionDeniedPage } from "@/pages/PermissionDeniedPage";
-import { PlaceholderPage } from "@/pages/PlaceholderPage";
 import { RouteErrorPage } from "@/pages/RouteErrorPage";
 
 export const appRoutes: RouteObject[] = [
@@ -91,7 +90,12 @@ export const appRoutes: RouteObject[] = [
           { path: "alertas/nueva", element: <RequireAnyPermission permissions={["alerts:create"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/alerts/AlertFormPage")).CreateAlertFormPage }) }] },
           { path: "alertas/:id/editar", element: <RequireAnyPermission permissions={["alerts:update"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/alerts/AlertFormPage")).EditAlertFormPage }) }] },
           { path: "alertas", element: <RequireAnyPermission permissions={["alerts:read-internal"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/AdminEntityPage")).AlertsAdminPage }) }, { path: ":id", lazy: async () => ({ Component: (await import("@/features/admin/AdminEntityPage")).AlertsAdminPage }) }] },
-          { path: "contenido/*", element: <PlaceholderPage title="Gestión editorial" /> }
+          { path: "contenido/nuevo", element: <RequireAnyPermission permissions={["content:create"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/content/ContentFormPage")).CreateContentPage }) }] },
+          { path: "contenido/:id/editar", element: <RequireAnyPermission permissions={["content:update"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/content/ContentFormPage")).EditContentPage }) }] },
+          { path: "contenido/:id/preview", element: <RequireAnyPermission permissions={["content:read-internal"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/content/ContentPreviewPage")).ContentPreviewPage }) }] },
+          { path: "contenido/:id/composicion", element: <RequireAnyPermission permissions={["content:update"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/content/CompositionBuilderPage")).CompositionBuilderPage }) }] },
+          { path: "contenido", element: <RequireAnyPermission permissions={["content:read-internal"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/content/ContentAdminPage")).ContentAdminPage }) }, { path: ":id", lazy: async () => ({ Component: (await import("@/features/admin/content/ContentAdminPage")).ContentAdminPage }) }] },
+          { path: "medios", element: <RequireAnyPermission permissions={["media:read-internal"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/media/MediaAdminPage")).MediaAdminPage }) }] }
         ]
       }]
     }]
