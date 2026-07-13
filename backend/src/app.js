@@ -2,6 +2,7 @@ const express = require("express");
 
 const healthRoutes = require("./routes/health");
 const authRoutes = require("./routes/auth.routes");
+const observatoryRoutes = require("./routes/observatory.routes");
 
 const {
     notFoundHandler
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/observatory", observatoryRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

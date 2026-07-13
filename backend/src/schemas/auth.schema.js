@@ -66,6 +66,19 @@ const registerSchema = z
 
         email: emailSchema,
 
+        occupation: z
+            .string({
+                invalid_type_error:
+                    "La ocupacion debe ser una cadena de texto."
+            })
+            .trim()
+            .max(
+                100,
+                "La ocupacion no puede superar los 100 caracteres."
+            )
+            .optional()
+            .or(z.literal("")),
+
         password: passwordSchema
     })
     .strict("Se enviaron campos que no están permitidos.");

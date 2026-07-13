@@ -1,3 +1,6 @@
+#docker compose -f docker-compose.yaml -f docker-compose.dev.yaml --env-file .env.development up
+
+
 services:
 
   nginx:
@@ -8,28 +11,38 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
 
   frontend:
-    image: node:22-alpine
+    image: observatorio-frontend-dev
+    build:
+      context: ./client
+      dockerfile: ../docker/frontend/Dockerfile.dev
     volumes:
       - ./client:/app
       - /app/node_modules
     working_dir: /app
-    # Cambiamos esto para asegurar que existan los módulos locales:
     command: sh -c "npm install && npm run dev"
     environment:
       VITE_API_URL: /api
+      CHOKIDAR_USEPOLLING: "true"
 
   backend:
-
+    image: observatorio-backend-dev
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile.dev
     volumes:
       - ./backend:/app
       - /app/node_modules
-
-    command: npm run dev
-
+    working_dir: /app
+    env_file:
+      - .env.development
+    command: sh -c "npm install && npm run dev"
     ports:
       - "3001:3001"
+    depends_on:
+      - postgres
 
   postgres:
-
     ports:
       - "5432:5432"
+    env_file:
+      - .env.development

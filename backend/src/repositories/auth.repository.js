@@ -13,9 +13,10 @@ class AuthRepository {
                 first_name,
                 last_name,
                 email,
+                occupation,
                 password_hash
             )
-            VALUES ($1, $2, $3, $4)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING
                 id_user,
                 first_name,
@@ -30,6 +31,7 @@ class AuthRepository {
             user.firstName,
             user.lastName,
             user.email,
+            user.occupation,
             user.passwordHash
         ];
 

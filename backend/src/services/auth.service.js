@@ -49,6 +49,7 @@ class AuthService {
             firstName,
             lastName,
             email,
+            occupation,
             password
         } = validationResult.data;
 
@@ -70,6 +71,7 @@ class AuthService {
                 firstName,
                 lastName,
                 email,
+                occupation: occupation || null,
                 passwordHash
             });
         } catch (error) {

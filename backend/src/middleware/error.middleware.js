@@ -1,6 +1,6 @@
 const {
     ApiError
-} = require("../errors/ApiError");
+} = require("../errors/apiError");
 
 /**
  * Middleware global de manejo de errores.
