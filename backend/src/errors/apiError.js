@@ -37,7 +37,7 @@ class UnauthorizedError extends ApiError {
             message,
             401,
             null,
-            "UNAUTHORIZED"
+            "AUTHENTICATION_REQUIRED"
         );
     }
 }
@@ -50,7 +50,7 @@ class ForbiddenError extends ApiError {
             message,
             403,
             null,
-            "FORBIDDEN"
+            "PERMISSION_DENIED"
         );
     }
 }
@@ -61,7 +61,7 @@ class NotFoundError extends ApiError {
             message,
             404,
             null,
-            "NOT_FOUND"
+            "RESOURCE_NOT_FOUND"
         );
     }
 }
@@ -77,11 +77,35 @@ class ConflictError extends ApiError {
     }
 }
 
+class InvalidTransitionError extends ApiError {
+    constructor(message = "La transición solicitada no está permitida.") {
+        super(message, 409, null, "INVALID_TRANSITION");
+    }
+}
+
+class ConcurrentModificationError extends ApiError {
+    constructor(message = "El recurso fue modificado por otra operación.") {
+        super(message, 409, null, "CONCURRENT_MODIFICATION");
+    }
+}
+
+class DomainRuleError extends ApiError {
+    constructor(
+        message = "La operación incumple una regla de dominio.",
+        errors = null
+    ) {
+        super(message, 422, errors, "DOMAIN_RULE_VIOLATION");
+    }
+}
+
 module.exports = {
     ApiError,
     ValidationError,
     UnauthorizedError,
     ForbiddenError,
     NotFoundError,
-    ConflictError
+    ConflictError,
+    InvalidTransitionError,
+    ConcurrentModificationError,
+    DomainRuleError
 };

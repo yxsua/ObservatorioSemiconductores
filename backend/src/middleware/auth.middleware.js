@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const {
     UnauthorizedError
-} = require("../errors/ApiError");
+} = require("../errors/apiError");
 
 const {
     verifyToken

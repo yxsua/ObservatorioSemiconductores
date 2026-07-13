@@ -4,7 +4,11 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test",
+    "test:e2e:alerts": "node scripts/alert-e2e.js",
+    "test:e2e:content": "node scripts/content-e2e.js",
+    "test:e2e:public-content": "node scripts/content-e2e.js",
+    "test:e2e:exports": "node scripts/content-e2e.js",
     "dev": "node --watch src/server.js",
     "start": "node src/server.js"
   },

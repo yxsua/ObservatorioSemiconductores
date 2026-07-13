@@ -19,7 +19,22 @@ function emptySuccessResponse(
     };
 }
 
+function paginatedResponse(
+    items,
+    pagination,
+    message = "Recursos obtenidos correctamente."
+) {
+    return successResponse(
+        {
+            items,
+            pagination
+        },
+        message
+    );
+}
+
 module.exports = {
     successResponse,
-    emptySuccessResponse
+    emptySuccessResponse,
+    paginatedResponse
 };

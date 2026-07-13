@@ -1,6 +1,6 @@
 const {
     NotFoundError
-} = require("../errors/ApiError");
+} = require("../errors/apiError");
 
 function notFoundHandler(req, res, next) {
     return next(

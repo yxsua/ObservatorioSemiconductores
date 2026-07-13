@@ -8,34 +8,65 @@ class AuthRepository {
      * @returns {Promise<Object>}
      */
     async createUser(user) {
-        const query = `
-            INSERT INTO users (
-                first_name,
-                last_name,
-                email,
-                password_hash
-            )
-            VALUES ($1, $2, $3, $4)
-            RETURNING
-                id_user,
-                first_name,
-                last_name,
-                email,
-                occupation,
-                active,
-                created_at;
-        `;
+        const client = await pool.connect();
 
-        const values = [
-            user.firstName,
-            user.lastName,
-            user.email,
-            user.passwordHash
-        ];
+        try {
+            await client.query("BEGIN");
 
-        const { rows } = await pool.query(query, values);
+            const userResult = await client.query(
+                `
+                    INSERT INTO users (
+                        first_name,
+                        last_name,
+                        email,
+                        password_hash
+                    )
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING
+                        id_user,
+                        first_name,
+                        last_name,
+                        email,
+                        occupation,
+                        active,
+                        created_at;
+                `,
+                [
+                    user.firstName,
+                    user.lastName,
+                    user.email,
+                    user.passwordHash
+                ]
+            );
 
-        return rows[0];
+            const createdUser = userResult.rows[0];
+
+            const roleResult = await client.query(
+                `
+                    INSERT INTO user_roles (id_user, id_role)
+                    SELECT $1, id_role
+                    FROM roles
+                    WHERE name = 'MEMBER'
+                    RETURNING id_role;
+                `,
+                [createdUser.id_user]
+            );
+
+            if (roleResult.rowCount !== 1) {
+                throw new Error(
+                    "El rol MEMBER no está configurado en la base de datos."
+                );
+            }
+
+            await client.query("COMMIT");
+
+            return createdUser;
+        } catch (error) {
+            await client.query("ROLLBACK");
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     /**
@@ -75,16 +106,31 @@ class AuthRepository {
     async findUserById(id) {
         const query = `
             SELECT
-                id_user,
-                first_name,
-                last_name,
-                email,
-                occupation,
-                active,
-                last_login,
-                created_at
-            FROM users
-            WHERE id_user = $1
+                u.id_user,
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.occupation,
+                u.active,
+                u.last_login,
+                u.created_at,
+                COALESCE(
+                    ARRAY_AGG(DISTINCT r.name)
+                        FILTER (WHERE r.name IS NOT NULL),
+                    ARRAY[]::VARCHAR[]
+                ) AS roles,
+                COALESCE(
+                    ARRAY_AGG(DISTINCT p.code)
+                        FILTER (WHERE p.code IS NOT NULL),
+                    ARRAY[]::VARCHAR[]
+                ) AS permissions
+            FROM users u
+            LEFT JOIN user_roles ur ON ur.id_user = u.id_user
+            LEFT JOIN roles r ON r.id_role = ur.id_role
+            LEFT JOIN role_permissions rp ON rp.id_role = r.id_role
+            LEFT JOIN permissions p ON p.id_permission = rp.id_permission
+            WHERE u.id_user = $1
+            GROUP BY u.id_user
             LIMIT 1;
         `;
 

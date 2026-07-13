@@ -86,13 +86,17 @@ class AuthService {
             throw error;
         }
 
+        const completeUser = await authRepository.findUserById(
+            createdUser.id_user
+        );
+
         const token = generateToken({
-            id: createdUser.id_user,
-            email: createdUser.email
+            id: completeUser.id_user,
+            email: completeUser.email
         });
 
         return {
-            user: this.mapUser(createdUser),
+            user: this.mapUser(completeUser),
             token
         };
     }
@@ -146,18 +150,17 @@ class AuthService {
 
         await authRepository.updateLastLogin(user.id_user);
 
-        /*
-         * El objeto obtenido mediante findUserByEmail no contiene
-         * last_login actualizado. Para el MVP puede devolverse null,
-         * o consultar nuevamente el usuario.
-         */
+        const completeUser = await authRepository.findUserById(
+            user.id_user
+        );
+
         const token = generateToken({
-            id: user.id_user,
-            email: user.email
+            id: completeUser.id_user,
+            email: completeUser.email
         });
 
         return {
-            user: this.mapUser(user),
+            user: this.mapUser(completeUser),
             token
         };
     }
@@ -207,14 +210,16 @@ class AuthService {
      */
     mapUser(user) {
         return {
-            id: user.id_user,
+            id: Number(user.id_user),
             firstName: user.first_name,
             lastName: user.last_name,
             email: user.email,
             occupation: user.occupation ?? null,
             active: user.active,
             lastLogin: user.last_login ?? null,
-            createdAt: user.created_at ?? null
+            createdAt: user.created_at ?? null,
+            roles: user.roles ?? [],
+            permissions: user.permissions ?? []
         };
     }
 }

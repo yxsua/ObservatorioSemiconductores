@@ -12,6 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/migrations:/docker-entrypoint-initdb.d
+      - ./database:/scripts
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]
@@ -29,6 +30,12 @@ services:
 
     env_file:
       - .env
+
+    environment:
+      MEDIA_ROOT: /app/storage/media
+
+    volumes:
+      - media_data:/app/storage/media
 
     depends_on:
       postgres:
@@ -49,7 +56,9 @@ services:
       - observatorio
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
 
     depends_on:
       - frontend
@@ -60,6 +69,7 @@ services:
 
 volumes:
   postgres_data:
+  media_data:
 
 networks:
   observatorio:

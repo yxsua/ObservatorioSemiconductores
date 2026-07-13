@@ -1,6 +1,6 @@
 const {
     ApiError
-} = require("../errors/ApiError");
+} = require("../errors/apiError");
 
 /**
  * Middleware global de manejo de errores.
@@ -65,6 +65,26 @@ function errorHandler(error, req, res, next) {
         message =
             "Uno de los valores proporcionados tiene un formato inválido.";
         code = "INVALID_VALUE";
+        errors = null;
+    }
+
+    /*
+     * PostgreSQL: not_null_violation.
+     */
+    if (error.code === "23502") {
+        statusCode = 400;
+        message = "Falta un valor obligatorio.";
+        code = "VALIDATION_ERROR";
+        errors = null;
+    }
+
+    /*
+     * PostgreSQL: check_violation.
+     */
+    if (error.code === "23514") {
+        statusCode = 422;
+        message = "La operación incumple una regla de dominio.";
+        code = "DOMAIN_RULE_VIOLATION";
         errors = null;
     }
 

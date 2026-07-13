@@ -7,3 +7,11 @@ docker cp ..\..\database\migrations\06_views.sql mvp-postgres-1:/scripts/06_view
 docker cp ..\..\database\migrations\07_procedures.sql mvp-postgres-1:/scripts/07_procedures.sql
 docker cp ..\..\database\migrations\08_triggers.sql mvp-postgres-1:/scripts/08_triggers.sql
 docker cp ..\..\database\migrations\09_indexes.sql mvp-postgres-1:/scripts/09_indexes.sql
+docker cp ..\..\database\migrations\10_roles_permissions.sql mvp-postgres-1:/scripts/10_roles_permissions.sql
+docker cp ..\..\database\migrations\11_signals_domain.sql mvp-postgres-1:/scripts/11_signals_domain.sql
+docker cp ..\..\database\migrations\12_trends_domain.sql mvp-postgres-1:/scripts/12_trends_domain.sql
+docker cp ..\..\database\migrations\13_alerts_domain.sql mvp-postgres-1:/scripts/13_alerts_domain.sql
+docker cp ..\..\database\migrations\14_editorial_domain.sql mvp-postgres-1:/scripts/14_editorial_domain.sql
+docker cp ..\..\database\migrations\15_editorial_api_rules.sql mvp-postgres-1:/scripts/15_editorial_api_rules.sql
+docker cp ..\..\database\migrations\16_public_content_api.sql mvp-postgres-1:/scripts/16_public_content_api.sql
+docker cp ..\..\database\migrations\17_export_history.sql mvp-postgres-1:/scripts/17_export_history.sql

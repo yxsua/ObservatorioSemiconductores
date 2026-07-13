@@ -1,0 +1,2798 @@
+openapi: 3.1.0
+info:
+  title: API del Observatorio de Semiconductores
+  version: 0.5.6
+  description: >-
+    Contrato de autenticación, catálogos y las verticales de señales,
+    tendencias, alertas y las APIs editorial interna y pública, incluida la
+    resolución de bloques, entrega de medios y exportaciones autenticadas,
+    implementadas hasta la Fase 5.6.
+servers:
+  - url: /api
+tags:
+  - name: Health
+  - name: Auth
+  - name: Catalogs
+  - name: Signals
+  - name: Admin Signals
+  - name: Trends
+  - name: Admin Trends
+  - name: Alerts
+  - name: Admin Alerts
+  - name: Admin Editorial
+  - name: Public Content
+  - name: Media
+  - name: Exports
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Comprueba backend y conexión con PostgreSQL
+      operationId: getHealth
+      responses:
+        "200":
+          description: Servicios disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, backend, database, timestamp]
+                properties:
+                  status: { type: string, const: ok }
+                  backend: { type: string, const: running }
+                  database: { type: string, const: connected }
+                  timestamp: { type: string, format: date-time }
+        "500":
+          description: PostgreSQL no está disponible
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Registra una cuenta pública con rol MEMBER
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Usuario registrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Inicia sesión
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Sesión iniciada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Obtiene el perfil autenticado, roles y permisos
+      operationId: getProfile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Perfil obtenido
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+        "403":
+          $ref: "#/components/responses/PermissionError"
+  /catalogs:
+    get:
+      tags: [Catalogs]
+      summary: Enumera los catálogos disponibles
+      operationId: listCatalogs
+      responses:
+        "200":
+          description: Nombres de catálogo
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { type: string }
+  /catalogs/{catalog}:
+    get:
+      tags: [Catalogs]
+      summary: Obtiene los elementos de un catálogo
+      operationId: getCatalog
+      parameters:
+        - name: catalog
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/CatalogName"
+      responses:
+        "200":
+          description: Catálogo obtenido
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: object
+                    required: [name, items]
+                    properties:
+                      name: { $ref: "#/components/schemas/CatalogName" }
+                      items:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: true
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /signals:
+    get:
+      tags: [Signals]
+      summary: Lista exclusivamente señales validadas
+      operationId: listPublicSignals
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/CategoryId"
+        - $ref: "#/components/parameters/Fcv"
+        - $ref: "#/components/parameters/Impact"
+        - $ref: "#/components/parameters/Urgency"
+        - $ref: "#/components/parameters/Reliability"
+        - $ref: "#/components/parameters/Scope"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/SignalSort"
+      responses:
+        "200":
+          description: Señales públicas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedSignalsResponse" }
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /signals/{id}:
+    get:
+      tags: [Signals]
+      summary: Obtiene una señal validada
+      operationId: getPublicSignal
+      parameters:
+        - $ref: "#/components/parameters/SignalId"
+      responses:
+        "200":
+          description: Señal pública
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SignalResponse" }
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /admin/signals:
+    get:
+      tags: [Admin Signals]
+      summary: Lista señales internas
+      operationId: listInternalSignals
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - name: status
+          in: query
+          schema: { $ref: "#/components/schemas/SignalStatusCode" }
+        - $ref: "#/components/parameters/CategoryId"
+        - $ref: "#/components/parameters/Fcv"
+        - $ref: "#/components/parameters/Impact"
+        - $ref: "#/components/parameters/Urgency"
+        - $ref: "#/components/parameters/Reliability"
+        - $ref: "#/components/parameters/Scope"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - $ref: "#/components/parameters/SignalSort"
+      responses:
+        "200":
+          description: Señales internas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedSignalsResponse" }
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+        "403":
+          $ref: "#/components/responses/PermissionError"
+    post:
+      tags: [Admin Signals]
+      summary: Crea una señal NEW para el analista autenticado
+      operationId: createSignal
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateSignalInput" }
+      responses:
+        "201":
+          description: Señal creada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SignalResponse" }
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+        "403":
+          $ref: "#/components/responses/PermissionError"
+        "422":
+          $ref: "#/components/responses/DomainRuleError"
+  /admin/signals/{id}:
+    get:
+      tags: [Admin Signals]
+      summary: Obtiene una señal con campos internos
+      operationId: getInternalSignal
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SignalId"
+      responses:
+        "200":
+          description: Señal interna
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SignalResponse" }
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+    patch:
+      tags: [Admin Signals]
+      summary: Modifica una señal en estado NEW
+      operationId: updateSignal
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SignalId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateSignalInput" }
+      responses:
+        "200":
+          description: Señal actualizada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SignalResponse" }
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "422":
+          $ref: "#/components/responses/DomainRuleError"
+  /admin/signals/{id}/transitions:
+    post:
+      tags: [Admin Signals]
+      summary: Ejecuta una transición semántica de estado
+      operationId: transitionSignal
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SignalId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SignalTransitionInput" }
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SignalResponse" }
+        "403":
+          $ref: "#/components/responses/PermissionError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "422":
+          $ref: "#/components/responses/DomainRuleError"
+  /admin/signals/{id}/history:
+    get:
+      tags: [Admin Signals]
+      summary: Obtiene el historial de estados de una señal
+      operationId: getSignalHistory
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SignalId"
+      responses:
+        "200":
+          description: Historial cronológico
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/SignalHistoryEntry" }
+  /admin/sources:
+    get:
+      tags: [Admin Signals]
+      summary: Lista fuentes activas disponibles para captura
+      operationId: listActiveSources
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Search"
+      responses:
+        "200":
+          description: Fuentes activas
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required: [id, type, name]
+                      properties:
+                        id: { type: integer, format: int64 }
+                        type: { $ref: "#/components/schemas/CatalogValue" }
+                        name: { type: string }
+                        website: { type: [string, "null"], format: uri }
+                        country: { type: [string, "null"] }
+                        historicalReliability: { type: [number, "null"] }
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+        "403":
+          $ref: "#/components/responses/PermissionError"
+  /trends:
+    get:
+      tags: [Trends]
+      summary: Lista tendencias activas
+      operationId: listPublicTrends
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - name: direction
+          in: query
+          schema: { type: string }
+        - name: maturity
+          in: query
+          schema: { type: string }
+        - $ref: "#/components/parameters/TrendSort"
+      responses:
+        "200":
+          description: Tendencias públicas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedTrendsResponse" }
+  /trends/{id}:
+    get:
+      tags: [Trends]
+      summary: Obtiene una tendencia activa
+      operationId: getPublicTrend
+      parameters:
+        - $ref: "#/components/parameters/TrendId"
+      responses:
+        "200":
+          description: Tendencia pública
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+  /admin/trends:
+    get:
+      tags: [Admin Trends]
+      summary: Lista tendencias internas
+      operationId: listInternalTrends
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: direction
+          in: query
+          schema: { type: string }
+        - name: maturity
+          in: query
+          schema: { type: string }
+        - $ref: "#/components/parameters/TrendSort"
+      responses:
+        "200":
+          description: Tendencias internas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedTrendsResponse" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+    post:
+      tags: [Admin Trends]
+      summary: Crea una tendencia NEW
+      operationId: createTrend
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateTrendInput" }
+      responses:
+        "201":
+          description: Tendencia creada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/trends/{id}:
+    get:
+      tags: [Admin Trends]
+      summary: Obtiene una tendencia interna
+      operationId: getInternalTrend
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      responses:
+        "200":
+          description: Tendencia interna
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+    patch:
+      tags: [Admin Trends]
+      summary: Modifica una tendencia NEW
+      operationId: updateTrend
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateTrendInput" }
+      responses:
+        "200":
+          description: Tendencia actualizada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/trends/{id}/transitions:
+    post:
+      tags: [Admin Trends]
+      summary: Ejecuta una transición de tendencia
+      operationId: transitionTrend
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TrendTransitionInput" }
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/trends/{id}/history:
+    get:
+      tags: [Admin Trends]
+      summary: Obtiene el historial de una tendencia
+      operationId: getTrendHistory
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      responses:
+        "200":
+          description: Historial cronológico
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/SignalHistoryEntry" }
+  /admin/trends/{id}/signals:
+    post:
+      tags: [Admin Trends]
+      summary: Vincula señales a una tendencia NEW
+      operationId: linkTrendSignals
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RelationIdsInput" }
+      responses:
+        "200":
+          description: Señales vinculadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+  /admin/trends/{id}/signals/{signalId}:
+    delete:
+      tags: [Admin Trends]
+      summary: Desvincula una señal de una tendencia NEW
+      operationId: unlinkTrendSignal
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/TrendId"
+        - $ref: "#/components/parameters/RelatedSignalId"
+      responses:
+        "200":
+          description: Señal desvinculada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+  /admin/trends/{id}/actors:
+    post:
+      tags: [Admin Trends]
+      summary: Vincula actores a una tendencia NEW
+      operationId: linkTrendActors
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/TrendId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RelationIdsInput" }
+      responses:
+        "200":
+          description: Actores vinculados
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+  /admin/trends/{id}/actors/{actorId}:
+    delete:
+      tags: [Admin Trends]
+      summary: Desvincula un actor de una tendencia NEW
+      operationId: unlinkTrendActor
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/TrendId"
+        - $ref: "#/components/parameters/ActorId"
+      responses:
+        "200":
+          description: Actor desvinculado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TrendResponse" }
+  /admin/actors:
+    get:
+      tags: [Admin Trends]
+      summary: Lista actores disponibles para tendencias
+      operationId: listActors
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/Search" }]
+      responses:
+        "200":
+          description: Actores disponibles
+  /alerts:
+    get:
+      tags: [Alerts]
+      summary: Lista alertas publicadas o cerradas
+      operationId: listPublicAlerts
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/AlertStatus"
+        - $ref: "#/components/parameters/AlertLevel"
+        - $ref: "#/components/parameters/AlertAudience"
+        - $ref: "#/components/parameters/AlertSort"
+      responses:
+        "200":
+          description: Alertas públicas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedAlertsResponse" }
+  /alerts/{id}:
+    get:
+      tags: [Alerts]
+      summary: Obtiene una alerta publicada o cerrada
+      operationId: getPublicAlert
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      responses:
+        "200":
+          description: Alerta pública
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertResponse" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/alerts:
+    get:
+      tags: [Admin Alerts]
+      summary: Lista alertas con información interna
+      operationId: listInternalAlerts
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/AlertStatus"
+        - $ref: "#/components/parameters/AlertLevel"
+        - $ref: "#/components/parameters/AlertAudience"
+        - $ref: "#/components/parameters/AlertSort"
+      responses:
+        "200":
+          description: Alertas internas paginadas
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedAlertsResponse" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+    post:
+      tags: [Admin Alerts]
+      summary: Crea una alerta manual en NEW
+      operationId: createAlert
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateAlertInput" }
+      responses:
+        "201":
+          description: Alerta creada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/alerts/{id}:
+    get:
+      tags: [Admin Alerts]
+      summary: Obtiene una alerta con información interna
+      operationId: getInternalAlert
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      responses:
+        "200":
+          description: Alerta interna
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertResponse" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+    patch:
+      tags: [Admin Alerts]
+      summary: Actualiza una alerta NEW
+      operationId: updateAlert
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateAlertInput" }
+      responses:
+        "200":
+          description: Alerta actualizada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertResponse" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/alerts/{id}/transitions:
+    post:
+      tags: [Admin Alerts]
+      summary: Ejecuta una transición semántica de alerta
+      operationId: transitionAlert
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AlertTransitionInput" }
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AlertResponse" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/alerts/{id}/history:
+    get:
+      tags: [Admin Alerts]
+      summary: Obtiene el historial de una alerta
+      operationId: getAlertHistory
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      responses:
+        "200":
+          description: Historial cronológico
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/AlertHistoryEntry" }
+  /admin/alerts/{id}/signals:
+    post:
+      tags: [Admin Alerts]
+      summary: Vincula señales a una alerta NEW
+      operationId: linkAlertSignals
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RelationIdsInput" }
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /admin/alerts/{id}/signals/{signalId}:
+    delete:
+      tags: [Admin Alerts]
+      summary: Desvincula una señal de una alerta NEW
+      operationId: unlinkAlertSignal
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/AlertId"
+        - $ref: "#/components/parameters/RelatedSignalId"
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /admin/alerts/{id}/trends:
+    post:
+      tags: [Admin Alerts]
+      summary: Vincula tendencias a una alerta NEW
+      operationId: linkAlertTrends
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RelationIdsInput" }
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /admin/alerts/{id}/trends/{trendId}:
+    delete:
+      tags: [Admin Alerts]
+      summary: Desvincula una tendencia de una alerta NEW
+      operationId: unlinkAlertTrend
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/AlertId"
+        - $ref: "#/components/parameters/RelatedTrendId"
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /admin/alerts/{id}/audiences:
+    post:
+      tags: [Admin Alerts]
+      summary: Vincula audiencias a una alerta NEW
+      operationId: linkAlertAudiences
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/AlertId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AudienceCodesInput" }
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /admin/alerts/{id}/audiences/{audienceCode}:
+    delete:
+      tags: [Admin Alerts]
+      summary: Desvincula una audiencia de una alerta NEW
+      operationId: unlinkAlertAudience
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/AlertId"
+        - name: audienceCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { $ref: "#/components/responses/AlertUpdated" }
+  /media/{id}:
+    get:
+      tags: [Media]
+      summary: Entrega una imagen raster pública
+      operationId: getPublicMediaInline
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+      responses:
+        "200":
+          description: Binario de imagen local
+          headers:
+            Cache-Control: { schema: { type: string } }
+            X-Content-Type-Options: { schema: { type: string, const: nosniff } }
+          content:
+            image/avif: { schema: { type: string, format: binary } }
+            image/gif: { schema: { type: string, format: binary } }
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/png: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
+        "302":
+          description: Redirección a almacenamiento HTTP(S)
+          headers:
+            Location: { schema: { type: string, format: uri } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /media/{id}/download:
+    get:
+      tags: [Media]
+      summary: Descarga un medio público con una cuenta registrada
+      operationId: downloadPublicMedia
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/MediaId"
+      responses:
+        "200":
+          description: Archivo local como attachment
+          headers:
+            Content-Disposition: { schema: { type: string } }
+            Cache-Control: { schema: { type: string, const: "private, no-store" } }
+            X-Content-Type-Options: { schema: { type: string, const: nosniff } }
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        "302":
+          description: Redirección autenticada a almacenamiento HTTP(S)
+          headers:
+            Location: { schema: { type: string, format: uri } }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /exports/{resource}.{format}:
+    get:
+      tags: [Exports]
+      summary: Exporta una colección pública con una cuenta registrada
+      description: >-
+        Aplica los filtros públicos del recurso y genera como máximo el
+        límite configurado de registros. No admite page, pageSize ni status.
+        Cada descarga exitosa queda registrada en el historial del usuario.
+      operationId: exportPublicCollection
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [signals, trends, alerts, content]
+        - name: format
+          in: path
+          required: true
+          schema: { type: string, enum: [csv, json] }
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/CategoryId"
+        - $ref: "#/components/parameters/Fcv"
+        - $ref: "#/components/parameters/Impact"
+        - $ref: "#/components/parameters/Urgency"
+        - $ref: "#/components/parameters/Reliability"
+        - $ref: "#/components/parameters/Scope"
+        - $ref: "#/components/parameters/FromDate"
+        - $ref: "#/components/parameters/ToDate"
+        - name: type
+          in: query
+          schema: { type: string, maxLength: 50 }
+        - name: direction
+          in: query
+          schema: { type: string }
+        - name: maturity
+          in: query
+          schema: { type: string }
+        - name: level
+          in: query
+          schema: { type: string }
+        - name: audience
+          in: query
+          schema: { type: string }
+        - name: sort
+          in: query
+          description: Debe corresponder a un campo público permitido por el recurso.
+          schema: { type: string }
+      responses:
+        "200":
+          description: Archivo generado
+          headers:
+            Content-Disposition: { schema: { type: string } }
+            Cache-Control: { schema: { type: string, const: "private, no-store" } }
+            X-Content-Type-Options: { schema: { type: string, const: nosniff } }
+            X-Export-Id: { schema: { type: integer, format: int64 } }
+            X-Row-Count: { schema: { type: integer, minimum: 0 } }
+            X-Checksum-SHA256:
+              schema: { type: string, pattern: "^[a-f0-9]{64}$" }
+          content:
+            text/csv:
+              schema: { type: string, format: binary }
+            application/json:
+              schema: { $ref: "#/components/schemas/ExportJsonDocument" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /exports/history:
+    get:
+      tags: [Exports]
+      summary: Consulta el historial propio de exportaciones
+      operationId: listOwnExportHistory
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: Historial paginado del usuario autenticado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedExportHistoryResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+  /content:
+    get:
+      tags: [Public Content]
+      summary: Lista contenido editorial publicado
+      operationId: listPublicContent
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - name: type
+          in: query
+          schema: { type: string, maxLength: 50 }
+        - name: categoryId
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: fcv
+          in: query
+          schema: { type: string, maxLength: 50 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: -publishedAt
+            enum: [publishedAt, -publishedAt, title, -title]
+      responses:
+        "200":
+          description: Contenido público paginado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedPublicContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+  /content/{slug}:
+    get:
+      tags: [Public Content]
+      summary: Obtiene la versión publicada de un contenido por slug
+      description: >-
+        Devuelve únicamente secciones, bloques, medios y relaciones que siguen
+        siendo públicos. Una revisión de trabajo nunca sustituye esta respuesta.
+      operationId: getPublicContentBySlug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+            maxLength: 250
+            pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      responses:
+        "200":
+          description: Contenido público obtenido
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/editorial/block-types:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene los contratos de bloques editoriales habilitados
+      description: >-
+        Requiere lectura, creación o actualización editorial. Solo devuelve
+        bloques cuya versión coincide entre PostgreSQL y el registro Zod.
+      operationId: listEditorialBlockTypes
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Contratos editoriales disponibles
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [success, message, data]
+                properties:
+                  success: { type: boolean, const: true }
+                  message: { type: string }
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/EditorialBlockType" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+  /admin/content:
+    get:
+      tags: [Admin Editorial]
+      summary: Lista contenido editorial interno
+      operationId: listInternalContent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/Search"
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: authorId
+          in: query
+          schema: { type: integer, format: int64, minimum: 1 }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            default: -updatedAt
+            enum: [title, -title, createdAt, -createdAt, updatedAt, -updatedAt, publishedAt, -publishedAt]
+      responses:
+        "200":
+          description: Contenido editorial paginado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaginatedContentResponse" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+    post:
+      tags: [Admin Editorial]
+      summary: Crea contenido y su primera versión DRAFT
+      operationId: createInternalContent
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateContentInput" }
+      responses:
+        "201":
+          description: Contenido creado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/content/{id}:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene contenido interno y su composición vigente
+      operationId: getInternalContent
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      responses:
+        "200":
+          description: Contenido obtenido
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentResponse" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+    patch:
+      tags: [Admin Editorial]
+      summary: Actualiza metadatos de la versión DRAFT vigente
+      operationId: updateInternalContent
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateContentInput" }
+      responses:
+        "200":
+          description: Contenido actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/content/{id}/versions:
+    get:
+      tags: [Admin Editorial]
+      summary: Lista las versiones de un contenido
+      operationId: listContentVersions
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      responses:
+        "200":
+          description: Versiones obtenidas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/ContentVersionSummary" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+    post:
+      tags: [Admin Editorial]
+      summary: Crea una revisión DRAFT desde la versión actual
+      operationId: createContentVersion
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateContentVersionInput" }
+      responses:
+        "201":
+          description: Revisión creada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentVersionResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/content/{id}/versions/{versionId}:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene una versión con secciones, bloques y relaciones
+      operationId: getContentVersion
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentId"
+        - $ref: "#/components/parameters/ContentVersionId"
+      responses:
+        "200":
+          description: Versión obtenida
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentVersionResponse" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/content/{id}/versions/{versionId}/composition:
+    put:
+      tags: [Admin Editorial]
+      summary: Reemplaza atómicamente la composición de una versión DRAFT
+      description: >-
+        El orden de los arreglos determina las posiciones. Valida los contratos
+        de bloques, medios y relaciones; updatedAt habilita control optimista.
+      operationId: replaceContentComposition
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: "#/components/parameters/ContentId"
+        - $ref: "#/components/parameters/ContentVersionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EditorialCompositionInput" }
+      responses:
+        "200":
+          description: Composición guardada
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentVersionResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/content/{id}/transitions:
+    post:
+      tags: [Admin Editorial]
+      summary: Ejecuta una transición del flujo editorial
+      operationId: transitionInternalContent
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ContentTransitionInput" }
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+        "409": { $ref: "#/components/responses/ConflictError" }
+        "422": { $ref: "#/components/responses/DomainRuleError" }
+  /admin/content/{id}/history:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene el historial inmutable de estados
+      operationId: getContentHistory
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      responses:
+        "200":
+          description: Historial obtenido
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/ContentHistoryEntry" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/content/{id}/preview:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene el DTO de vista previa de la versión actual
+      operationId: previewInternalContent
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentId" }]
+      responses:
+        "200":
+          description: Vista previa obtenida
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ContentPreviewResponse" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /admin/content-templates:
+    get:
+      tags: [Admin Editorial]
+      summary: Lista plantillas editoriales activas
+      operationId: listContentTemplates
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Plantillas obtenidas
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessEnvelope"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/ContentTemplateSummary" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+  /admin/content-templates/{id}:
+    get:
+      tags: [Admin Editorial]
+      summary: Obtiene una plantilla con su composición predeterminada
+      operationId: getContentTemplate
+      security: [{ bearerAuth: [] }]
+      parameters: [{ $ref: "#/components/parameters/ContentTemplateId" }]
+      responses:
+        "200":
+          description: Plantilla obtenida
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/SuccessEnvelope"
+                  - type: object
+                    properties:
+                      data: { $ref: "#/components/schemas/ContentTemplate" }
+        "401": { $ref: "#/components/responses/AuthenticationError" }
+        "403": { $ref: "#/components/responses/PermissionError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    SignalId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    TrendId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    AlertId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    ContentId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    ContentVersionId:
+      name: versionId
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    ContentTemplateId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    MediaId:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    RelatedSignalId:
+      name: signalId
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    ActorId:
+      name: actorId
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    RelatedTrendId:
+      name: trendId
+      in: path
+      required: true
+      schema: { type: integer, format: int64, minimum: 1 }
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 1, default: 1 }
+    PageSize:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    Search:
+      name: search
+      in: query
+      schema: { type: string, minLength: 2, maxLength: 200 }
+    CategoryId:
+      name: categoryId
+      in: query
+      schema: { type: integer, minimum: 1 }
+    Fcv:
+      name: fcv
+      in: query
+      schema: { type: string }
+    Impact:
+      name: impact
+      in: query
+      schema: { type: string, enum: [LOW, MEDIUM, HIGH] }
+    Urgency:
+      name: urgency
+      in: query
+      schema: { type: string, enum: [LOW, MEDIUM, HIGH] }
+    Reliability:
+      name: reliability
+      in: query
+      schema: { type: string, enum: [LOW, MEDIUM, HIGH] }
+    Scope:
+      name: scope
+      in: query
+      schema: { type: string }
+    FromDate:
+      name: from
+      in: query
+      schema: { type: string, format: date }
+    ToDate:
+      name: to
+      in: query
+      schema: { type: string, format: date }
+    SignalSort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: -publicationDate
+        enum:
+          - publicationDate
+          - -publicationDate
+          - captureDate
+          - -captureDate
+          - ips
+          - -ips
+          - title
+          - -title
+          - updatedAt
+          - -updatedAt
+    TrendSort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: -updatedAt
+        enum:
+          - title
+          - -title
+          - firstSignalDate
+          - -firstSignalDate
+          - updatedAt
+          - -updatedAt
+          - signalCount
+          - -signalCount
+    AlertStatus:
+      name: status
+      in: query
+      schema:
+        type: string
+        enum: [NEW, UNDER_REVIEW, VALIDATED, PUBLISHED, CLOSED]
+    AlertLevel:
+      name: level
+      in: query
+      schema: { type: string, enum: [YELLOW, ORANGE, RED] }
+    AlertAudience:
+      name: audience
+      in: query
+      schema: { type: string }
+    AlertSort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: -updatedAt
+        enum:
+          - generationDate
+          - -generationDate
+          - responseDeadline
+          - -responseDeadline
+          - level
+          - -level
+          - title
+          - -title
+          - updatedAt
+          - -updatedAt
+  schemas:
+    RegisterInput:
+      type: object
+      additionalProperties: false
+      required: [firstName, lastName, email, password]
+      properties:
+        firstName: { type: string, minLength: 1, maxLength: 80 }
+        lastName: { type: string, minLength: 1, maxLength: 80 }
+        email: { type: string, format: email, maxLength: 150 }
+        password:
+          type: string
+          minLength: 8
+          maxLength: 100
+          description: Requiere minúscula, mayúscula y número.
+    LoginInput:
+      type: object
+      additionalProperties: false
+      required: [email, password]
+      properties:
+        email: { type: string, format: email, maxLength: 150 }
+        password: { type: string, minLength: 1, maxLength: 100 }
+    User:
+      type: object
+      required: [id, firstName, lastName, email, active, roles, permissions]
+      properties:
+        id: { type: integer, format: int64 }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, format: email }
+        occupation: { type: [string, "null"] }
+        active: { type: boolean }
+        lastLogin: { type: [string, "null"], format: date-time }
+        createdAt: { type: [string, "null"], format: date-time }
+        roles:
+          type: array
+          items: { type: string }
+        permissions:
+          type: array
+          items: { type: string }
+    AuthData:
+      type: object
+      required: [user, token]
+      properties:
+        user: { $ref: "#/components/schemas/User" }
+        token: { type: string }
+    AuthResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: { $ref: "#/components/schemas/AuthData" }
+    CatalogName:
+      type: string
+      enum:
+        - source-types
+        - categories
+        - fcv
+        - block-types
+        - signal-types
+        - reliability-levels
+        - impacts
+        - urgencies
+        - scopes
+        - signal-statuses
+        - trend-maturity
+        - trend-statuses
+        - trend-directions
+        - alert-levels
+        - alert-statuses
+        - alert-origins
+        - audiences
+        - content-types
+        - content-statuses
+        - file-types
+        - actor-types
+        - content-relation-types
+        - section-types
+    SignalStatusCode:
+      type: string
+      enum: [NEW, UNDER_REVIEW, VALIDATED, ARCHIVED]
+    CatalogValue:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+    Signal:
+      type: object
+      required:
+        - id
+        - businessCode
+        - title
+        - summary
+        - publicationDate
+        - captureDate
+        - evidenceUrl
+        - ips
+        - priority
+        - category
+        - source
+        - signalType
+        - impact
+        - urgency
+        - reliability
+        - scope
+        - status
+        - keywords
+        - relations
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: integer, format: int64 }
+        businessCode: { type: string, example: SIG-2026-000001 }
+        title: { type: string }
+        summary: { type: string }
+        publicationDate: { type: string, format: date }
+        captureDate: { type: string, format: date }
+        evidenceUrl: { type: string, format: uri }
+        ips: { type: number, minimum: 1, maximum: 27 }
+        priority: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        category:
+          type: object
+          required: [id, name, fcv]
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            fcv: { $ref: "#/components/schemas/CatalogValue" }
+        source:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        signalType: { $ref: "#/components/schemas/CatalogValue" }
+        impact: { $ref: "#/components/schemas/CatalogValue" }
+        urgency: { $ref: "#/components/schemas/CatalogValue" }
+        reliability: { $ref: "#/components/schemas/CatalogValue" }
+        scope: { $ref: "#/components/schemas/CatalogValue" }
+        status: { $ref: "#/components/schemas/CatalogValue" }
+        keywords:
+          type: array
+          items:
+            type: object
+            required: [id, name]
+            properties:
+              id: { type: integer, format: int64 }
+              name: { type: string }
+        relations:
+          type: object
+          required: [linkedToTrend, linkedToAlert]
+          properties:
+            linkedToTrend: { type: boolean }
+            linkedToAlert: { type: boolean }
+        analyst:
+          type: object
+          description: Solo se incluye en respuestas internas.
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        validator:
+          type: [object, "null"]
+          description: Solo se incluye en respuestas internas.
+        validationDate: { type: [string, "null"], format: date }
+        notes: { type: [string, "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    SignalResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: { $ref: "#/components/schemas/Signal" }
+    Pagination:
+      type: object
+      required: [page, pageSize, totalItems, totalPages]
+      properties:
+        page: { type: integer }
+        pageSize: { type: integer }
+        totalItems: { type: integer }
+        totalPages: { type: integer }
+    PaginatedSignalsResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/Signal" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    CreateSignalInput:
+      type: object
+      additionalProperties: false
+      required:
+        - title
+        - summary
+        - publicationDate
+        - evidenceUrl
+        - categoryId
+        - sourceId
+        - signalTypeCode
+        - impactCode
+        - urgencyCode
+        - reliabilityCode
+        - scopeCode
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        summary: { type: string, minLength: 1, maxLength: 5000 }
+        publicationDate: { type: string, format: date }
+        evidenceUrl: { type: string, format: uri, maxLength: 2000 }
+        categoryId: { type: integer, minimum: 1 }
+        sourceId: { type: integer, format: int64, minimum: 1 }
+        signalTypeCode: { type: string }
+        impactCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        urgencyCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        reliabilityCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        scopeCode: { type: string }
+        notes: { type: [string, "null"], maxLength: 5000 }
+        keywords:
+          type: array
+          maxItems: 20
+          items: { type: string, minLength: 1, maxLength: 80 }
+    UpdateSignalInput:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      description: Todos los campos son opcionales; IPS, estado y autor no se aceptan.
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        summary: { type: string, minLength: 1, maxLength: 5000 }
+        publicationDate: { type: string, format: date }
+        evidenceUrl: { type: string, format: uri, maxLength: 2000 }
+        categoryId: { type: integer, minimum: 1 }
+        sourceId: { type: integer, format: int64, minimum: 1 }
+        signalTypeCode: { type: string }
+        impactCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        urgencyCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        reliabilityCode: { type: string, enum: [LOW, MEDIUM, HIGH] }
+        scopeCode: { type: string }
+        notes: { type: [string, "null"], maxLength: 5000 }
+        keywords:
+          type: array
+          maxItems: 20
+          items: { type: string, minLength: 1, maxLength: 80 }
+        updatedAt: { type: string, format: date-time }
+    SignalTransitionInput:
+      type: object
+      additionalProperties: false
+      required: [transition]
+      properties:
+        transition:
+          type: string
+          enum:
+            - SUBMIT_FOR_REVIEW
+            - REQUEST_CHANGES
+            - VALIDATE
+            - REOPEN
+            - ARCHIVE
+        notes: { type: [string, "null"], maxLength: 2000 }
+    SignalHistoryEntry:
+      type: object
+      required: [id, toStatus, transition, changedBy, changedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        fromStatus:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/CatalogValue"
+        toStatus: { $ref: "#/components/schemas/CatalogValue" }
+        transition: { type: string }
+        changedBy:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        notes: { type: [string, "null"] }
+        changedAt: { type: string, format: date-time }
+    Trend:
+      type: object
+      required:
+        - id
+        - businessCode
+        - title
+        - narrative
+        - suggestedMaturity
+        - status
+        - metrics
+        - signals
+        - actors
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: integer, format: int64 }
+        businessCode: { type: string, example: TRE-2026-000001 }
+        title: { type: string }
+        narrative: { type: string }
+        implications: { type: [string, "null"] }
+        methodologyNotes:
+          type: [string, "null"]
+          description: Solo se incluye en respuestas internas.
+        firstSignalDate: { type: [string, "null"], format: date }
+        lastSignalDate: { type: [string, "null"], format: date }
+        direction:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/CatalogValue"
+        maturity:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/CatalogValue"
+        suggestedMaturity:
+          type: object
+          required: [code, requirements]
+          properties:
+            code: { type: [string, "null"] }
+            requirements:
+              type: object
+              additionalProperties: { type: boolean }
+        status: { $ref: "#/components/schemas/CatalogValue" }
+        metrics:
+          type: object
+          required: [signalCount, sourceCount, actorCount, fcvCount]
+          properties:
+            signalCount: { type: integer }
+            sourceCount: { type: integer }
+            actorCount: { type: integer }
+            fcvCount: { type: integer }
+        signals:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        actors:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        analyst:
+          type: object
+          description: Solo se incluye en respuestas internas.
+        validator:
+          type: [object, "null"]
+          description: Solo se incluye en respuestas internas.
+        validationDate: { type: [string, "null"], format: date }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    TrendResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: { $ref: "#/components/schemas/Trend" }
+    PaginatedTrendsResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/Trend" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    CreateTrendInput:
+      type: object
+      additionalProperties: false
+      required: [title, narrative]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        narrative: { type: string, minLength: 1, maxLength: 10000 }
+        implications: { type: [string, "null"], maxLength: 10000 }
+        directionCode: { type: [string, "null"] }
+        maturityCode: { type: [string, "null"] }
+        methodologyNotes: { type: [string, "null"], maxLength: 5000 }
+        signalIds:
+          type: array
+          maxItems: 100
+          items: { type: integer, format: int64, minimum: 1 }
+        actorIds:
+          type: array
+          maxItems: 100
+          items: { type: integer, format: int64, minimum: 1 }
+    UpdateTrendInput:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        title: { type: string, minLength: 1, maxLength: 200 }
+        narrative: { type: string, minLength: 1, maxLength: 10000 }
+        implications: { type: [string, "null"], maxLength: 10000 }
+        directionCode: { type: [string, "null"] }
+        maturityCode: { type: [string, "null"] }
+        methodologyNotes: { type: [string, "null"], maxLength: 5000 }
+        updatedAt: { type: string, format: date-time }
+    RelationIdsInput:
+      type: object
+      additionalProperties: false
+      required: [ids]
+      properties:
+        ids:
+          type: array
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+          items: { type: integer, format: int64, minimum: 1 }
+    TrendTransitionInput:
+      type: object
+      additionalProperties: false
+      required: [transition]
+      properties:
+        transition:
+          type: string
+          enum:
+            - SUBMIT_FOR_REVIEW
+            - REQUEST_CHANGES
+            - VALIDATE
+            - REOPEN
+            - ACTIVATE
+            - ARCHIVE
+        notes: { type: [string, "null"], maxLength: 2000 }
+    Alert:
+      type: object
+      required:
+        - id
+        - businessCode
+        - title
+        - executiveSummary
+        - generationDate
+        - status
+        - origin
+        - metrics
+        - signals
+        - trends
+        - audiences
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: integer, format: int64 }
+        businessCode: { type: string, example: ALT-2026-000001 }
+        title: { type: string }
+        executiveSummary: { type: string }
+        implications: { type: [string, "null"] }
+        recommendations: { type: [string, "null"] }
+        generationDate: { type: string, format: date }
+        responseDeadline: { type: [string, "null"], format: date }
+        publicationDate: { type: [string, "null"], format: date }
+        activationRule: { type: [string, "null"] }
+        level:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [code, name, color]
+              properties:
+                code: { type: string, enum: [YELLOW, ORANGE, RED] }
+                name: { type: string }
+                color: { type: string }
+        status: { $ref: "#/components/schemas/CatalogValue" }
+        origin: { $ref: "#/components/schemas/CatalogValue" }
+        metrics:
+          type: object
+          required: [signalCount, trendCount, audienceCount]
+          properties:
+            signalCount: { type: integer, minimum: 0 }
+            trendCount: { type: integer, minimum: 0 }
+            audienceCount: { type: integer, minimum: 0 }
+        signals:
+          type: array
+          items: { type: object, additionalProperties: true }
+        trends:
+          type: array
+          items: { type: object, additionalProperties: true }
+        audiences:
+          type: array
+          items: { $ref: "#/components/schemas/CatalogValue" }
+        notes:
+          type: [string, "null"]
+          description: Solo se incluye en respuestas internas.
+        creator:
+          type: [object, "null"]
+          description: Solo se incluye en respuestas internas.
+        validator:
+          type: [object, "null"]
+          description: Solo se incluye en respuestas internas.
+        publisher:
+          type: [object, "null"]
+          description: Solo se incluye en respuestas internas.
+        validationDate: { type: [string, "null"], format: date }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    AlertResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: { $ref: "#/components/schemas/Alert" }
+    PaginatedAlertsResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/Alert" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    CreateAlertInput:
+      type: object
+      additionalProperties: false
+      required: [title, executiveSummary]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 150 }
+        executiveSummary: { type: string, minLength: 1, maxLength: 10000 }
+        implications: { type: [string, "null"], maxLength: 10000 }
+        recommendations: { type: [string, "null"], maxLength: 10000 }
+        responseDeadline: { type: [string, "null"], format: date }
+        levelCode: { type: [string, "null"], enum: [YELLOW, ORANGE, RED, null] }
+        activationRule: { type: [string, "null"], maxLength: 5000 }
+        notes: { type: [string, "null"], maxLength: 5000 }
+        signalIds:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: { type: integer, format: int64, minimum: 1 }
+        trendIds:
+          type: array
+          maxItems: 100
+          uniqueItems: true
+          items: { type: integer, format: int64, minimum: 1 }
+        audienceCodes:
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          items: { type: string, minLength: 1, maxLength: 40 }
+    UpdateAlertInput:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        title: { type: string, minLength: 1, maxLength: 150 }
+        executiveSummary: { type: string, minLength: 1, maxLength: 10000 }
+        implications: { type: [string, "null"], maxLength: 10000 }
+        recommendations: { type: [string, "null"], maxLength: 10000 }
+        responseDeadline: { type: [string, "null"], format: date }
+        levelCode: { type: [string, "null"], enum: [YELLOW, ORANGE, RED, null] }
+        activationRule: { type: [string, "null"], maxLength: 5000 }
+        notes: { type: [string, "null"], maxLength: 5000 }
+        updatedAt: { type: string, format: date-time }
+    AudienceCodesInput:
+      type: object
+      additionalProperties: false
+      required: [codes]
+      properties:
+        codes:
+          type: array
+          minItems: 1
+          maxItems: 50
+          uniqueItems: true
+          items: { type: string, minLength: 1, maxLength: 40 }
+    AlertTransitionInput:
+      type: object
+      additionalProperties: false
+      required: [transition]
+      properties:
+        transition:
+          type: string
+          enum:
+            - SUBMIT_FOR_REVIEW
+            - REQUEST_CHANGES
+            - VALIDATE
+            - REOPEN
+            - PUBLISH
+            - CLOSE
+        notes: { type: [string, "null"], maxLength: 2000 }
+    AlertHistoryEntry:
+      type: object
+      required: [id, toStatus, transition, changedBy, changedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        fromStatus:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/CatalogValue"
+        toStatus: { $ref: "#/components/schemas/CatalogValue" }
+        transition: { type: string }
+        changedBy:
+          type: object
+          required: [id, name]
+          properties:
+            id: { type: integer, format: int64 }
+            name: { type: string }
+        notes: { type: [string, "null"] }
+        changedAt: { type: string, format: date-time }
+    EditorialBlockType:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - category
+        - schemaVersion
+        - dataContract
+        - settingsContract
+        - supportsChildren
+        - publicAllowed
+      properties:
+        id: { type: integer, minimum: 1 }
+        code:
+          type: string
+          enum:
+            - heading
+            - paragraph
+            - quote
+            - list
+            - callout
+            - divider
+            - image
+            - file
+            - table
+            - chart
+            - signal
+            - trend
+            - alert
+        name: { type: string }
+        category:
+          type: string
+          enum: [text, layout, media, data, surveillance]
+        schemaVersion: { type: integer, const: 1 }
+        icon: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+        supportsChildren: { type: boolean }
+        publicAllowed: { type: boolean }
+        dataContract:
+          type: object
+          additionalProperties: true
+        settingsContract:
+          type: object
+          additionalProperties: true
+    EditorialBlockInput:
+      type: object
+      additionalProperties: false
+      required: [type, schemaVersion, data]
+      properties:
+        type: { type: string }
+        schemaVersion: { type: integer, minimum: 1 }
+        data: { type: object }
+        settings: { type: object }
+        position: { type: integer, minimum: 1 }
+        isVisible: { type: boolean, default: true }
+        cssClass: { type: [string, "null"], maxLength: 100 }
+    SuccessEnvelope:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data: {}
+    EditorialPerson:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: integer, format: int64, minimum: 1 }
+        name: { type: string }
+    EditorialStatus:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string }
+        name: { type: string }
+    PublicCategory:
+      type: object
+      required: [id, name, fcv]
+      properties:
+        id: { type: integer, minimum: 1 }
+        name: { type: string }
+        fcv: { $ref: "#/components/schemas/EditorialStatus" }
+    PublicContentSummary:
+      type: object
+      required: [id, slug, type, title, categories, publishedAt]
+      properties:
+        id: { type: integer, format: int64, minimum: 1 }
+        slug: { type: string }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        title: { type: string }
+        summary: { type: [string, "null"] }
+        featuredMedia:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [id, filename, mimeType]
+              properties:
+                id: { type: integer, format: int64, minimum: 1 }
+                filename: { type: string }
+                mimeType: { type: [string, "null"] }
+        categories:
+          type: array
+          items: { $ref: "#/components/schemas/PublicCategory" }
+        publishedAt: { type: string, format: date-time }
+    ResolvedMediaBlock:
+      type: object
+      required:
+        - kind
+        - id
+        - filename
+        - originalFilename
+        - mimeType
+        - extension
+        - sizeBytes
+        - url
+        - downloadUrl
+      properties:
+        kind: { type: string, enum: [image, file] }
+        id: { type: integer, format: int64, minimum: 1 }
+        filename: { type: string }
+        originalFilename: { type: [string, "null"] }
+        mimeType: { type: [string, "null"] }
+        extension: { type: [string, "null"] }
+        sizeBytes: { type: [integer, "null"], format: int64, minimum: 0 }
+        url: { type: [string, "null"] }
+        downloadUrl: { type: string }
+    ResolvedEntityBlock:
+      type: object
+      required: [kind, id, businessCode, title, href]
+      properties:
+        kind: { type: string, enum: [signal, trend, alert] }
+        id: { type: integer, format: int64, minimum: 1 }
+        businessCode: { type: string }
+        title: { type: string }
+        href: { type: string }
+        summary: { type: [string, "null"] }
+        metadata: { type: object, additionalProperties: true }
+        relations: { type: object, additionalProperties: true }
+    ResolvedBlock:
+      oneOf:
+        - $ref: "#/components/schemas/ResolvedMediaBlock"
+        - $ref: "#/components/schemas/ResolvedEntityBlock"
+    PublicBlock:
+      type: object
+      required: [id, type, schemaVersion, position, data, settings]
+      properties:
+        id: { type: integer, format: int64, minimum: 1 }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        schemaVersion: { type: integer, minimum: 1 }
+        position: { type: integer, minimum: 1 }
+        data: { type: object, additionalProperties: true }
+        settings: { type: object, additionalProperties: true }
+        cssClass: { type: [string, "null"] }
+        resolved: { $ref: "#/components/schemas/ResolvedBlock" }
+    PublicSection:
+      type: object
+      required: [id, title, position, isCollapsible, settings, blocks]
+      properties:
+        id: { type: integer, format: int64, minimum: 1 }
+        type:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialStatus" }]
+        title: { type: [string, "null"] }
+        position: { type: integer, minimum: 1 }
+        isCollapsible: { type: boolean }
+        settings: { type: object, additionalProperties: true }
+        blocks:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/PublicBlock" }
+    PublicRelatedEntity:
+      type: object
+      required: [id, businessCode, title]
+      properties:
+        id: { type: integer, format: int64, minimum: 1 }
+        businessCode: { type: string }
+        title: { type: string }
+    PublicRelations:
+      type: object
+      required: [categories, signals, trends, alerts]
+      properties:
+        categories:
+          type: array
+          items: { $ref: "#/components/schemas/PublicCategory" }
+        signals:
+          type: array
+          items: { $ref: "#/components/schemas/PublicRelatedEntity" }
+        trends:
+          type: array
+          items: { $ref: "#/components/schemas/PublicRelatedEntity" }
+        alerts:
+          type: array
+          items: { $ref: "#/components/schemas/PublicRelatedEntity" }
+    PublicContent:
+      allOf:
+        - $ref: "#/components/schemas/PublicContentSummary"
+        - type: object
+          required: [versionNumber, sections, relations]
+          properties:
+            versionNumber: { type: integer, minimum: 1 }
+            sections:
+              type: array
+              items: { $ref: "#/components/schemas/PublicSection" }
+            relations: { $ref: "#/components/schemas/PublicRelations" }
+    PublicContentResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data: { $ref: "#/components/schemas/PublicContent" }
+    PaginatedPublicContentResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/PublicContentSummary" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    ExportJsonDocument:
+      type: object
+      required: [generatedAt, resource, rowCount, filters, data]
+      properties:
+        generatedAt: { type: string, format: date-time }
+        resource:
+          type: string
+          enum: [signals, trends, alerts, content]
+        rowCount: { type: integer, minimum: 0 }
+        filters:
+          type: object
+          additionalProperties: { type: string }
+        data:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/Signal"
+              - $ref: "#/components/schemas/Trend"
+              - $ref: "#/components/schemas/Alert"
+              - $ref: "#/components/schemas/PublicContentSummary"
+    ExportHistoryEntry:
+      type: object
+      required:
+        - id
+        - resource
+        - format
+        - filters
+        - rowCount
+        - sizeBytes
+        - checksum
+        - createdAt
+      properties:
+        id: { type: integer, format: int64 }
+        resource:
+          type: string
+          enum: [signals, trends, alerts, content]
+        format: { type: string, enum: [csv, json] }
+        filters:
+          type: object
+          additionalProperties: { type: string }
+        rowCount: { type: integer, minimum: 0 }
+        sizeBytes: { type: integer, format: int64, minimum: 0 }
+        checksum: { type: string, pattern: "^[a-f0-9]{64}$" }
+        createdAt: { type: string, format: date-time }
+    PaginatedExportHistoryResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/ExportHistoryEntry" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    InternalContent:
+      type: object
+      required:
+        - id
+        - type
+        - status
+        - title
+        - author
+        - currentVersionId
+        - publishedVersionId
+        - metrics
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: integer, format: int64 }
+        slug: { type: [string, "null"] }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        status: { $ref: "#/components/schemas/EditorialStatus" }
+        title: { type: string }
+        summary: { type: [string, "null"] }
+        featuredMedia:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [id, filename, mimeType]
+              properties:
+                id: { type: integer, format: int64 }
+                filename: { type: string }
+                mimeType: { type: string }
+        author: { $ref: "#/components/schemas/EditorialPerson" }
+        currentVersionId: { type: [integer, "null"], format: int64 }
+        publishedVersionId: { type: [integer, "null"], format: int64 }
+        currentVersionNumber: { type: [integer, "null"] }
+        approval: { $ref: "#/components/schemas/EditorialAction" }
+        publication: { $ref: "#/components/schemas/EditorialAction" }
+        archive: { $ref: "#/components/schemas/EditorialAction" }
+        metrics:
+          type: object
+          required: [versionCount, sectionCount, blockCount]
+          properties:
+            versionCount: { type: integer, minimum: 0 }
+            sectionCount: { type: integer, minimum: 0 }
+            blockCount: { type: integer, minimum: 0 }
+        currentVersion: { $ref: "#/components/schemas/ContentVersion" }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    EditorialAction:
+      oneOf:
+        - type: "null"
+        - type: object
+          required: [by, at]
+          properties:
+            by: { $ref: "#/components/schemas/EditorialPerson" }
+            at: { type: string, format: date-time }
+    ContentVersionSummary:
+      type: object
+      required: [id, number, title, createdBy, createdAt, isCurrent, isPublished, metrics]
+      properties:
+        id: { type: integer, format: int64 }
+        number: { type: integer, minimum: 1 }
+        title: { type: string }
+        summary: { type: [string, "null"] }
+        changeSummary: { type: [string, "null"] }
+        createdBy: { $ref: "#/components/schemas/EditorialPerson" }
+        createdAt: { type: string, format: date-time }
+        approvedBy:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialPerson" }]
+        approvedAt: { type: [string, "null"], format: date-time }
+        publishedBy:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialPerson" }]
+        publishedAt: { type: [string, "null"], format: date-time }
+        isCurrent: { type: boolean }
+        isPublished: { type: boolean }
+        metrics:
+          type: object
+          required: [sectionCount, blockCount]
+          properties:
+            sectionCount: { type: integer, minimum: 0 }
+            blockCount: { type: integer, minimum: 0 }
+    EditorialBlock:
+      type: object
+      required: [id, type, schemaVersion, position, data, settings, isVisible, createdAt, updatedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        schemaVersion: { type: integer, minimum: 1 }
+        position: { type: integer, minimum: 1 }
+        data: { type: object, additionalProperties: true }
+        settings: { type: object, additionalProperties: true }
+        isVisible: { type: boolean }
+        cssClass: { type: [string, "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    EditorialSection:
+      type: object
+      required: [id, title, position, isCollapsible, isVisible, settings, blocks]
+      properties:
+        id: { type: integer, format: int64 }
+        type:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialStatus" }]
+        title: { type: [string, "null"] }
+        position: { type: integer, minimum: 1 }
+        isCollapsible: { type: boolean }
+        isVisible: { type: boolean }
+        settings: { type: object, additionalProperties: true }
+        blocks:
+          type: array
+          items: { $ref: "#/components/schemas/EditorialBlock" }
+    RelatedEditorialEntity:
+      type: object
+      required: [id, businessCode, title, status]
+      properties:
+        id: { type: integer, format: int64 }
+        businessCode: { type: string }
+        title: { type: string }
+        status: { $ref: "#/components/schemas/EditorialStatus" }
+    ContentVersion:
+      type: object
+      required:
+        - id
+        - number
+        - title
+        - createdBy
+        - createdAt
+        - isCurrent
+        - isPublished
+        - featuredMediaId
+        - sections
+        - relations
+      properties:
+        id: { type: integer, format: int64 }
+        number: { type: integer, minimum: 1 }
+        title: { type: string }
+        summary: { type: [string, "null"] }
+        featuredMediaId: { type: [integer, "null"], format: int64 }
+        changeSummary: { type: [string, "null"] }
+        createdBy: { $ref: "#/components/schemas/EditorialPerson" }
+        createdAt: { type: string, format: date-time }
+        approvedBy:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialPerson" }]
+        approvedAt: { type: [string, "null"], format: date-time }
+        publishedBy:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialPerson" }]
+        publishedAt: { type: [string, "null"], format: date-time }
+        isCurrent: { type: boolean }
+        isPublished: { type: boolean }
+        sections:
+          type: array
+          items: { $ref: "#/components/schemas/EditorialSection" }
+        relations:
+          type: object
+          required: [categories, signals, trends, alerts]
+          properties:
+            categories:
+              type: array
+              items: { type: object, additionalProperties: true }
+            signals:
+              type: array
+              items: { $ref: "#/components/schemas/RelatedEditorialEntity" }
+            trends:
+              type: array
+              items: { $ref: "#/components/schemas/RelatedEditorialEntity" }
+            alerts:
+              type: array
+              items: { $ref: "#/components/schemas/RelatedEditorialEntity" }
+    CreateContentInput:
+      type: object
+      additionalProperties: false
+      required: [typeCode, title]
+      properties:
+        typeCode: { type: string, minLength: 1, maxLength: 50 }
+        title: { type: string, minLength: 1, maxLength: 250 }
+        summary: { type: [string, "null"], maxLength: 10000 }
+        slug:
+          type: [string, "null"]
+          maxLength: 250
+          pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        featuredMediaId: { type: [integer, "null"], format: int64, minimum: 1 }
+        templateId: { type: [integer, "null"], format: int64, minimum: 1 }
+    UpdateContentInput:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        typeCode: { type: string, minLength: 1, maxLength: 50 }
+        title: { type: string, minLength: 1, maxLength: 250 }
+        summary: { type: [string, "null"], maxLength: 10000 }
+        slug:
+          type: string
+          maxLength: 250
+          pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        featuredMediaId: { type: [integer, "null"], format: int64, minimum: 1 }
+        updatedAt: { type: string, format: date-time }
+    CreateContentVersionInput:
+      type: object
+      additionalProperties: false
+      required: [changeSummary]
+      properties:
+        changeSummary: { type: string, minLength: 1, maxLength: 2000 }
+    EditorialSectionInput:
+      type: object
+      additionalProperties: false
+      properties:
+        typeCode: { type: string, minLength: 1, maxLength: 50, default: custom }
+        title: { type: [string, "null"], maxLength: 150 }
+        isCollapsible: { type: boolean, default: false }
+        isVisible: { type: boolean, default: true }
+        settings: { type: object, additionalProperties: true }
+        blocks:
+          type: array
+          maxItems: 200
+          items: { $ref: "#/components/schemas/EditorialBlockInput" }
+    EditorialRelationsInput:
+      type: object
+      additionalProperties: false
+      properties:
+        categoryIds: { $ref: "#/components/schemas/EditorialIdList" }
+        signalIds: { $ref: "#/components/schemas/EditorialIdList" }
+        trendIds: { $ref: "#/components/schemas/EditorialIdList" }
+        alertIds: { $ref: "#/components/schemas/EditorialIdList" }
+    EditorialIdList:
+      type: array
+      maxItems: 100
+      uniqueItems: true
+      items: { type: integer, format: int64, minimum: 1 }
+    EditorialCompositionInput:
+      type: object
+      additionalProperties: false
+      required: [sections]
+      properties:
+        sections:
+          type: array
+          maxItems: 100
+          items: { $ref: "#/components/schemas/EditorialSectionInput" }
+        relations: { $ref: "#/components/schemas/EditorialRelationsInput" }
+        updatedAt: { type: string, format: date-time }
+    ContentTransitionInput:
+      type: object
+      additionalProperties: false
+      required: [transition]
+      properties:
+        transition:
+          type: string
+          enum: [SUBMIT_FOR_REVIEW, REQUEST_CHANGES, APPROVE, REOPEN, PUBLISH, ARCHIVE]
+        notes: { type: [string, "null"], maxLength: 2000 }
+    ContentHistoryEntry:
+      type: object
+      required: [id, toStatus, transition, changedBy, changedAt]
+      properties:
+        id: { type: integer, format: int64 }
+        version:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [id, number]
+              properties:
+                id: { type: integer, format: int64 }
+                number: { type: integer, minimum: 1 }
+        fromStatus:
+          oneOf: [{ type: "null" }, { $ref: "#/components/schemas/EditorialStatus" }]
+        toStatus: { $ref: "#/components/schemas/EditorialStatus" }
+        transition: { type: string }
+        changedBy: { $ref: "#/components/schemas/EditorialPerson" }
+        notes: { type: [string, "null"] }
+        changedAt: { type: string, format: date-time }
+    ContentTemplateSummary:
+      type: object
+      required: [id, name, type, sectionCount]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        sectionCount: { type: integer, minimum: 0 }
+    ContentTemplate:
+      type: object
+      required: [id, name, type, sections]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        type: { $ref: "#/components/schemas/EditorialStatus" }
+        sections:
+          type: array
+          items: { type: object, additionalProperties: true }
+    ContentResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data: { $ref: "#/components/schemas/InternalContent" }
+    ContentVersionResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data: { $ref: "#/components/schemas/ContentVersion" }
+    ContentPreviewResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [id, type, status, version, preview]
+              properties:
+                id: { type: integer, format: int64 }
+                slug: { type: [string, "null"] }
+                type: { $ref: "#/components/schemas/EditorialStatus" }
+                status: { $ref: "#/components/schemas/EditorialStatus" }
+                version: { $ref: "#/components/schemas/ContentVersion" }
+                preview: { type: boolean, const: true }
+    PaginatedContentResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success: { type: boolean, const: true }
+        message: { type: string }
+        data:
+          type: object
+          required: [items, pagination]
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/InternalContent" }
+            pagination: { $ref: "#/components/schemas/Pagination" }
+    ErrorDetail:
+      type: object
+      required: [field, message]
+      properties:
+        field: { type: [string, "null"] }
+        message: { type: string }
+    ErrorResponse:
+      type: object
+      required: [success, message, code, errors]
+      properties:
+        success: { type: boolean, const: false }
+        message: { type: string }
+        code: { type: string }
+        errors:
+          oneOf:
+            - type: "null"
+            - type: array
+              items: { $ref: "#/components/schemas/ErrorDetail" }
+  responses:
+    AlertUpdated:
+      description: Relaciones de la alerta actualizadas
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/AlertResponse" }
+    ValidationError:
+      description: Datos inválidos
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    AuthenticationError:
+      description: Autenticación requerida o inválida
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    PermissionError:
+      description: Permiso insuficiente
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    NotFoundError:
+      description: Recurso inexistente
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    ConflictError:
+      description: Conflicto con el estado actual
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
+    DomainRuleError:
+      description: La operación incumple una regla de dominio
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorResponse" }
