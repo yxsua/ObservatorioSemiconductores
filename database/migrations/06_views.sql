@@ -1,5 +1,5 @@
 -- VISTAS DE CATALOGOS
-CREATE VIEW vw_source_types AS
+CREATE OR REPLACE VIEW vw_source_types AS
 SELECT
     id_source_type,
     code,
@@ -7,9 +7,9 @@ SELECT
     description
 FROM
     source_types;
-GO
 
-CREATE VIEW vw_categories AS
+
+CREATE OR REPLACE VIEW vw_categories AS
 SELECT
     c.id_category,
     c.name,
@@ -24,9 +24,9 @@ FROM
     categories c
     INNER JOIN fcv f ON f.id_fcv = c.id_fcv
     LEFT JOIN categories p ON p.id_category = c.parent_category_id;
-GO
 
-CREATE VIEW vw_fcv AS
+
+CREATE OR REPLACE VIEW vw_fcv AS
 SELECT
     id_fcv,
     code,
@@ -35,9 +35,9 @@ SELECT
     active
 FROM
     fcv;
-GO
 
-CREATE VIEW vw_block_types AS
+
+CREATE OR REPLACE VIEW vw_block_types AS
 SELECT
     id_block_type,
     code,
@@ -48,9 +48,9 @@ SELECT
     schema
 FROM
     block_type;
-GO
 
-CREATE VIEW vw_signal_types AS
+
+CREATE OR REPLACE VIEW vw_signal_types AS
 SELECT
     id_signal_type,
     code,
@@ -58,9 +58,9 @@ SELECT
     description
 FROM
     signal_types;
-GO
 
-CREATE VIEW vw_impacts AS
+
+CREATE OR REPLACE VIEW vw_impacts AS
 SELECT
     id_impact,
     code,
@@ -68,9 +68,9 @@ SELECT
     weight
 FROM
     impacts;
-GO
 
-CREATE VIEW vw_urgencies AS
+
+CREATE OR REPLACE VIEW vw_urgencies AS
 SELECT
     id_urgency,
     code,
@@ -78,18 +78,18 @@ SELECT
     weight
 FROM
     urgencies;
-GO
 
-CREATE VIEW vw_scopes AS
+
+CREATE OR REPLACE VIEW vw_scopes AS
 SELECT
     id_scope,
     code,
     name
 FROM
     scopes;
-GO
 
-CREATE VIEW vw_signal_statuses AS
+
+CREATE OR REPLACE VIEW vw_signal_statuses AS
 SELECT
     id_signal_status,
     code,
@@ -97,9 +97,9 @@ SELECT
     description
 FROM
     signal_statuses;
-GO
 
-CREATE VIEW vw_trend_maturity AS
+
+CREATE OR REPLACE VIEW vw_trend_maturity AS
 SELECT
     id_trend_maturity,
     code,
@@ -107,27 +107,27 @@ SELECT
     description
 FROM
     trend_maturity;
-GO
 
-CREATE VIEW vw_trend_statuses AS
+
+CREATE OR REPLACE VIEW vw_trend_statuses AS
 SELECT
     id_trend_status,
     code,
     name
 FROM
     trend_statuses;
-GO
 
-CREATE VIEW vw_trend_directions AS
+
+CREATE OR REPLACE VIEW vw_trend_directions AS
 SELECT
     id_trend_direction,
     code,
     name
 FROM
     trend_directions;
-GO
 
-CREATE VIEW vw_alert_levels AS
+
+CREATE OR REPLACE VIEW vw_alert_levels AS
 SELECT
     id_alert_level,
     code,
@@ -135,72 +135,72 @@ SELECT
     color
 FROM
     alert_levels;
-GO
 
-CREATE VIEW vw_alert_statuses AS
+
+CREATE OR REPLACE VIEW vw_alert_statuses AS
 SELECT
     id_alert_status,
     code,
     name
 FROM
     alert_statuses;
-GO
 
-CREATE VIEW vw_alert_origins AS
+
+CREATE OR REPLACE VIEW vw_alert_origins AS
 SELECT
     id_alert_origin,
     code,
     name
 FROM
     alert_origins;
-GO
 
-CREATE VIEW vw_audiences AS
+
+CREATE OR REPLACE VIEW vw_audiences AS
 SELECT
     id_audience,
     code,
     name
 FROM
     audiences;
-GO
 
-CREATE VIEW vw_content_types AS
+
+CREATE OR REPLACE VIEW vw_content_types AS
 SELECT
     id_content_type,
     code,
     name
 FROM
     content_types;
-GO
 
-CREATE VIEW vw_content_statuses AS
+
+CREATE OR REPLACE VIEW vw_content_statuses AS
 SELECT
     id_content_status,
     code,
     name
 FROM
     content_statuses;
-GO
 
-CREATE VIEW vw_file_types AS
+
+CREATE OR REPLACE VIEW vw_file_types AS
 SELECT
     id_file_type,
     code,
     name
 FROM
     file_types;
-GO
 
-CREATE VIEW vw_actor_types AS
+
+CREATE OR REPLACE VIEW vw_actor_types AS
 SELECT
     id_actor_type,
     code,
     name
 FROM
     actor_types;
-GO
 
-CREATE VIEW vw_content_relation_types AS
+
+CREATE OR REPLACE VIEW vw_content_relation_types AS
 SELECT
     id_content_relation_type,
     code,
@@ -208,19 +208,19 @@ SELECT
     description
 FROM
     content_relation_types;
-GO
 
-CREATE VIEW vw_section_types AS
+
+CREATE OR REPLACE VIEW vw_section_types AS
 SELECT
     id_section_type,
     code,
     name
 FROM
     section_types;
-GO
+
 
 -- VISTAS DE USUARIOS
-CREATE VIEW vw_users AS
+CREATE OR REPLACE VIEW vw_users AS
 SELECT
     u.id_user,
     u.first_name,
@@ -245,7 +245,7 @@ GROUP BY
     u.last_login,
     u.created_at;
 
-CREATE VIEW vw_user_roles AS
+CREATE OR REPLACE VIEW vw_user_roles AS
 SELECT
     u.id_user,
     u.email,
@@ -257,7 +257,7 @@ FROM
     INNER JOIN user_roles ur ON ur.id_user = u.id_user
     INNER JOIN roles r ON r.id_role = ur.id_role;
 
-CREATE VIEW vw_role_permissions AS
+CREATE OR REPLACE VIEW vw_role_permissions AS
 SELECT
     r.id_role,
     r.name AS role_name,
@@ -269,7 +269,7 @@ FROM
     INNER JOIN role_permissions rp ON rp.id_role = r.id_role
     INNER JOIN permissions p ON p.id_permission = rp.id_permission;
 
-CREATE VIEW vw_user_permissions AS
+CREATE OR REPLACE VIEW vw_user_permissions AS
 SELECT
     u.id_user,
     u.email,
@@ -282,11 +282,11 @@ FROM
     INNER JOIN role_permissions rp ON rp.id_role = ur.id_role
     INNER JOIN permissions p ON p.id_permission = rp.id_permission;
 
-CREATE VIEW vw_roles AS
+CREATE OR REPLACE VIEW vw_roles AS
 SELECT
-    id_role,
-    name,
-    description,
+    r.id_role,
+    r.name,
+    r.description,
     COUNT(ur.id_user) AS total_users
 FROM
     roles r
@@ -323,7 +323,7 @@ SELECT
 FROM
     keywords;
 
-CREATE VIEW vw_actors AS
+CREATE OR REPLACE VIEW vw_actors AS
 SELECT
     a.id_actor,
     at.code,
@@ -337,7 +337,7 @@ FROM
     actors a
     LEFT JOIN actor_types at ON at.id_actor_type = a.id_actor_type;
 
-CREATE VIEW vw_signals AS
+CREATE OR REPLACE VIEW vw_signals AS
 SELECT
     sig.id_signal,
     sig.business_code,
@@ -627,7 +627,7 @@ SELECT
     sig.evidence_url,
     sig.ips,
     cat.id_category,
-    cat.code AS category_code,
+    cat.id_fcv AS category_code,
     cat.name AS category,
     fcv.id_fcv,
     fcv.code AS fcv_code,
@@ -1136,7 +1136,7 @@ OR REPLACE VIEW vw_content_categories AS
 SELECT
     cc.content_id,
     cat.id_category,
-    cat.code,
+    cat.id_fcv,
     cat.name,
     fcv.code AS fcv_code,
     fcv.name AS fcv
@@ -1254,7 +1254,7 @@ SELECT
                     'id',
                     cat.id_category,
                     'code',
-                    cat.code,
+                    cat.id_fcv,
                     'name',
                     cat.name,
                     'fcv',
@@ -1412,6 +1412,8 @@ SELECT
             content_version cv
         WHERE
             cv.content_id = c.id_content
+        GROUP BY
+            cv.version_number
         ORDER BY
             cv.version_number DESC
         LIMIT
@@ -1424,7 +1426,7 @@ FROM
     JOIN users u ON u.id_user = c.author_id
     LEFT JOIN media m ON m.id_media = c.featured_media_id;
 
-CREATE VIEW vw_content_history AS
+CREATE OR REPLACE VIEW vw_content_history AS
 SELECT
     c.id_content,
     c.title,
