@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { PUBLIC_MODULES } from "@/app/public-modules";
+import logoUrl from "@/assets/logo-white-background.jpeg";
 import styles from "./HomePage.module.css";
 
 export function HomePage() {
@@ -19,9 +20,14 @@ export function HomePage() {
           </div>
         </div>
         <aside className={styles.heroPanel} aria-label="Áreas de consulta">
-          <span>Información pública</span>
-          <strong>Publicaciones + evidencia estructurada</strong>
-          <p>Contenido editorial conectado con señales, tendencias y alertas.</p>
+          <div className={styles.heroArtwork}>
+            <img alt="Observatorio de Semiconductores de Querétaro" src={logoUrl} />
+          </div>
+          <div className={styles.heroPanelCopy}>
+            <span>Información pública</span>
+            <strong>Publicaciones + evidencia estructurada</strong>
+            <p>Contenido editorial conectado con señales, tendencias y alertas.</p>
+          </div>
         </aside>
       </section>
 
@@ -35,7 +41,7 @@ export function HomePage() {
         </header>
         <div className={styles.moduleGrid}>
           {PUBLIC_MODULES.map((module, index) => (
-            <Link className={styles.moduleCard} key={module.id} to={module.path}>
+            <Link className={`${styles.moduleCard} ${module.id === "surveillance" ? styles.featuredModule : ""}`} key={module.id} to={module.path}>
               <span className={styles.moduleNumber} aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}
               </span>

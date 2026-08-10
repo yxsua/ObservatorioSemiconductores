@@ -116,6 +116,32 @@ class AlertRepository {
                 WHERE aa.id_alert = a.id_alert AND aud.code = $${values.length}
             )`);
         }
+        if (filters.categoryId !== undefined) {
+            values.push(filters.categoryId);
+            const category = `$${values.length}`;
+            conditions.push(`(
+                EXISTS (
+                    SELECT 1 FROM alert_signals filter_alert_signal
+                    INNER JOIN signals filter_signal ON filter_signal.id_signal = filter_alert_signal.id_signal
+                    WHERE filter_alert_signal.id_alert = a.id_alert
+                      AND filter_signal.id_category = ${category}
+                ) OR EXISTS (
+                    SELECT 1 FROM alert_trends filter_alert_trend
+                    INNER JOIN signal_trends filter_trend_signal ON filter_trend_signal.id_trend = filter_alert_trend.id_trend
+                    INNER JOIN signals filter_signal ON filter_signal.id_signal = filter_trend_signal.id_signal
+                    WHERE filter_alert_trend.id_alert = a.id_alert
+                      AND filter_signal.id_category = ${category}
+                )
+            )`);
+        }
+        if (filters.from !== undefined) {
+            values.push(filters.from);
+            conditions.push(`a.generation_date >= $${values.length}::DATE`);
+        }
+        if (filters.to !== undefined) {
+            values.push(filters.to);
+            conditions.push(`a.generation_date < $${values.length}::DATE + INTERVAL '1 day'`);
+        }
         if (filters.search !== undefined) {
             values.push(filters.search);
             const p = `$${values.length}`;

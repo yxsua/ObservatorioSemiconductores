@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { isApiError } from "@/api";
 import { Button } from "@/components/ui/Button";
 import { PageFeedback } from "@/components/feedback/PageFeedback";
+import { FieldLabel } from "@/components/forms/FieldHelp";
 import { useAuth } from "@/features/auth/AuthContext";
 import { applyZodErrors } from "@/features/auth/form-errors";
 import { getAdminEntity } from "../admin.service";
@@ -15,6 +16,10 @@ import styles from "./SignalForm.module.css";
 const EMPTY_VALUES: SignalFormValues = {
   title: "", summary: "", publicationDate: "", evidenceUrl: "", categoryId: "", sourceId: "",
   signalTypeCode: "", impactCode: "", urgencyCode: "", reliabilityCode: "", scopeCode: "", notes: "", keywordsText: ""
+};
+
+const FIELD_HELP: Partial<Record<keyof SignalFormValues, string>> = {
+  signalTypeCode: "Clasifica la naturaleza del cambio observado; no sustituye al FCV ni a la categoría temática.", categoryId: "Selecciona la categoría más específica dentro de un Factor Crítico de Vigilancia.", sourceId: "Fuente activa donde se localizó la evidencia; debe permitir trazabilidad.", impactCode: "Valora magnitud, actores afectados, decisiones, alcance y permanencia. Popularidad no equivale a impacto.", urgencyCode: "Mide cuánto tiempo hay antes de perder valor de decisión; actualidad no equivale a urgencia alta.", reliabilityCode: "Considera trazabilidad, autoridad, calidad documental y corroboración.", scopeCode: "Ámbito geográfico o sectorial donde el cambio produce efectos observables."
 };
 
 function valuesFromSignal(signal: Signal): SignalFormValues {
@@ -37,7 +42,7 @@ function valuesFromSignal(signal: Signal): SignalFormValues {
 
 function SelectField({ error, label, name, options, register }: { error?: string; label: string; name: keyof SignalFormValues; options: SignalFormOption[]; register: ReturnType<typeof useForm<SignalFormValues>>["register"] }) {
   const id = `signal-${name}`;
-  return <div className={styles.field}><label htmlFor={id}>{label}</label><select aria-describedby={error ? `${id}-error` : undefined} aria-invalid={Boolean(error)} id={id} {...register(name)}><option value="">Selecciona una opción</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>{error && <small className={styles.error} id={`${id}-error`}>{error}</small>}</div>;
+  return <div className={styles.field}><FieldLabel help={FIELD_HELP[name] ?? "Selecciona el valor que mejor describa la evidencia disponible."} htmlFor={id}>{label}</FieldLabel><select aria-describedby={error ? `${id}-error` : undefined} aria-invalid={Boolean(error)} id={id} {...register(name)}><option value="">Selecciona una opción</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>{error && <small className={styles.error} id={`${id}-error`}>{error}</small>}</div>;
 }
 
 function SignalForm({ initial, mode, onReload, options, signal }: { initial: SignalFormValues; mode: "create" | "edit"; onReload?: () => void; options: SignalFormOptions; signal?: Signal }) {
@@ -70,11 +75,11 @@ function SignalForm({ initial, mode, onReload, options, signal }: { initial: Sig
   return <form className={styles.form} noValidate onSubmit={submit}>
     {mutation.isError && <div className={styles.summary} role="alert"><p>{conflict ? "La señal cambió en otra sesión. Tus datos no se sobrescribieron; recarga la versión actual antes de volver a guardar." : apiError?.message ?? "No fue posible guardar la señal."}</p>{conflict && onReload && <Button onClick={onReload}>Recargar versión actual</Button>}</div>}
     <section className={styles.section} aria-labelledby="signal-general"><h2 id="signal-general">Información de la señal</h2><div className={styles.grid}>
-      <div className={`${styles.field} ${styles.wide}`}><label htmlFor="signal-title">Título</label><input aria-invalid={Boolean(errors.title)} id="signal-title" maxLength={200} {...register("title")} />{errors.title && <small className={styles.error}>{errors.title.message}</small>}</div>
-      <div className={`${styles.field} ${styles.wide}`}><label htmlFor="signal-summary">Resumen</label><textarea aria-invalid={Boolean(errors.summary)} id="signal-summary" maxLength={5000} rows={6} {...register("summary")} />{errors.summary && <small className={styles.error}>{errors.summary.message}</small>}</div>
-      <div className={styles.field}><label htmlFor="signal-publication-date">Fecha de publicación</label><input aria-invalid={Boolean(errors.publicationDate)} id="signal-publication-date" type="date" {...register("publicationDate")} />{errors.publicationDate && <small className={styles.error}>{errors.publicationDate.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Describe el hecho o cambio principal con precisión y sin conclusiones no sustentadas." htmlFor="signal-title">Título</FieldLabel><input aria-invalid={Boolean(errors.title)} id="signal-title" maxLength={200} {...register("title")} />{errors.title && <small className={styles.error}>{errors.title.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Explica qué cambió, cuál es la evidencia y por qué resulta relevante para el ecosistema." htmlFor="signal-summary">Resumen</FieldLabel><textarea aria-invalid={Boolean(errors.summary)} id="signal-summary" maxLength={5000} rows={6} {...register("summary")} />{errors.summary && <small className={styles.error}>{errors.summary.message}</small>}</div>
+      <div className={styles.field}><FieldLabel help="Fecha original del documento o acontecimiento. Para señales nuevas se recomienda evidencia de los últimos 90 días." htmlFor="signal-publication-date">Fecha de publicación</FieldLabel><input aria-invalid={Boolean(errors.publicationDate)} id="signal-publication-date" type="date" {...register("publicationDate")} />{errors.publicationDate && <small className={styles.error}>{errors.publicationDate.message}</small>}</div>
       <SelectField error={errors.signalTypeCode?.message} label="Tipo de señal" name="signalTypeCode" options={options.signalTypes} register={register} />
-      <div className={`${styles.field} ${styles.wide}`}><label htmlFor="signal-evidence-url">URL de evidencia</label><input aria-invalid={Boolean(errors.evidenceUrl)} id="signal-evidence-url" maxLength={2000} placeholder="https://…" type="url" {...register("evidenceUrl")} />{errors.evidenceUrl && <small className={styles.error}>{errors.evidenceUrl.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Enlace directo y verificable al recurso que sustenta la señal; evita páginas de inicio o enlaces temporales." htmlFor="signal-evidence-url">URL de evidencia</FieldLabel><input aria-invalid={Boolean(errors.evidenceUrl)} id="signal-evidence-url" maxLength={2000} placeholder="https://…" type="url" {...register("evidenceUrl")} />{errors.evidenceUrl && <small className={styles.error}>{errors.evidenceUrl.message}</small>}</div>
       <SelectField error={errors.categoryId?.message} label="Categoría y FCV" name="categoryId" options={options.categories} register={register} />
       <SelectField error={errors.sourceId?.message} label="Fuente" name="sourceId" options={options.sources} register={register} />
     </div></section>
@@ -85,8 +90,8 @@ function SignalForm({ initial, mode, onReload, options, signal }: { initial: Sig
       <SelectField error={errors.scopeCode?.message} label="Alcance" name="scopeCode" options={options.scopes} register={register} />
     </div></section>
     <section className={styles.section} aria-labelledby="signal-context"><h2 id="signal-context">Contexto interno</h2><div className={styles.grid}>
-      <div className={`${styles.field} ${styles.wide}`}><label htmlFor="signal-keywords">Palabras clave</label><small>Separa hasta 20 términos con comas o saltos de línea.</small><textarea aria-invalid={Boolean(errors.keywordsText)} id="signal-keywords" rows={3} {...register("keywordsText")} />{errors.keywordsText && <small className={styles.error}>{errors.keywordsText.message}</small>}</div>
-      <div className={`${styles.field} ${styles.wide}`}><label htmlFor="signal-notes">Notas internas</label><textarea aria-invalid={Boolean(errors.notes)} id="signal-notes" maxLength={5000} rows={4} {...register("notes")} />{errors.notes && <small className={styles.error}>{errors.notes.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Términos específicos que facilitan búsqueda y agrupación; evita repetir palabras genéricas del título." htmlFor="signal-keywords">Palabras clave</FieldLabel><small>Separa hasta 20 términos con comas o saltos de línea.</small><textarea aria-invalid={Boolean(errors.keywordsText)} id="signal-keywords" rows={3} {...register("keywordsText")} />{errors.keywordsText && <small className={styles.error}>{errors.keywordsText.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Registra dudas, contradicciones, evidencia pendiente o decisiones metodológicas. No se publica." htmlFor="signal-notes">Notas internas</FieldLabel><textarea aria-invalid={Boolean(errors.notes)} id="signal-notes" maxLength={5000} rows={4} {...register("notes")} />{errors.notes && <small className={styles.error}>{errors.notes.message}</small>}</div>
     </div></section>
     <div className={styles.actions}><Link to={signal ? `/admin/senales/${signal.id}` : "/admin/senales"}>Cancelar</Link><Button disabled={mutation.isPending} type="submit" variant="primary">{mutation.isPending ? "Guardando…" : mode === "create" ? "Crear señal" : "Guardar cambios"}</Button></div>
   </form>;

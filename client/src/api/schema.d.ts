@@ -768,6 +768,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/views/{resourceType}/{resourceId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceType: "content" | "signal" | "trend" | "alert";
+                resourceId: number;
+            };
+            cookie?: never;
+        };
+        /** Consulta el contador de visitas de un recurso público */
+        get: operations["getPublicViewCount"];
+        put?: never;
+        /** Registra una visita de un recurso público */
+        post: operations["recordPublicView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/editorial/block-types": {
         parameters: {
             query?: never;
@@ -1626,6 +1647,15 @@ export interface components {
         };
         PublicContentResponse: components["schemas"]["SuccessEnvelope"] & {
             data?: components["schemas"]["PublicContent"];
+        };
+        PublicViewCount: {
+            /** @enum {string} */
+            resourceType: "content" | "signal" | "trend" | "alert";
+            resourceId: number;
+            viewCount: number;
+        };
+        PublicViewCountResponse: components["schemas"]["SuccessEnvelope"] & {
+            data?: components["schemas"]["PublicViewCount"];
         };
         PaginatedPublicContentResponse: {
             /** @constant */
@@ -2572,6 +2602,9 @@ export interface operations {
                 page?: components["parameters"]["Page"];
                 pageSize?: components["parameters"]["PageSize"];
                 search?: components["parameters"]["Search"];
+                categoryId?: number;
+                from?: string;
+                to?: string;
                 direction?: string;
                 maturity?: string;
                 sort?: components["parameters"]["TrendSort"];
@@ -2622,6 +2655,9 @@ export interface operations {
                 page?: components["parameters"]["Page"];
                 pageSize?: components["parameters"]["PageSize"];
                 search?: components["parameters"]["Search"];
+                categoryId?: number;
+                from?: string;
+                to?: string;
                 status?: string;
                 direction?: string;
                 maturity?: string;
@@ -2899,6 +2935,9 @@ export interface operations {
                 page?: components["parameters"]["Page"];
                 pageSize?: components["parameters"]["PageSize"];
                 search?: components["parameters"]["Search"];
+                categoryId?: number;
+                from?: string;
+                to?: string;
                 status?: components["parameters"]["AlertStatus"];
                 level?: components["parameters"]["AlertLevel"];
                 audience?: components["parameters"]["AlertAudience"];
@@ -2950,6 +2989,9 @@ export interface operations {
                 page?: components["parameters"]["Page"];
                 pageSize?: components["parameters"]["PageSize"];
                 search?: components["parameters"]["Search"];
+                categoryId?: number;
+                from?: string;
+                to?: string;
                 status?: components["parameters"]["AlertStatus"];
                 level?: components["parameters"]["AlertLevel"];
                 audience?: components["parameters"]["AlertAudience"];
@@ -3409,6 +3451,56 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicContentResponse"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            404: components["responses"]["NotFoundError"];
+        };
+    };
+    getPublicViewCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceType: "content" | "signal" | "trend" | "alert";
+                resourceId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Contador obtenido */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicViewCountResponse"];
+                };
+            };
+            400: components["responses"]["ValidationError"];
+            404: components["responses"]["NotFoundError"];
+        };
+    };
+    recordPublicView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                resourceType: "content" | "signal" | "trend" | "alert";
+                resourceId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Visita registrada y contador actualizado */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicViewCountResponse"];
                 };
             };
             400: components["responses"]["ValidationError"];

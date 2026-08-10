@@ -29,7 +29,14 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
+
+.filters > h2 { padding: var(--space-5) var(--space-6) 0; font-size: var(--font-size-xl); }
+.advancedFilters { grid-column: 1 / -1; border-block: 1px solid var(--color-border); }
+.advancedFilters > summary { padding-inline: 0; color: var(--color-primary); }
+.advancedGrid { display: grid; padding-block-end: var(--space-4); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.advancedGrid > div { display: grid; align-content: start; gap: var(--space-2); }
 
 .filters summary {
   padding: var(--space-4) var(--space-6);
@@ -144,21 +151,25 @@
 .loadingGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
+  gap: var(--space-6);
 }
 
 .card {
   display: grid;
   min-block-size: 25rem;
-  padding: var(--space-6);
+  padding: var(--space-8);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface);
   gap: var(--space-5, 1.25rem);
+  box-shadow: var(--shadow-card);
+  transition: translate 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
 .card:hover {
   border-color: var(--color-primary);
+  box-shadow: var(--shadow-card-hover);
+  translate: 0 -.2rem;
 }
 
 .cardMeta,
@@ -206,7 +217,7 @@
 }
 
 .card h2 {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
 }
 
 .card h2 a {
@@ -457,11 +468,12 @@
   display: grid;
   position: sticky;
   inset-block-start: 7rem;
-  padding: var(--space-6);
+  padding: var(--space-8);
   border-radius: var(--radius-card);
   background: var(--color-ink);
   color: white;
   gap: var(--space-4);
+  box-shadow: var(--shadow-card);
 }
 
 .sourcePanel .eyebrow,
@@ -523,6 +535,7 @@
   .filterActions {
     grid-column: auto;
   }
+  .advancedGrid { grid-template-columns: 1fr; }
 
   .filterActions {
     grid-template-columns: 1fr;

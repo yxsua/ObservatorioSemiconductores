@@ -16,11 +16,18 @@ body {
   margin: 0;
   font-size: var(--font-size-base);
   line-height: 1.5;
+  background:
+    radial-gradient(circle at 8% 4%, rgb(255 255 255 / 0.9), transparent 26rem),
+    var(--color-bg);
+  color: var(--color-text);
 }
 
 #root {
   min-block-size: 100vh;
 }
+
+.network-status{position:fixed;z-index:1000;inset-block-start:0;inset-inline:0;padding:.65rem 1rem;background:#7a2e0e;color:#fff;text-align:center;font-weight:800}.network-status--restored{background:#21633b}.network-status--online{visibility:hidden;pointer-events:none}
+.admin-skip-link{position:fixed;z-index:1100;inset-block-start:.5rem;inset-inline-start:.5rem;transform:translateY(-200%);padding:.75rem 1rem;border-radius:.25rem;background:#fff;color:#111;font-weight:800}.admin-skip-link:focus{transform:none}
 
 .standalone-feedback {
   inline-size: min(100% - 2rem, var(--content-max-width));
@@ -67,6 +74,19 @@ h3 {
 h1 {
   font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-3xl));
   line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-ink);
+  font-weight: 800;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
 }
 
 img,

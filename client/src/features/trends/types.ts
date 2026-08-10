@@ -6,4 +6,4 @@ export type TrendListQuery = NonNullable<operations["listPublicTrends"]["paramet
 export type TrendSort = NonNullable<TrendListQuery["sort"]>;
 export type PaginatedTrendsResponse = paths["/trends"]["get"]["responses"]["200"]["content"]["application/json"];
 export type TrendResponse = paths["/trends/{id}"]["get"]["responses"]["200"]["content"]["application/json"];
-export interface TrendFilterCatalogs { directions: CatalogOption[]; maturities: CatalogOption[]; }
+export interface TrendFilterCatalogs { categories: CatalogOption[]; directions: CatalogOption[]; maturities: CatalogOption[]; }

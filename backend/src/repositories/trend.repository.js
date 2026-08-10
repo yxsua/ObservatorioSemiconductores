@@ -117,6 +117,23 @@ class TrendRepository {
 
         if (filters.direction !== undefined) add(filters.direction, "td.code");
         if (filters.maturity !== undefined) add(filters.maturity, "tm.code");
+        if (filters.categoryId !== undefined) {
+            values.push(filters.categoryId);
+            conditions.push(`EXISTS (
+                SELECT 1 FROM signal_trends filter_relation
+                INNER JOIN signals filter_signal ON filter_signal.id_signal = filter_relation.id_signal
+                WHERE filter_relation.id_trend = t.id_trend
+                  AND filter_signal.id_category = $${values.length}
+            )`);
+        }
+        if (filters.from !== undefined) {
+            values.push(filters.from);
+            conditions.push(`t.first_signal_date >= $${values.length}::DATE`);
+        }
+        if (filters.to !== undefined) {
+            values.push(filters.to);
+            conditions.push(`t.first_signal_date < $${values.length}::DATE + INTERVAL '1 day'`);
+        }
 
         if (filters.search !== undefined) {
             values.push(filters.search);

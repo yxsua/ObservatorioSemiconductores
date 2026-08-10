@@ -42,15 +42,6 @@ export const PUBLIC_MODULES: readonly PublicModule[] = [
     primaryNavigation: true
   },
   {
-    id: "surveillance",
-    path: "/vigilancia",
-    label: "Vigilancia tecnológica",
-    shortLabel: "Vigilancia",
-    description: "Evidencia validada para seguir señales, tendencias y alertas tempranas.",
-    source: { kind: "domain", resources: ["signals", "trends", "alerts"] },
-    primaryNavigation: true
-  },
-  {
     id: "publications",
     path: "/publicaciones",
     label: "Publicaciones e informes",
@@ -67,6 +58,15 @@ export const PUBLIC_MODULES: readonly PublicModule[] = [
     description: "Conceptos, cadena de valor y fundamentos para comprender la industria.",
     source: { kind: "page", slug: "industria-de-semiconductores" },
     primaryNavigation: false
+  },
+  {
+    id: "surveillance",
+    path: "/vigilancia",
+    label: "Vigilancia tecnológica",
+    shortLabel: "Vigilancia",
+    description: "Evidencia validada para seguir señales, tendencias y alertas tempranas.",
+    source: { kind: "domain", resources: ["signals", "trends", "alerts"] },
+    primaryNavigation: true
   }
 ] as const;
 

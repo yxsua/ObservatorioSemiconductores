@@ -1,0 +1,2 @@
+import {fireEvent,render,screen} from "@testing-library/react";import {describe,expect,it} from "vitest";import {OnlineStatus} from "./OnlineStatus";
+describe("estado de red",()=>{it("informa la pérdida y recuperación de conexión",()=>{render(<OnlineStatus/>);fireEvent(window,new Event("offline"));expect(screen.getByRole("status")).toHaveTextContent("Sin conexión");fireEvent(window,new Event("online"));expect(screen.getByRole("status")).toHaveTextContent("Conexión restablecida")})});

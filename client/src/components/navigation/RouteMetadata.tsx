@@ -18,11 +18,15 @@ const routeMetadata: Record<string, { title: string; description: string }> = {
   },
   "/tendencias": {
     title: "Tendencias",
-    description: "Consulta patrones consolidados a partir de señales del sector de semiconductores."
+    description: "Consulta patrones emergentes, en consolidación o consolidados a partir de señales validadas."
   },
   "/alertas": {
     title: "Alertas",
     description: "Consulta alertas publicadas y sus implicaciones para audiencias relevantes."
+  },
+  "/acerca-de": {
+    title: "Acerca del observatorio",
+    description: "Conoce el propósito, el equipo, la gobernanza y los principios del Observatorio de Semiconductores."
   },
   "/iniciar-sesion": { title: "Iniciar sesión", description: "Accede a tu cuenta del observatorio." },
   "/registro": { title: "Crear cuenta", description: "Crea una cuenta para utilizar funciones registradas." },

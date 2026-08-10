@@ -18,6 +18,7 @@ const adminMediaRoutes = require("./routes/admin.media.routes");
 const contentRoutes = require("./routes/content.routes");
 const mediaRoutes = require("./routes/media.routes");
 const exportRoutes = require("./routes/export.routes");
+const publicViewRoutes = require("./routes/publicView.routes");
 
 const {
     notFoundHandler
@@ -49,6 +50,7 @@ app.use("/api/admin/media", adminMediaRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/media", mediaRoutes);
 app.use("/api/exports", exportRoutes);
+app.use("/api/views", publicViewRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

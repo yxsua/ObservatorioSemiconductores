@@ -10,7 +10,7 @@
 
 El backend ya ofrece un contrato suficientemente estable para construir el portal público, la autenticación, las vistas internas de vigilancia, el flujo editorial basado en bloques y las exportaciones. La API implementada y el contrato OpenAPI tienen 62 operaciones cada uno, organizadas en 53 rutas. Las 56 pruebas unitarias pasan y los flujos integrales más recientes validaron alertas, publicación editorial, resolución pública de bloques, medios y exportaciones.
 
-No es necesario esperar a que el backend esté “cerrado” para comenzar el frontend. Hay dos brechas que sí deben resolverse antes de completar todas las funciones: todavía no existe una API administrativa para cargar y seleccionar medios, y la configuración productiva referencia un archivo Nginx que no existe. Ninguna bloquea el arranque del portal público ni de la mayoría de las pantallas internas.
+El backend y el frontend cubren los flujos previstos para el MVP. Las brechas originales de administración de medios y configuración productiva de Nginx quedaron resueltas durante FE-P6.3 y FE-P7, respectivamente.
 
 ## Alcance disponible
 
@@ -49,7 +49,7 @@ No es necesario esperar a que el backend esté “cerrado” para comenzar el fr
 ### Necesarios antes de completar el MVP
 
 1. **Administración de medios.** Sólo existen lectura y descarga por ID. Para que el editor pueda crear bloques `image` y `file` sin intervención en base de datos hace falta una API autenticada de carga, listado/selección y metadatos de medios.
-2. **Despliegue productivo.** `docker-compose.prod.yaml` monta `docker/nginx/production.conf`, pero ese archivo no existe actualmente. Debe crearse y validarse antes de desplegar producción.
+2. **Despliegue productivo.** `docker-compose.prod.yaml` monta una configuración Nginx validada. La terminación TLS y la gestión de certificados corresponden al proxy o balanceador frontal del entorno.
 
 ### No bloqueantes para iniciar el frontend
 

@@ -1,0 +1,13 @@
+.counter {
+  align-items: center;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 650;
+  gap: 0.4rem;
+}
+
+.icon {
+  color: var(--color-primary, #18427a);
+  font-size: 1rem;
+}

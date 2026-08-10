@@ -5,6 +5,7 @@ import { PRIMARY_PUBLIC_MODULES, PUBLIC_MODULES } from "@/app/public-modules";
 import { RouteMetadata } from "@/components/navigation/RouteMetadata";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/AuthContext";
+import logoUrl from "@/assets/logo-white-background.jpeg";
 import styles from "./PublicLayout.module.css";
 
 export function PublicLayout() {
@@ -36,8 +37,7 @@ export function PublicLayout() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link aria-label="Observatorio de Semiconductores, inicio" className={styles.brand} to="/">
-            <span aria-hidden="true" className={styles.brandMark}>OS</span>
-            <span>Observatorio de<br />Semiconductores</span>
+            <img alt="" aria-hidden="true" className={styles.brandLogo} src={logoUrl} />
           </Link>
           <button
             aria-controls="public-navigation"
@@ -60,9 +60,10 @@ export function PublicLayout() {
                     Inicio
                   </NavLink>
                 </li>
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/acerca-de">Acerca de</NavLink></li>
                 {PRIMARY_PUBLIC_MODULES.map((module) => (
                   <li key={module.id}>
-                    <NavLink className={({ isActive }) => isActive ? styles.active : undefined} to={module.path}>
+                    <NavLink className={({ isActive }) => `${isActive ? styles.active : ""} ${module.id === "surveillance" ? styles.surveillanceLink : ""}`} to={module.path}>
                       {module.shortLabel}
                     </NavLink>
                   </li>
@@ -112,6 +113,7 @@ export function PublicLayout() {
               <li><Link to="/senales">Señales</Link></li>
               <li><Link to="/tendencias">Tendencias</Link></li>
               <li><Link to="/alertas">Alertas</Link></li>
+              <li><Link to="/acerca-de">Acerca del equipo</Link></li>
             </ul>
           </nav>
         </div>

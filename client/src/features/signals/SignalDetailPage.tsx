@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { isApiError } from "@/api";
 import { PageFeedback } from "@/components/feedback/PageFeedback";
+import { ViewCounter } from "@/features/views/ViewCounter";
 import { formatSignalDate, signalLevelLabel } from "./signal-format";
 import { getPublicSignal } from "./signals.service";
 import styles from "./Signals.module.css";
@@ -73,6 +74,7 @@ export function SignalDetailPage() {
             Prioridad {signalLevelLabel(signal.priority).toLocaleLowerCase("es-MX")}
           </span>
           <span>Validada</span>
+          <ViewCounter id={signal.id} resource="signal" />
         </div>
         <h1>{signal.title}</h1>
         <p>{signal.summary}</p>

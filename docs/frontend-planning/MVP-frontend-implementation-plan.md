@@ -356,7 +356,7 @@ Criterio de cierre:
 - preview y detalle público comparten renderers y no divergen visualmente;
 - los conflictos nunca sobrescriben trabajo de forma silenciosa.
 
-### FE-P7 — Estabilización y entrega
+### FE-P7 — Estabilización y entrega (completada el 13 de julio de 2026)
 
 - E2E de visitante, MEMBER, ANALYST, VALIDATOR, EDITOR y PUBLISHER;
 - auditoría de accesibilidad y navegación por teclado;
@@ -379,7 +379,7 @@ Criterio de cierre:
 | Dependencia | Afecta | Estrategia |
 | --- | --- | --- |
 | API administrativa de medios | FE-P6.3 | Resuelta el 13 de julio de 2026. |
-| `docker/nginx/production.conf` | FE-P7 | No bloquea desarrollo; sí bloquea validación productiva. |
+| `docker/nginx/production.conf` | FE-P7 | Resuelta y validada durante FE-P7. TLS termina en la infraestructura frontal. |
 | Plantillas/datos iniciales | FE-P6.0 | Definir fixtures y semillas representativas antes de cerrar UX editorial. |
 | Refresh/recovery de cuenta | FE-P4 | Mantener como mejora opcional; el MVP puede trabajar con expiración y nuevo login. |
 | Cambios de OpenAPI | Todas | Versionar el contrato y regenerar tipos; evitar cambios incompatibles silenciosos. |

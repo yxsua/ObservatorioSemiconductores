@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/production.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

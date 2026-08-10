@@ -8,6 +8,7 @@ export function AdminLayout() {
   const { user } = useAuth();
   return (
     <div className={styles.shell}>
+      <a className="admin-skip-link" href="#admin-main">Saltar al contenido</a>
       <header className={styles.header}>
         <NavLink to="/">← Portal público</NavLink>
         <strong>Área interna</strong>
@@ -38,7 +39,7 @@ export function AdminLayout() {
           </ul>
         </nav>
       </aside>
-      <main className={styles.main}>
+      <main className={styles.main} id="admin-main" tabIndex={-1}>
         <Outlet />
       </main>
     </div>

@@ -9,9 +9,10 @@ export async function getPublicAlert(id: number, signal?: AbortSignal): Promise<
   return (await apiRequest<AlertResponse>("/alerts/" + id, { signal })).data;
 }
 export async function getAlertFilterCatalogs(signal?: AbortSignal): Promise<AlertFilterCatalogs> {
-  const [levels, audiences] = await Promise.all([
+  const [categories, levels, audiences] = await Promise.all([
+    getCatalogOptions("categories", signal),
     getCatalogOptions("alert-levels", signal),
     getCatalogOptions("audiences", signal)
   ]);
-  return { levels, audiences };
+  return { categories, levels, audiences };
 }

@@ -1,27 +1,30 @@
 :root {
   color-scheme: light;
-  font-family: system-ui, "Segoe UI", sans-serif;
+  font-family: "Segoe UI Variable", "Aptos", "Segoe UI", system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 
-  --color-bg: #f6f8fa;
+  --color-bg: #e6e7ee;
+  --color-background: #e6e7ee;
   --color-surface: #ffffff;
-  --color-text: #17202a;
-  --color-text-muted: #52606d;
-  --color-border: #cbd5e1;
-  --color-border-strong: #94a3b8;
-  --color-primary: #0b5e75;
-  --color-primary-hover: #084a5c;
+  --color-text: #0b1322;
+  --color-text-muted: #66758f;
+  --color-border: #c6cad5;
+  --color-border-strong: #8e99ad;
+  --color-primary: #18427a;
+  --color-primary-hover: #0f315e;
   --color-primary-contrast: #ffffff;
-  --color-primary-soft: #e5f2f5;
-  --color-ink: #102a36;
-  --color-accent-soft: #f4d58d;
+  --color-primary-soft: #e8eef7;
+  --color-ink: #0b1322;
+  --color-accent: #f18f2e;
+  --color-accent-hover: #dc7613;
+  --color-accent-soft: #fff0df;
   --color-success: #18794e;
   --color-danger: #b42318;
-  --color-focus: #0b5e75;
+  --color-focus: #f18f2e;
 
   --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
+  --font-size-base: 1.0625rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.375rem;
   --font-size-2xl: 1.75rem;
@@ -31,13 +34,16 @@
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
+  --space-5: 1.25rem;
+  --space-6: 1.75rem;
+  --space-8: 2.25rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
   --space-16: 4rem;
 
-  --radius-control: 0.375rem;
-  --radius-card: 0.5rem;
-  --content-max-width: 75rem;
+  --radius-control: 0.625rem;
+  --radius-card: 1rem;
+  --shadow-card: 0 1rem 2.5rem rgb(11 19 34 / 0.08);
+  --shadow-card-hover: 0 1.25rem 3rem rgb(11 19 34 / 0.14);
+  --content-max-width: 82rem;
 }

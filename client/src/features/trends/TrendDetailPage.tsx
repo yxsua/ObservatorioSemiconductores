@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { isApiError } from "@/api";
 import { PageFeedback } from "@/components/feedback/PageFeedback";
 import { formatPublicDate, relationNumber, relationText } from "@/features/surveillance/format";
+import { ViewCounter } from "@/features/views/ViewCounter";
 import { getPublicTrend } from "./trends.service";
 import styles from "@/features/surveillance/Surveillance.module.css";
 
@@ -19,7 +20,7 @@ export function TrendDetailPage() {
   return (
     <article className={styles.page}>
       <nav aria-label="Ruta de navegación" className={styles.breadcrumbs}><Link to="/vigilancia">Vigilancia</Link><span>/</span><Link to="/tendencias">Tendencias</Link><span>/</span><span aria-current="page">{trend.businessCode}</span></nav>
-      <header className={styles.detailHeader}><div className={styles.meta}><span className={styles.badge}>Tendencia activa</span><span>{trend.businessCode}</span>{trend.direction && <span>{trend.direction.name}</span>}{trend.maturity && <span>{trend.maturity.name}</span>}</div><h1>{trend.title}</h1><p className={styles.lead}>{trend.narrative}</p></header>
+      <header className={styles.detailHeader}><div className={styles.meta}><span className={styles.badge}>Tendencia activa</span><span>{trend.businessCode}</span>{trend.direction && <span>{trend.direction.name}</span>}{trend.maturity && <span>{trend.maturity.name}</span>}<ViewCounter id={trend.id} resource="trend" /></div><h1>{trend.title}</h1><p className={styles.lead}>{trend.narrative}</p></header>
       <div className={styles.detailLayout}>
         <div className={styles.main}>
           <section aria-labelledby="trend-reading" className={styles.section}><p className={styles.eyebrow}>Lectura estratégica</p><h2 id="trend-reading">Implicaciones</h2><p>{trend.implications || "Esta tendencia todavía no incluye implicaciones públicas."}</p></section>

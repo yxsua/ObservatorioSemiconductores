@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: API del Observatorio de Semiconductores
-  version: 0.5.7
+  version: 0.5.8
   description: >-
     Contrato de autenticación, catálogos y las verticales de señales,
     tendencias, alertas y las APIs editorial interna y pública, incluida la
@@ -24,6 +24,7 @@ tags:
   - name: Public Content
   - name: Media
   - name: Exports
+  - name: Public Views
 paths:
   /health:
     get:
@@ -454,6 +455,15 @@ paths:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Search"
+        - name: categoryId
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
         - name: direction
           in: query
           schema: { type: string }
@@ -492,6 +502,15 @@ paths:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Search"
+        - name: categoryId
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
         - name: status
           in: query
           schema: { type: string }
@@ -683,6 +702,15 @@ paths:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Search"
+        - name: categoryId
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
         - $ref: "#/components/parameters/AlertStatus"
         - $ref: "#/components/parameters/AlertLevel"
         - $ref: "#/components/parameters/AlertAudience"
@@ -716,6 +744,15 @@ paths:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/Search"
+        - name: categoryId
+          in: query
+          schema: { type: integer, minimum: 1 }
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          schema: { type: string, format: date }
         - $ref: "#/components/parameters/AlertStatus"
         - $ref: "#/components/parameters/AlertLevel"
         - $ref: "#/components/parameters/AlertAudience"
@@ -1097,6 +1134,42 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/PublicContentResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+  /views/{resourceType}/{resourceId}:
+    parameters:
+      - name: resourceType
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [content, signal, trend, alert]
+      - name: resourceId
+        in: path
+        required: true
+        schema: { type: integer, minimum: 1 }
+    get:
+      tags: [Public Views]
+      summary: Consulta el contador de visitas de un recurso público
+      operationId: getPublicViewCount
+      responses:
+        "200":
+          description: Contador obtenido
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicViewCountResponse" }
+        "400": { $ref: "#/components/responses/ValidationError" }
+        "404": { $ref: "#/components/responses/NotFoundError" }
+    post:
+      tags: [Public Views]
+      summary: Registra una visita de un recurso público
+      operationId: recordPublicView
+      responses:
+        "200":
+          description: Visita registrada y contador actualizado
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicViewCountResponse" }
         "400": { $ref: "#/components/responses/ValidationError" }
         "404": { $ref: "#/components/responses/NotFoundError" }
   /admin/editorial/block-types:
@@ -2536,6 +2609,21 @@ components:
         - type: object
           properties:
             data: { $ref: "#/components/schemas/PublicContent" }
+    PublicViewCount:
+      type: object
+      required: [resourceType, resourceId, viewCount]
+      properties:
+        resourceType:
+          type: string
+          enum: [content, signal, trend, alert]
+        resourceId: { type: integer, minimum: 1 }
+        viewCount: { type: integer, minimum: 0 }
+    PublicViewCountResponse:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data: { $ref: "#/components/schemas/PublicViewCount" }
     PaginatedPublicContentResponse:
       type: object
       required: [success, message, data]

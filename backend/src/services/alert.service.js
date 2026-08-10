@@ -18,7 +18,7 @@ const { formatZodErrors } = require("../utils/zod");
 const { parsePagination, buildPagination } = require("../utils/pagination");
 
 const FILTER_KEYS = new Set([
-    "page", "pageSize", "search", "status", "level", "audience", "sort"
+    "page", "pageSize", "search", "status", "level", "audience", "categoryId", "from", "to", "sort"
 ]);
 const SORT_FIELDS = new Set([
     "generationDate", "responseDeadline", "level", "title", "updatedAt"
@@ -41,6 +41,15 @@ function parseId(value, field = "id") {
         );
     }
     return id;
+}
+
+function parseDate(value, field) {
+    const date = String(value);
+    const parsed = new Date(`${date}T12:00:00Z`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(parsed.valueOf()) || parsed.toISOString().slice(0, 10) !== date) {
+        throw new ValidationError("Los filtros de alertas no son válidos.", [{ field, message: "Debe ser una fecha YYYY-MM-DD válida." }]);
+    }
+    return date;
 }
 
 class AlertService {
@@ -73,6 +82,12 @@ class AlertService {
             if (query[key] !== undefined) {
                 filters[key] = String(query[key]).trim().toUpperCase();
             }
+        }
+        if (query.categoryId !== undefined) filters.categoryId = parseId(query.categoryId, "categoryId");
+        if (query.from !== undefined) filters.from = parseDate(query.from, "from");
+        if (query.to !== undefined) filters.to = parseDate(query.to, "to");
+        if (filters.from && filters.to && filters.from > filters.to) {
+            throw new ValidationError("Los filtros de alertas no son válidos.", [{ field: "to", message: "Debe ser igual o posterior a from." }]);
         }
         const rawSort = query.sort === undefined
             ? "-updatedAt"

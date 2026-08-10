@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { isApiError } from "@/api";
 import { PageFeedback } from "@/components/feedback/PageFeedback";
 import { formatPublicDate } from "@/features/surveillance/format";
+import { ViewCounter } from "@/features/views/ViewCounter";
 import { EditorialSection } from "./EditorialSection";
 import { getPublicContent } from "./content.service";
 import styles from "./Editorial.module.css";
@@ -35,7 +36,7 @@ export function ContentDetailPage({ slug: fixedSlug }: Props) {
     <article className={styles.page}>
       <nav aria-label="Ruta de navegación" className={styles.breadcrumbs}><Link to="/">Inicio</Link><span aria-hidden="true">/</span><Link to={collection.href}>{collection.label}</Link><span aria-hidden="true">/</span><span aria-current="page">{content.title}</span></nav>
       <header className={styles.header}>
-        <div className={styles.meta}><span>{content.type.name}</span><time dateTime={content.publishedAt}>{formatPublicDate(content.publishedAt)}</time></div>
+        <div className={styles.meta}><span>{content.type.name}</span><time dateTime={content.publishedAt}>{formatPublicDate(content.publishedAt)}</time><ViewCounter id={content.id} resource="content" /></div>
         <h1>{content.title}</h1>
         {content.summary && <p>{content.summary}</p>}
         {content.categories.length > 0 && <ul aria-label="Clasificación de la publicación" className={styles.categories}>{content.categories.map((category) => <li key={category.id}>{category.name}<span>{category.fcv.name}</span></li>)}</ul>}

@@ -1,6 +1,6 @@
 .button {
-  min-block-size: 2.75rem;
-  padding: var(--space-2) var(--space-4);
+  min-block-size: 3rem;
+  padding: var(--space-3) var(--space-5);
   border: 1px solid transparent;
   border-radius: var(--radius-control);
   cursor: pointer;
@@ -12,9 +12,18 @@
   opacity: 0.55;
 }
 
+.button:not(:disabled) {
+  transition: translate 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  translate: 0 -1px;
+}
+
 .primary {
   background: var(--color-primary);
   color: var(--color-primary-contrast);
+  box-shadow: 0 .5rem 1.25rem rgb(24 66 122 / .18);
 }
 
 .primary:hover:not(:disabled) {

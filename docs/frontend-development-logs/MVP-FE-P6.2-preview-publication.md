@@ -35,4 +35,4 @@ Todas las transiciones presentan un diálogo de confirmación. La publicación a
 
 ## Siguiente incremento
 
-El siguiente incremento planificado es **FE-P6.3 — medios editoriales**, que continúa bloqueado hasta disponer de administración de medios en el backend. Si se mantiene ese bloqueo, puede avanzarse a FE-P7 de estabilización.
+FE-P6.3 quedó completado posteriormente con la API administrativa y biblioteca de medios. El siguiente bloque es FE-P7 de estabilización.

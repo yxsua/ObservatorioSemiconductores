@@ -9,9 +9,10 @@ export async function getPublicTrend(id: number, signal?: AbortSignal): Promise<
   return (await apiRequest<TrendResponse>("/trends/" + id, { signal })).data;
 }
 export async function getTrendFilterCatalogs(signal?: AbortSignal): Promise<TrendFilterCatalogs> {
-  const [directions, maturities] = await Promise.all([
+  const [categories, directions, maturities] = await Promise.all([
+    getCatalogOptions("categories", signal),
     getCatalogOptions("trend-directions", signal),
     getCatalogOptions("trend-maturity", signal)
   ]);
-  return { directions, maturities };
+  return { categories, directions, maturities };
 }

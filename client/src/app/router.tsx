@@ -22,24 +22,28 @@ import { ExportHistoryPage } from "@/features/exports/ExportHistoryPage";
 import { AccountPage } from "@/pages/AccountPage";
 import { AdminIndexPage } from "@/pages/AdminIndexPage";
 import { HomePage } from "@/pages/HomePage";
-import { ModuleLandingPage } from "@/pages/ModuleLandingPage";
+import { AboutPage } from "@/pages/AboutPage";
+import { SurveillancePage } from "@/pages/SurveillancePage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PermissionDeniedPage } from "@/pages/PermissionDeniedPage";
 import { RouteErrorPage } from "@/pages/RouteErrorPage";
+import { PageFeedback } from "@/components/feedback/PageFeedback";
 
 export const appRoutes: RouteObject[] = [
   {
     element: <PublicLayout />,
     errorElement: <RouteErrorPage />,
+    hydrateFallbackElement: <PageFeedback title="Cargando observatorio" message="Preparando la ruta solicitada." />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: "acerca-de", element: <AboutPage /> },
       ...PUBLIC_MODULES.map((module) => ({
         path: module.path.slice(1),
         element: module.source.kind === "collection"
           ? <ContentIndexPage description={module.description} eyebrow="Módulo del observatorio" lockedType={module.source.contentType} title={module.label} />
           : module.source.kind === "page"
             ? <ContentDetailPage slug={module.source.slug} />
-            : <ModuleLandingPage module={module} />
+            : <SurveillancePage />
       })),
       { path: "contenido", element: <ContentIndexPage /> },
       { path: "contenido/:slug", element: <ContentDetailPage /> },
@@ -71,6 +75,7 @@ export const appRoutes: RouteObject[] = [
   {
     element: <RequireAuth />,
     errorElement: <RouteErrorPage />,
+    hydrateFallbackElement: <PageFeedback title="Cargando área interna" message="Preparando herramientas y permisos." />,
     children: [{
       element: <RequireAnyPermission permissions={INTERNAL_PERMISSIONS} />,
       children: [{

@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { isApiError } from "@/api";
 import { PageFeedback } from "@/components/feedback/PageFeedback";
 import { formatPublicDate, relationNumber, relationText } from "@/features/surveillance/format";
+import { ViewCounter } from "@/features/views/ViewCounter";
 import { getPublicAlert } from "./alerts.service";
 import styles from "@/features/surveillance/Surveillance.module.css";
 
@@ -20,7 +21,7 @@ export function AlertDetailPage() {
   return (
     <article className={styles.page}>
       <nav aria-label="Ruta de navegación" className={styles.breadcrumbs}><Link to="/vigilancia">Vigilancia</Link><span>/</span><Link to="/alertas">Alertas</Link><span>/</span><span aria-current="page">{alert.businessCode}</span></nav>
-      <header className={styles.detailHeader}><div className={styles.meta}>{alert.level && <span className={styles.badge + " " + levelClass}>Nivel {alert.level.name}</span>}<span>{alert.status.name}</span><span>{alert.businessCode}</span><span>{alert.origin.name}</span></div><h1>{alert.title}</h1><p className={styles.lead}>{alert.executiveSummary}</p></header>
+      <header className={styles.detailHeader}><div className={styles.meta}>{alert.level && <span className={styles.badge + " " + levelClass}>Nivel {alert.level.name}</span>}<span>{alert.status.name}</span><span>{alert.businessCode}</span><span>{alert.origin.name}</span><ViewCounter id={alert.id} resource="alert" /></div><h1>{alert.title}</h1><p className={styles.lead}>{alert.executiveSummary}</p></header>
       <div className={styles.detailLayout}>
         <div className={styles.main}>
           <section aria-labelledby="alert-action" className={styles.section}><p className={styles.eyebrow}>Orientación</p><h2 id="alert-action">Implicaciones y recomendaciones</h2><h3>Implicaciones</h3><p>{alert.implications || "Sin implicaciones públicas adicionales."}</p><h3>Recomendaciones</h3><p>{alert.recommendations || "Sin recomendaciones públicas adicionales."}</p>{alert.activationRule && <><h3>Regla de activación</h3><p>{alert.activationRule}</p></>}</section>
