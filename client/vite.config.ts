@@ -10,6 +10,8 @@ export default defineConfig({
     }
   },
   server: {
+    host: 'observatorio.blockcode.site',
+    allowedHosts: ['observatorio.blockcode.site'],
     watch: {
       usePolling: process.env.CHOKIDAR_USEPOLLING === "true"
     }
