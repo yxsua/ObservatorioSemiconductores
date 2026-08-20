@@ -13,6 +13,28 @@ export interface PublicModule {
   primaryNavigation: boolean;
 }
 
+export interface NavigationGroup {
+  id: string;
+  label: string;
+  path: string;
+  items: readonly { label: string; path: string }[];
+}
+
+export const NAVIGATION_GROUPS: readonly NavigationGroup[] = [
+  { id: "industry", label: "Industria", path: "/industria", items: [
+    { label: "Indicadores de pertinencia", path: "/indicadores-pertinencia" },
+    { label: "Ecosistema regional", path: "/ecosistema-regional" },
+    { label: "Cadena de valor", path: "/cadena-de-valor" },
+    { label: "Inversiones y Expansión", path: "/inversiones" }
+  ] },
+  { id: "surveillance", label: "Vigilancia Tecnológica", path: "/vigilancia", items: [
+    { label: "Buscador Inteligente", path: "/buscador" },
+    { label: "Señales", path: "/senales" },
+    { label: "Alertas", path: "/alertas" },
+    { label: "Tendencias", path: "/tendencias" }
+  ] }
+] as const;
+
 export const PUBLIC_MODULES: readonly PublicModule[] = [
   {
     id: "newsletters",

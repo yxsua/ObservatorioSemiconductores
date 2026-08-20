@@ -35,7 +35,7 @@
   text-transform: uppercase;
 }
 
-.hero h1 { font-size: clamp(2.35rem, 6vw, 4.7rem); line-height: 0.98; margin: 1rem 0 1.5rem; max-width: 14ch; }
+.hero h1 { font-size: clamp(2.35rem, 6vw, 4.7rem); line-height: 0.98; margin: 1rem 0 1.5rem; max-width: 14ch; color:#e6e7ee; }
 .hero p:last-child { font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.7; margin: 0; max-width: 46rem; }
 .sectionHeader { max-width: 52rem; }
 .sectionHeader h2 { color: #0b1322; font-size: clamp(1.8rem, 4vw, 3rem); margin: 0.5rem 0 1rem; }

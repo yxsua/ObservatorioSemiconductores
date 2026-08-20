@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { INTERNAL_PERMISSIONS } from "@/app/permissions";
-import { PRIMARY_PUBLIC_MODULES, PUBLIC_MODULES } from "@/app/public-modules";
+import { NAVIGATION_GROUPS } from "@/app/public-modules";
 import { RouteMetadata } from "@/components/navigation/RouteMetadata";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/features/auth/AuthContext";
@@ -60,14 +60,19 @@ export function PublicLayout() {
                     Inicio
                   </NavLink>
                 </li>
-                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/acerca-de">Acerca de</NavLink></li>
-                {PRIMARY_PUBLIC_MODULES.map((module) => (
-                  <li key={module.id}>
-                    <NavLink className={({ isActive }) => `${isActive ? styles.active : ""} ${module.id === "surveillance" ? styles.surveillanceLink : ""}`} to={module.path}>
-                      {module.shortLabel}
-                    </NavLink>
-                  </li>
-                ))}
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/dashboard">Dashboard</NavLink></li>
+                {NAVIGATION_GROUPS.slice(0, 1).map((group) => <li className={styles.menuGroup} key={group.id}>
+                  <NavLink className={({ isActive }) => isActive ? styles.active : undefined} to={group.path}>{group.label}</NavLink>
+                  <ul className={styles.submenu}>{group.items.map((item) => <li key={item.path}><NavLink to={item.path}>{item.label}</NavLink></li>)}</ul>
+                </li>)}
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/noticias">Noticias</NavLink></li>
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/publicaciones">Publicaciones</NavLink></li>
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/eventos">Eventos</NavLink></li>
+                <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/recursos">Recursos</NavLink></li>
+                {NAVIGATION_GROUPS.slice(1).map((group) => <li className={styles.menuGroup} key={group.id}>
+                  <NavLink className={({ isActive }) => `${isActive ? styles.active : ""} ${styles.surveillanceLink}`} to={group.path}>{group.label}</NavLink>
+                  <ul className={`${styles.submenu} ${styles.submenuRight}`}>{group.items.map((item) => <li key={item.path}><NavLink to={item.path}>{item.label}</NavLink></li>)}</ul>
+                </li>)}
               </ul>
             </nav>
             <div className={styles.accountActions}>
@@ -101,9 +106,13 @@ export function PublicLayout() {
           <nav aria-label="Módulos del observatorio" className={styles.footerNavigation}>
             <strong>Módulos</strong>
             <ul>
-              {PUBLIC_MODULES.map((module) => (
-                <li key={module.id}><Link to={module.path}>{module.label}</Link></li>
-              ))}
+              <li><Link to="/dashboard">Dashboard</Link></li>
+              <li><Link to="/industria">Industria de semiconductores</Link></li>
+              <li><Link to="/noticias">Noticias</Link></li>
+              <li><Link to="/publicaciones">Publicaciones e informes</Link></li>
+              <li><Link to="/eventos">Eventos y convocatorias</Link></li>
+              <li><Link to="/recursos">Recursos y bases de datos</Link></li>
+              <li><Link to="/vigilancia">Vigilancia tecnológica</Link></li>
             </ul>
           </nav>
           <nav aria-label="Recursos del portal" className={styles.footerNavigation}>

@@ -24,6 +24,7 @@ import { AdminIndexPage } from "@/pages/AdminIndexPage";
 import { HomePage } from "@/pages/HomePage";
 import { AboutPage } from "@/pages/AboutPage";
 import { SurveillancePage } from "@/pages/SurveillancePage";
+import { ObservatoryModulePage } from "@/pages/ObservatoryModulePage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PermissionDeniedPage } from "@/pages/PermissionDeniedPage";
 import { RouteErrorPage } from "@/pages/RouteErrorPage";
@@ -36,6 +37,15 @@ export const appRoutes: RouteObject[] = [
     hydrateFallbackElement: <PageFeedback title="Cargando observatorio" message="Preparando la ruta solicitada." />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: "dashboard", element: <ObservatoryModulePage kind="dashboard" /> },
+      { path: "industria", element: <ObservatoryModulePage kind="industry" /> },
+      { path: "indicadores-pertinencia", element: <ObservatoryModulePage kind="indicators" /> },
+      { path: "ecosistema-regional", element: <ObservatoryModulePage kind="ecosystem" /> },
+      { path: "cadena-de-valor", element: <ObservatoryModulePage kind="value-chain" /> },
+      { path: "inversiones", element: <ObservatoryModulePage kind="investments" /> },
+      { path: "eventos", element: <ObservatoryModulePage kind="events" /> },
+      { path: "recursos", element: <ObservatoryModulePage kind="resources" /> },
+      { path: "buscador", element: <ObservatoryModulePage kind="search" /> },
       { path: "acerca-de", element: <AboutPage /> },
       ...PUBLIC_MODULES.map((module) => ({
         path: module.path.slice(1),

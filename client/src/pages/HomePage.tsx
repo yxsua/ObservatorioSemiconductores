@@ -15,8 +15,8 @@ export function HomePage() {
             el ecosistema regional y los cambios que están definiendo al sector.
           </p>
           <div className={styles.actions}>
-            <Link className={styles.primaryAction} to="/vigilancia">Explorar vigilancia</Link>
-            <Link className={styles.secondaryAction} to="/boletines">Consultar boletines</Link>
+            <Link className={styles.primaryAction} to="/dashboard">Ver dashboard ejecutivo</Link>
+            <Link className={styles.secondaryAction} to="/industria">Explorar la industria</Link>
           </div>
         </div>
         <aside className={styles.heroPanel} aria-label="Áreas de consulta">
@@ -25,8 +25,8 @@ export function HomePage() {
           </div>
           <div className={styles.heroPanelCopy}>
             <span>Información pública</span>
-            <strong>Publicaciones + evidencia estructurada</strong>
-            <p>Contenido editorial conectado con señales, tendencias y alertas.</p>
+            <strong>Contexto + evidencia estructurada</strong>
+            <p>Información para comprender la industria y seguir sus cambios relevantes.</p>
           </div>
         </aside>
       </section>

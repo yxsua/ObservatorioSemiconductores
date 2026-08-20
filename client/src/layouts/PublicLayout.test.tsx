@@ -13,9 +13,10 @@ describe("shell público", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getAllByRole("link", { name: "Boletines" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Dashboard ejecutivo" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Noticias" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Ecosistema" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Industria de semiconductores" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Vigilancia Tecnológica" }).length).toBeGreaterThan(0);
   });
 
   it("renderiza una página modular y actualiza sus metadatos", async () => {
