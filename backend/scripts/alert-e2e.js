@@ -2,6 +2,28 @@
 
 const baseUrl = process.env.API_URL || "http://localhost:3001";
 const password = process.env.E2E_PASSWORD || "Password123!";
+const pool = require("../src/config/database");
+
+async function seed() {
+    const suffix = `${Date.now()}-${process.pid}`;
+    const emails = {};
+    for (const role of ["ANALYST", "VALIDATOR", "PUBLISHER"]) {
+        const email = `${role.toLowerCase()}-${suffix}@example.com`;
+        await request("/api/auth/register", {
+            method: "POST", expected: 201,
+            body: { firstName: "Prueba", lastName: role, email, password, termsVersion:"2026-09-11" }
+        });
+        await pool.query(`INSERT INTO user_roles (id_user, id_role)
+            SELECT u.id_user, r.id_role FROM users u CROSS JOIN roles r
+            WHERE u.email = $1 AND r.name = $2 ON CONFLICT DO NOTHING`, [email, role]);
+        emails[role] = email;
+    }
+    const sources = await pool.query(`INSERT INTO sources (id_source_type, name, website, reliability)
+        SELECT id_source_type, 'Fuente alertas E2E ' || n, 'https://example.com/source-' || n, 0.95
+        FROM source_types CROSS JOIN generate_series(1, 2) n
+        WHERE code = 'SCIENTIFIC_ARTICLE' RETURNING id_source`);
+    return { emails, sourceIds: sources.rows.map((row) => Number(row.id_source)) };
+}
 
 async function request(path, options = {}) {
     const response = await fetch(`${baseUrl}${path}`, {
@@ -46,7 +68,7 @@ async function transition(resource, id, transitionCode, token, expected = 200) {
     });
 }
 
-async function createValidatedSignals(analyst, validator) {
+async function createValidatedSignals(analyst, validator, sourceIds) {
     const ids = [];
 
     for (let index = 1; index <= 3; index += 1) {
@@ -60,7 +82,7 @@ async function createValidatedSignals(analyst, validator) {
                 publicationDate: "2026-07-01",
                 evidenceUrl: `https://example.com/evidence-${index}`,
                 categoryId: 1,
-                sourceId: index === 2 ? 2 : 1,
+                sourceId: sourceIds[index === 2 ? 1 : 0],
                 signalTypeCode: "STRONG",
                 impactCode: "HIGH",
                 urgencyCode: "HIGH",
@@ -100,10 +122,11 @@ async function createActiveTrend(signalIds, analyst, validator) {
 }
 
 async function main() {
-    const analyst = await login("analyst@example.com");
-    const validator = await login("validator@example.com");
-    const publisher = await login("publisher@example.com");
-    const signalIds = await createValidatedSignals(analyst, validator);
+    const { emails, sourceIds } = await seed();
+    const analyst = await login(emails.ANALYST);
+    const validator = await login(emails.VALIDATOR);
+    const publisher = await login(emails.PUBLISHER);
+    const signalIds = await createValidatedSignals(analyst, validator, sourceIds);
     const trendId = await createActiveTrend(signalIds, analyst, validator);
 
     const incomplete = await request("/api/admin/alerts", {
@@ -199,4 +222,4 @@ async function main() {
 main().catch((error) => {
     console.error(error);
     process.exitCode = 1;
-});
+}).finally(() => pool.end());

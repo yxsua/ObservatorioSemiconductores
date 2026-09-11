@@ -8,6 +8,7 @@ import { useAuth } from "./AuthContext";
 import { applyApiErrors, applyZodErrors } from "./form-errors";
 import { registerFormSchema, type RegisterFormValues } from "./auth.schemas";
 import { safeReturnTo } from "./safe-return";
+import legal from "@/features/legal/legal-config";
 import styles from "./AuthForm.module.css";
 
 interface LocationState {
@@ -26,6 +27,7 @@ export function RegisterPage() {
     setError
   } = useForm<RegisterFormValues>({
     defaultValues: {
+      acceptedTerms: false,
       firstName: "",
       lastName: "",
       email: "",
@@ -52,6 +54,7 @@ export function RegisterPage() {
       firstName: validation.data.firstName,
       lastName: validation.data.lastName,
       email: validation.data.email,
+      termsVersion: legal.version as "2026-09-11",
       password: validation.data.password
     };
     try {
@@ -110,6 +113,8 @@ export function RegisterPage() {
           type="password"
           {...register("confirmPassword")}
         />
+        <aside className={styles.privacySummary}><strong>Aviso de privacidad simplificado</strong><p>El Tecnológico Nacional de México, con domicilio en {legal.address}, usará tus datos para administrar tu cuenta, proteger el acceso y registrar tus actividades en el sitio. No se utilizarán para publicidad, venta de datos ni finalidades ajenas al servicio; no se prevén transferencias que requieran tu consentimiento.</p><p>Consulta el <Link to="/privacidad" target="_blank" rel="noopener">aviso integral y los medios para ejercer tus derechos (abre en otra pestaña)</Link>. Esta versión está pendiente de revisión institucional.</p></aside>
+        <label className={styles.acceptance}><input type="checkbox" {...register("acceptedTerms")} aria-invalid={Boolean(errors.acceptedTerms)} aria-describedby={errors.acceptedTerms?'terms-error':undefined}/><span>Acepto los <Link to="/terminos" target="_blank" rel="noopener">términos de servicio (abre en otra pestaña)</Link> y he leído la <Link to="/privacidad" target="_blank" rel="noopener">política de privacidad (abre en otra pestaña)</Link>.</span></label>{errors.acceptedTerms&&<p id="terms-error" role="alert">{errors.acceptedTerms.message}</p>}
         <Button disabled={isSubmitting} type="submit" variant="primary">
           {isSubmitting ? "Creando cuenta…" : "Crear cuenta"}
         </Button>

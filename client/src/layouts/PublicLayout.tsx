@@ -128,7 +128,7 @@ export function PublicLayout() {
         </div>
         <div className={styles.footerLegal}>
           <span>Observatorio de Semiconductores</span>
-          <span>Consulta pública · Exportaciones con cuenta</span>
+          <span><Link to="/terminos">Términos de servicio</Link> · <Link to="/privacidad">Privacidad</Link></span>
         </div>
       </footer>
     </div>

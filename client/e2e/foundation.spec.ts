@@ -30,7 +30,7 @@ test("el menú móvil abre la navegación pública", async ({ page }, testInfo) 
   await menu.click();
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByRole("navigation", { name: "Navegación principal" })
-    .getByRole("link", { name: "Boletines" })).toBeVisible();
+    .getByRole("link", { name: "Dashboard", exact: true })).toBeVisible();
 });
 
 test("la navegación por teclado salta al contenido principal", async ({ page }, testInfo) => {

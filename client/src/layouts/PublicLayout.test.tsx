@@ -13,7 +13,8 @@ describe("shell público", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getAllByRole("link", { name: "Dashboard ejecutivo" }).length).toBeGreaterThan(0);
+    expect(within(screen.getByRole("navigation", { name: "Navegación principal" }))
+      .getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", "/dashboard");
     expect(screen.getAllByRole("link", { name: "Noticias" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Industria de semiconductores" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Vigilancia Tecnológica" }).length).toBeGreaterThan(0);

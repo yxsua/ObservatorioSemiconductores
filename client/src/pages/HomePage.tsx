@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PUBLIC_MODULES } from "@/app/public-modules";
 import logoUrl from "@/assets/logo-white-background.jpeg";
 import styles from "./HomePage.module.css";
 
 export function HomePage() {
+  const [partnerPage,setPartnerPage]=useState(0);
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -67,6 +69,14 @@ export function HomePage() {
           <li><Link to="/tendencias"><span>02</span><strong>Tendencias</strong><small>Patrones relacionados</small></Link></li>
           <li><Link to="/alertas"><span>03</span><strong>Alertas</strong><small>Atención prioritaria</small></Link></li>
         </ol>
+      </section>
+      <section aria-labelledby="team-title" className={styles.community}>
+        <header className={styles.sectionHeader}><div><p className={styles.eyebrow}>Detrás del Observatorio</p><h2 id="team-title">Equipo de desarrollo</h2><p>Cinco personas, un proyecto compartido.</p></div></header>
+        <div className={styles.teamGrid}>{Array.from({length:5},(_,index)=><article className={styles.person} key={index}><div className={styles.portrait}><svg viewBox="0 0 200 200" role="img" aria-label={`Fotografía pendiente del integrante ${index+1}`}><circle cx="100" cy="75" r="30"/><path d="M40 185v-20a60 60 0 0 1 120 0v20Z"/></svg><span>Fotografía próximamente</span></div><h3>Integrante {String(index+1).padStart(2,'0')}</h3><p>Nombre por confirmar</p></article>)}</div>
+      </section>
+      <section aria-labelledby="partners-title" className={styles.community} aria-roledescription="carrusel">
+        <header className={styles.sectionHeader}><div><p className={styles.eyebrow}>Conexiones que suman</p><h2 id="partners-title">Instituciones y empresas aliadas</h2><p>Espacios reservados para los logos de nuestros aliados.</p></div><div className={styles.carouselControls}><button aria-label="Logos anteriores" onClick={()=>setPartnerPage(p=>(p+1)%2)}>←</button><span aria-live="polite">Grupo {partnerPage+1} de 2</span><button aria-label="Logos siguientes" onClick={()=>setPartnerPage(p=>(p+1)%2)}>→</button></div></header>
+        <div className={styles.partnerGrid} key={partnerPage}>{Array.from({length:4},(_,index)=>{const number=partnerPage*4+index+1;return <div className={styles.partner} key={number}><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40 8 70 25v30L40 72 10 55V25Z"/><path d="M25 49V31h30v18M40 31v18"/></svg><strong>{index%2===0?'Institución':'Empresa'} {String(number).padStart(2,'0')}</strong><span>Logo próximamente</span></div>;})}</div>
       </section>
     </div>
   );

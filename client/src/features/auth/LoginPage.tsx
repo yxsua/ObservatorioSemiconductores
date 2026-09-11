@@ -89,6 +89,7 @@ export function LoginPage() {
           {isSubmitting ? "Iniciando…" : "Iniciar sesión"}
         </Button>
       </form>
+      <p className={styles.alternative}><Link to="/recuperar-contrasena">¿Olvidaste tu contraseña?</Link></p>
       <p className={styles.alternative}>
         ¿No tienes cuenta? <Link to="/registro" state={{ returnTo }}>
           Crear cuenta

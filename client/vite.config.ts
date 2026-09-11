@@ -17,6 +17,8 @@ export default defineConfig({
     }
   },
   test: {
+    // Bound jsdom concurrency so lazy-route checks are not starved on local validation.
+    maxWorkers: 2,
     environment: "jsdom",
     exclude: [...configDefaults.exclude, "e2e/**"],
     setupFiles: ["./src/test/setup.ts"],

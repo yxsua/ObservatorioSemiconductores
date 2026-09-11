@@ -9,6 +9,7 @@ export function AdminIndexPage() {
       <h1 id="admin-title">Área interna</h1>
       <p className={styles.intro}>Selecciona un módulo disponible para tu cuenta.</p>
       <div className={styles.modules}>
+        <Can permission="data:read-internal"><Link to="/admin/datos/indicators"><strong>Datos del observatorio</strong><span>Indicadores, actores, inversiones, eventos y recursos.</span></Link></Can>
         <Can permission="signals:read-internal">
           <Link to="/admin/senales"><strong>Señales</strong><span>Captura y revisión.</span></Link>
         </Can>

@@ -1,4 +1,5 @@
 export const INTERNAL_PERMISSIONS = [
+  'data:read-internal','data:create','data:update','data:submit','data:approve','data:publish',
   "signals:read-internal",
   "signals:create",
   "signals:update-own",

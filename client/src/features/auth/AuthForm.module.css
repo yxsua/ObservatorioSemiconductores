@@ -43,3 +43,5 @@
 .alternative {
   margin-block-start: var(--space-6);
 }
+
+.privacySummary{padding:1rem;border:1px solid #cbd8e4;border-radius:.75rem;background:#f3f7fa;font-size:.9rem;line-height:1.6}.privacySummary p{margin:.6rem 0}.acceptance{display:flex;align-items:flex-start;gap:.75rem;line-height:1.6}.acceptance input{flex-shrink:0;margin-top:.35rem;width:1.2rem;height:1.2rem}

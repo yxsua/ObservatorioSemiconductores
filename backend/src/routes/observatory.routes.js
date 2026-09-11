@@ -1,0 +1,24 @@
+const express=require('express');
+const {asyncHandler}=require('../utils/asyncHandler');
+const {successResponse}=require('../utils/apiResponse');
+const {authenticate}=require('../middleware/auth.middleware');
+const {requirePermissions}=require('../middleware/permission.middleware');
+const service=require('../services/observatory.service');
+const discovery=require('../services/discovery.service');
+const publicRouter=express.Router();const adminRouter=express.Router();const discoveryRouter=express.Router();
+publicRouter.get('/:kind',asyncHandler(async(req,res)=>res.json(successResponse(await service.list(req.params.kind,req.query)))));
+publicRouter.get('/:kind/:id',asyncHandler(async(req,res)=>res.json(successResponse(await service.get(req.params.kind,req.params.id)))));
+adminRouter.use(authenticate,requirePermissions('data:read-internal'));
+adminRouter.get('/:kind',asyncHandler(async(req,res)=>res.json(successResponse(await service.list(req.params.kind,req.query,true)))));
+adminRouter.get('/:kind/:id',asyncHandler(async(req,res)=>res.json(successResponse(await service.get(req.params.kind,req.params.id,true)))));
+adminRouter.get('/:kind/:id/history',asyncHandler(async(req,res)=>res.json(successResponse(await service.history(req.params.kind,req.params.id)))));
+adminRouter.post('/:kind',asyncHandler(async(req,res)=>res.status(201).json(successResponse(await service.save(req.params.kind,null,req.body,req.user)))));
+adminRouter.put('/:kind/:id',asyncHandler(async(req,res)=>res.json(successResponse(await service.save(req.params.kind,req.params.id,req.body,req.user)))));
+adminRouter.post('/:kind/:id/transitions',asyncHandler(async(req,res)=>res.json(successResponse(await service.transition(req.params.kind,req.params.id,req.body,req.user)))));
+discoveryRouter.get('/search',asyncHandler(async(req,res)=>res.json(successResponse(await discovery.search(req.query)))));
+discoveryRouter.get('/dashboard',asyncHandler(async(req,res)=>res.json(successResponse(await discovery.dashboard(req.query)))));
+discoveryRouter.get('/dashboard.csv',asyncHandler(async(req,res)=>{
+    res.set('Content-Disposition','attachment; filename="observatorio-indicadores.csv"');
+    res.type('text/csv').send(await discovery.dashboardCsv(req.query));
+}));
+module.exports={publicRouter,adminRouter,discoveryRouter};

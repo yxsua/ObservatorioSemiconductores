@@ -19,9 +19,9 @@ class AuthRepository {
                         first_name,
                         last_name,
                         email,
-                        password_hash
+                        password_hash, terms_version, terms_accepted_at
                     )
-                    VALUES ($1, $2, $3, $4)
+                    VALUES ($1, $2, $3, $4, $5, now())
                     RETURNING
                         id_user,
                         first_name,
@@ -35,7 +35,7 @@ class AuthRepository {
                     user.firstName,
                     user.lastName,
                     user.email,
-                    user.passwordHash
+                    user.passwordHash, user.termsVersion
                 ]
             );
 
@@ -112,6 +112,7 @@ class AuthRepository {
                 u.email,
                 u.occupation,
                 u.active,
+                u.auth_version,
                 u.last_login,
                 u.created_at,
                 COALESCE(

@@ -18,6 +18,7 @@ export function AdminLayout() {
         <nav aria-label="Navegación interna">
           <ul>
             <li><NavLink end to="/admin">Inicio</NavLink></li>
+            <Can permission="data:read-internal"><li><NavLink to="/admin/datos/indicators">Datos del observatorio</NavLink></li></Can>
             <Can permission="signals:read-internal">
               <li><NavLink to="/admin/senales">Señales</NavLink></li>
             </Can>

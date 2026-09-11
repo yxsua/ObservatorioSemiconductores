@@ -1,0 +1,3 @@
+import {chromium} from '@playwright/test';
+const browser=await chromium.launch();
+try{for(const [name,width] of [['desktop',1440],['mobile',390]]){const page=await browser.newPage({viewport:{width,height:900}});await page.goto('http://127.0.0.1:18080/');await page.getByRole('heading',{name:'Equipo de desarrollo'}).waitFor();await page.screenshot({path:'test-results/home-'+name+'.png',fullPage:true});await page.goto('http://127.0.0.1:18080/indicadores-pertinencia');await page.getByRole('button',{name:/Ver más sobre/}).first().click();await page.getByRole('dialog').getByRole('heading',{name:'Evidencia y archivos'}).waitFor();await page.screenshot({path:'test-results/overlay-'+name+'.png'});await page.close();}}finally{await browser.close();}

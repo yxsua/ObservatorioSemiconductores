@@ -66,6 +66,7 @@ const registerSchema = z
 
         email: emailSchema,
 
+        termsVersion: z.literal("2026-09-11"),
         password: passwordSchema
     })
     .strict("Se enviaron campos que no están permitidos.");
@@ -89,6 +90,7 @@ const loginSchema = z
     .strict("Se enviaron campos que no están permitidos.");
 
 module.exports = {
+    emailSchema, passwordSchema,
     registerSchema,
     loginSchema
 };

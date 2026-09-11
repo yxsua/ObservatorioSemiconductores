@@ -41,9 +41,10 @@ test("renderiza la estructura editorial y los bloques de texto", async ({ page }
   await expect(page.getByText("Descripción metodológica.")).toBeVisible();
 });
 
-test("una página de módulo consume su slug editorial configurado", async ({ page }) => {
-  await page.route("**/api/content/ecosistema-regional", (route) => route.fulfill({ json: { success: true, message: "Contenido", data: { ...content, slug: "ecosistema-regional", type: { code: "PAGE", name: "Página" } } } }));
+test("el ecosistema consulta datos estructurados", async ({ page }) => {
+  await page.route("**/api/content/**", (route) => route.abort());
+  await page.route("**/api/data/ecosystem**", route=>route.fulfill({json:{success:true,data:{items:[],pagination:{page:1,pageSize:20,totalItems:0,totalPages:0}}}}));
   await page.goto("/ecosistema-regional");
-  await expect(page.getByRole("heading", { level: 1, name: content.title })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Contenido", exact: true })).toHaveAttribute("href", "/contenido");
+  await expect(page.getByRole("heading", { level: 1, name: "Ecosistema regional" })).toBeVisible();
+  await expect(page.getByText("No hay registros públicos para esta consulta.")).toBeVisible();
 });

@@ -21,6 +21,7 @@ export const loginFormSchema = z.object({
 });
 
 export const registerFormSchema = z.object({
+  acceptedTerms: z.boolean().refine(v=>v,"Debes aceptar los términos y leer el aviso de privacidad."),
   firstName: z.string().trim()
     .min(1, "El nombre es obligatorio.")
     .max(80, "El nombre no puede superar 80 caracteres."),
@@ -37,3 +38,5 @@ export const registerFormSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
+
+export const resetPasswordFormSchema=z.object({password:securePassword,confirmPassword:z.string()}).refine(v=>v.password===v.confirmPassword,{path:["confirmPassword"],message:"Las contraseñas no coinciden."});

@@ -7,6 +7,12 @@ const DEFAULT_DESCRIPTION =
   "Información estratégica, publicaciones y vigilancia tecnológica sobre la industria de semiconductores.";
 
 const routeMetadata: Record<string, { title: string; description: string }> = {
+  '/dashboard':{title:'Dashboard ejecutivo',description:'Indicadores publicados con metodología y fuente.'},
+  '/indicadores-pertinencia':{title:'Indicadores de pertinencia',description:'Datos y evaluaciones de pertinencia regional.'},
+  '/inversiones':{title:'Inversiones y expansión',description:'Proyectos anunciados y operaciones con fuente y corte.'},
+  '/eventos':{title:'Eventos y convocatorias',description:'Agenda publicada del ecosistema.'},
+  '/recursos':{title:'Recursos y bases de datos',description:'Fuentes y recursos de consulta.'},
+  '/buscador':{title:'Buscador inteligente',description:'Búsqueda unificada de información pública del observatorio.'},
   "/": { title: SITE_NAME, description: DEFAULT_DESCRIPTION },
   "/contenido": {
     title: "Contenido publicado",
@@ -29,6 +35,10 @@ const routeMetadata: Record<string, { title: string; description: string }> = {
     description: "Conoce el propósito, el equipo, la gobernanza y los principios del Observatorio de Semiconductores."
   },
   "/iniciar-sesion": { title: "Iniciar sesión", description: "Accede a tu cuenta del observatorio." },
+  '/terminos':{title:'Términos de servicio',description:'Condiciones de uso de la plataforma.'},
+  '/privacidad':{title:'Política de privacidad',description:'Datos, finalidades y derechos de las personas usuarias.'},
+  '/recuperar-contrasena':{title:'Recuperar contraseña',description:'Solicita recuperar el acceso a tu cuenta.'},
+  '/restablecer-contrasena':{title:'Restablecer contraseña',description:'Crea una nueva contraseña.'},
   "/registro": { title: "Crear cuenta", description: "Crea una cuenta para utilizar funciones registradas." },
   "/cuenta": { title: "Mi cuenta", description: "Consulta tu perfil y permisos actuales." },
   "/cuenta/exportaciones": {
@@ -46,6 +56,7 @@ for (const module of PUBLIC_MODULES) {
 }
 
 function metadataFor(pathname: string) {
+  if(pathname.startsWith('/datos/')) return {title:'Ficha del observatorio',description:DEFAULT_DESCRIPTION};
   if (routeMetadata[pathname]) return routeMetadata[pathname];
   if (pathname.startsWith("/contenido/")) return {
     title: "Contenido publicado",

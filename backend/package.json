@@ -4,6 +4,7 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
+    "test:e2e:observatory": "node scripts/observatory-e2e.js",
     "test": "node --test",
     "test:e2e:alerts": "node scripts/alert-e2e.js",
     "test:e2e:content": "node scripts/content-e2e.js",

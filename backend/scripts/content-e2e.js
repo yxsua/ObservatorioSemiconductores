@@ -33,7 +33,7 @@ async function request(path, options = {}) {
 async function register(email, firstName, lastName) {
     await request("/api/auth/register", {
         method: "POST",
-        body: { firstName, lastName, email, password },
+        body: { firstName, lastName, email, password, termsVersion:"2026-09-11" },
         expected: 201
     });
 }
@@ -85,7 +85,7 @@ async function seedTemplate() {
     return Number(templateId);
 }
 
-async function seedResolvedReferences(editorEmail, publisherEmail) {
+async function seedResolvedReferences(editorEmail, publisherEmail, suffix) {
     const source = await pool.query(`
         INSERT INTO sources (id_source_type, name, website, reliability)
         SELECT id_source_type, 'Fuente resolución E2E',
@@ -101,7 +101,7 @@ async function seedResolvedReferences(editorEmail, publisherEmail) {
     `, [editorEmail, publisherEmail]);
     const signal = await pool.query(`
         SELECT sp_create_signal_v2(
-            'Señal resuelta desde contenido',
+            $3,
             'Resumen público de la señal resuelta.',
             CURRENT_DATE,
             'https://example.com/evidence',
@@ -110,7 +110,7 @@ async function seedResolvedReferences(editorEmail, publisherEmail) {
             'STRONG', 'HIGH', 'HIGH', 'HIGH', 'GLOBAL',
             $2
         ) AS id_signal;
-    `, [source.rows[0].id_source, users.rows[0].editor_id]);
+    `, [source.rows[0].id_source, users.rows[0].editor_id, `Señal resuelta desde contenido ${suffix}`]);
     const signalId = Number(signal.rows[0].id_signal);
     await pool.query("SELECT sp_transition_signal($1,'SUBMIT_FOR_REVIEW',$2,NULL);", [
         signalId, users.rows[0].editor_id
@@ -162,15 +162,17 @@ async function transition(id, transitionCode, token, expected = 200) {
 }
 
 async function main() {
-    const editorEmail = "editor-content-e2e@example.com";
-    const publisherEmail = "publisher-content-e2e@example.com";
-    const memberEmail = "member-export-e2e@example.com";
+    const suffix = `${Date.now()}-${process.pid}`;
+    const title = `Reporte editorial E2E ${suffix}`;
+    const editorEmail = `editor-content-${suffix}@example.com`;
+    const publisherEmail = `publisher-content-${suffix}@example.com`;
+    const memberEmail = `member-export-${suffix}@example.com`;
     await register(editorEmail, "Elena", "Editora");
     await register(publisherEmail, "Pablo", "Publicador");
     await register(memberEmail, "Mario", "Miembro");
     await assignRole(editorEmail, "EDITOR");
     await assignRole(publisherEmail, "PUBLISHER");
-    const references = await seedResolvedReferences(editorEmail, publisherEmail);
+    const references = await seedResolvedReferences(editorEmail, publisherEmail, suffix);
     const templateId = await seedTemplate();
     const editor = await login(editorEmail);
     const publisher = await login(publisherEmail);
@@ -190,9 +192,9 @@ async function main() {
         expected: 201,
         body: {
             typeCode: "REPORT",
-            title: "Reporte editorial E2E",
+            title,
             summary: "Versión inicial del reporte.",
-            slug: "reporte-editorial-api-e2e",
+            slug: `reporte-editorial-api-e2e-${suffix}`,
             templateId
         }
     });
@@ -203,11 +205,13 @@ async function main() {
         throw new Error("La plantilla no creó una versión DRAFT con composición.");
     }
 
-    const publicBeforePublish = await request("/api/content", { expected: 200 });
+    const publicBeforePublish = await request(`/api/content?search=${suffix}`, { expected: 200 });
     if (publicBeforePublish.payload.data.items.length !== 0) {
         throw new Error("La lista pública expuso contenido DRAFT.");
     }
     await request(`/api/content/${content.slug}`, { expected: 404 });
+    await request(`/api/views/content/${contentId}`, { expected: 404 });
+    await request(`/api/views/content/${contentId}`, { method: "POST", expected: 404 });
 
     const updated = await request(`/api/admin/content/${contentId}`, {
         method: "PATCH",
@@ -322,7 +326,15 @@ async function main() {
         throw new Error("La publicación no fijó la versión aprobada.");
     }
 
-    const publicList = await request("/api/content?type=report&search=editorial", {
+    const viewsBefore = await request(`/api/views/content/${contentId}`, { expected: 200 });
+    if (viewsBefore.payload.data.viewCount !== 0) throw new Error("Contador inicial incorrecto.");
+    await Promise.all(Array.from({ length: 5 }, () => request(`/api/views/content/${contentId}`, {
+        method: "POST", expected: 200
+    })));
+    const viewsAfter = await request(`/api/views/content/${contentId}`, { expected: 200 });
+    if (viewsAfter.payload.data.viewCount !== 5) throw new Error("El contador perdió incrementos concurrentes.");
+
+    const publicList = await request(`/api/content?type=report&search=${suffix}`, {
         expected: 200
     });
     if (
@@ -346,7 +358,7 @@ async function main() {
     const resolvedImage = publicBlocks.find((block) => block.type.code === "image");
     const resolvedFile = publicBlocks.find((block) => block.type.code === "file");
     if (
-        resolvedSignal?.resolved?.title !== "Señal resuelta desde contenido"
+        resolvedSignal?.resolved?.title !== `Señal resuelta desde contenido ${suffix}`
         || resolvedSignal.resolved.metadata.priority !== "HIGH"
         || resolvedSignal.resolved.relations.linkedToTrend !== false
         || "summary" in resolvedSignal.resolved
@@ -397,7 +409,7 @@ async function main() {
         token: member, expected: 400
     });
     const contentExport = await request(
-        "/api/exports/content.csv?type=report&search=editorial",
+        `/api/exports/content.csv?type=report&search=${suffix}`,
         { token: member, expected: 200, responseType: "buffer" }
     );
     const exportedCsv = contentExport.payload.toString("utf8");
@@ -412,7 +424,7 @@ async function main() {
     ) {
         throw new Error("La exportación CSV no respetó su contrato.");
     }
-    const signalExport = await request("/api/exports/signals.json", {
+    const signalExport = await request(`/api/exports/signals.json?search=${suffix}`, {
         token: member, expected: 200, responseType: "buffer"
     });
     const exportedSignals = JSON.parse(signalExport.payload.toString("utf8"));
@@ -492,8 +504,12 @@ async function main() {
     const publicDuringRevision = await request(`/api/content/${content.slug}`, {
         expected: 200
     });
+    const searchDuringRevision = await request('/api/search?q=' + encodeURIComponent('Título aún no publicado'), {expected:200});
+    if (searchDuringRevision.payload.data.items.some((item) => item.type === 'content' && item.id === contentId)) {
+        throw new Error('La búsqueda expuso el título de una revisión no publicada.');
+    }
     if (
-        publicDuringRevision.payload.data.title !== "Reporte editorial E2E"
+        publicDuringRevision.payload.data.title !== title
         || publicDuringRevision.payload.data.versionNumber !== 1
         || "currentVersionId" in publicDuringRevision.payload.data
         || "author" in publicDuringRevision.payload.data

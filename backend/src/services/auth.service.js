@@ -70,7 +70,8 @@ class AuthService {
                 firstName,
                 lastName,
                 email,
-                passwordHash
+                passwordHash,
+                termsVersion: validationResult.data.termsVersion
             });
         } catch (error) {
             /*
@@ -92,7 +93,8 @@ class AuthService {
 
         const token = generateToken({
             id: completeUser.id_user,
-            email: completeUser.email
+            email: completeUser.email,
+            authVersion: completeUser.auth_version
         });
 
         return {
@@ -156,7 +158,8 @@ class AuthService {
 
         const token = generateToken({
             id: completeUser.id_user,
-            email: completeUser.email
+            email: completeUser.email,
+            authVersion: completeUser.auth_version
         });
 
         return {

@@ -48,12 +48,14 @@ describe("detalle editorial público", () => {
     expect(screen.getByText(/todavía no puede mostrarse/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "← Volver a publicaciones" })).toHaveAttribute("href", "/publicaciones");
   });
-  it("usa el slug configurado para páginas editoriales de módulo", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(json({ success: true, message: "Contenido", data: { ...content, slug: "ecosistema-regional", type: { code: "PAGE", name: "Página" } } }));
+  it("consulta el dominio de ecosistema sin depender de una página del CMS", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(json({ success: true, data: { items: [], pagination: {page:1,pageSize:20,totalItems:0,totalPages:0} } }));
     vi.stubGlobal("fetch", fetchMock);
     renderApp("/ecosistema-regional");
-    expect(await screen.findByRole("heading", { level: 1, name: content.title })).toBeInTheDocument();
-    expect(fetchMock.mock.calls.some(([url]) => String(url) === "/api/content/ecosistema-regional")).toBe(true);
+    expect(await screen.findByRole("heading", { level: 1, name: "Ecosistema regional" })).toBeInTheDocument();
+    expect(await screen.findByText("No hay registros públicos para esta consulta.")).toBeInTheDocument();
+    expect(fetchMock.mock.calls.some(([url]) => String(url).startsWith("/api/data/ecosystem"))).toBe(true);
+    expect(fetchMock.mock.calls.some(([url]) => String(url) === "/api/content/ecosistema-regional")).toBe(false);
   });
   it("presenta 404 e identificadores inválidos de forma segura", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ success: false, message: "No existe", code: "NOT_FOUND", errors: [] }, 404)));

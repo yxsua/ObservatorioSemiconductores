@@ -1,6 +1,7 @@
 export type EditorialModuleSource =
   | { kind: "collection"; contentType: "NEWS" | "NEWSLETTER" | "REPORT" }
   | { kind: "page"; slug: string }
+  | { kind: "data"; resource: "ecosystem" }
   | { kind: "domain"; resources: readonly ("signals" | "trends" | "alerts")[] };
 
 export interface PublicModule {
@@ -60,7 +61,7 @@ export const PUBLIC_MODULES: readonly PublicModule[] = [
     label: "Ecosistema regional",
     shortLabel: "Ecosistema",
     description: "Capacidades, instituciones y actores que conforman el ecosistema regional.",
-    source: { kind: "page", slug: "ecosistema-regional" },
+    source: { kind: "data", resource: "ecosystem" },
     primaryNavigation: true
   },
   {

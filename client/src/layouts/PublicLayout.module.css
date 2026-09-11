@@ -359,3 +359,6 @@
     justify-content: center;
   }
 }
+
+.footerLegal a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
+.footerLegal a:hover { color: #fff; }

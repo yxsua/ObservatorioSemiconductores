@@ -1,0 +1,1 @@
+ALTER TABLE events ADD COLUMN IF NOT EXISTS photo_media_id BIGINT REFERENCES media(id_media) ON DELETE SET NULL;

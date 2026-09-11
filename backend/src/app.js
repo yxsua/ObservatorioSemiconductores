@@ -29,8 +29,12 @@ const {
 } = require("./middleware/error.middleware");
 
 const app = express();
+const observatoryRoutes = require('./routes/observatory.routes');
 
 app.use(express.json());
+app.use('/api/data', observatoryRoutes.publicRouter);
+app.use('/api/admin/data', observatoryRoutes.adminRouter);
+app.use('/api', observatoryRoutes.discoveryRouter);
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);

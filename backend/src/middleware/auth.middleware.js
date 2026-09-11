@@ -8,7 +8,7 @@ const {
     verifyToken
 } = require("../utils/jwt");
 
-function authenticate(req, res, next) {
+async function authenticate(req, res, next) {
     try {
         const authorizationHeader =
             req.headers.authorization;
@@ -52,6 +52,8 @@ function authenticate(req, res, next) {
             );
         }
 
+        const {rows}=await require('../config/database').query('SELECT active,auth_version FROM users WHERE id_user=$1',[userId]);
+        if(!rows[0]?.active||(payload.authVersion??0)!==rows[0].auth_version)throw new UnauthorizedError('La sesión ya no es válida. Inicia sesión de nuevo.');
         req.user = {
             id: userId,
             email: payload.email ?? null

@@ -1,0 +1,63 @@
+name: observatorio-validation
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: observatorio_validation
+      POSTGRES_USER: validation
+      POSTGRES_PASSWORD: local-validation-only
+    volumes:
+      - validation_postgres:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+      - ./database:/scripts:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U validation -d observatorio_validation"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: observatorio_validation
+      POSTGRES_USER: validation
+      POSTGRES_PASSWORD: local-validation-only
+      JWT_SECRET: local-validation-only-not-for-deployment
+      MEDIA_ROOT: /app/storage/media
+      PORT: 3001
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/health').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1))"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - validation_media:/app/storage/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: ../docker/frontend/Dockerfile
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "127.0.0.1:18080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+
+volumes:
+  validation_postgres:
+  validation_media:

@@ -1,5 +1,11 @@
 # Arquitectura General del Observatorio de Semiconductores
 
+## Validación local
+
+Desde la raíz del MVP, ejecutar `./scripts/validate.ps1 -RestoreDependencies` para restaurar las herramientas y comprobar frontend, backend, PostgreSQL y navegación en un entorno Docker separado. En ejecuciones posteriores basta con `./scripts/validate.ps1`.
+
+Consultar [procedimiento, resultados y límites de la validación](docs/status-checks/2026-09-10-environment-validation.md).
+
 ## Introducción
 
 La arquitectura propuesta para el Observatorio de Semiconductores sigue un modelo cliente-servidor basado en una arquitectura de tres capas, donde la interfaz de usuario, la lógica de negocio y el almacenamiento de datos se encuentran desacoplados. Esta organización permite desarrollar cada componente de manera independiente, facilita el mantenimiento del sistema y proporciona una base sólida para incorporar nuevas funcionalidades conforme evolucione el proyecto.

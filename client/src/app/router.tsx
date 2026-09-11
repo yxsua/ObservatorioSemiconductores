@@ -8,8 +8,6 @@ import { PublicLayout } from "@/layouts/PublicLayout";
 import { AdminLayout } from "@/layouts/AdminLayout";
 import { RequireAuth } from "@/features/auth/RequireAuth";
 import { RequireAnyPermission } from "@/features/auth/RequireAnyPermission";
-import { LoginPage } from "@/features/auth/LoginPage";
-import { RegisterPage } from "@/features/auth/RegisterPage";
 import { SignalDetailPage } from "@/features/signals/SignalDetailPage";
 import { SignalsListPage } from "@/features/signals/SignalsListPage";
 import { TrendDetailPage } from "@/features/trends/TrendDetailPage";
@@ -37,17 +35,18 @@ export const appRoutes: RouteObject[] = [
     hydrateFallbackElement: <PageFeedback title="Cargando observatorio" message="Preparando la ruta solicitada." />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "dashboard", element: <ObservatoryModulePage kind="dashboard" /> },
+      { path: "dashboard", lazy: async () => ({ Component: (await import('@/features/observatory/DashboardPage')).DashboardPage }) },
       { path: "industria", element: <ObservatoryModulePage kind="industry" /> },
-      { path: "indicadores-pertinencia", element: <ObservatoryModulePage kind="indicators" /> },
-      { path: "ecosistema-regional", element: <ObservatoryModulePage kind="ecosystem" /> },
+      ...(['indicators','ecosystem','investments','events','resources'] as const).map(kind => ({
+        path: ({indicators:'indicadores-pertinencia',ecosystem:'ecosistema-regional',investments:'inversiones',events:'eventos',resources:'recursos'})[kind],
+        lazy: async () => {const {DataListPage}=await import('@/features/observatory/PublicDataPage');return {Component:()=> <DataListPage kind={kind}/>};}
+      })),
+      { path: "datos/:kind/:id", lazy: async () => ({ Component: (await import('@/features/observatory/PublicDataPage')).DataDetailPage }) },
       { path: "cadena-de-valor", element: <ObservatoryModulePage kind="value-chain" /> },
-      { path: "inversiones", element: <ObservatoryModulePage kind="investments" /> },
-      { path: "eventos", element: <ObservatoryModulePage kind="events" /> },
-      { path: "recursos", element: <ObservatoryModulePage kind="resources" /> },
-      { path: "buscador", element: <ObservatoryModulePage kind="search" /> },
+      { path: "buscador", lazy: async () => ({ Component: (await import('@/features/observatory/SearchPage')).SearchPage }) },
       { path: "acerca-de", element: <AboutPage /> },
-      ...PUBLIC_MODULES.map((module) => ({
+      { path: "vigilancia", element: <SurveillancePage /> },
+      ...PUBLIC_MODULES.filter(module => module.source.kind === 'collection').map((module) => ({
         path: module.path.slice(1),
         element: module.source.kind === "collection"
           ? <ContentIndexPage description={module.description} eyebrow="Módulo del observatorio" lockedType={module.source.contentType} title={module.label} />
@@ -63,8 +62,11 @@ export const appRoutes: RouteObject[] = [
       { path: "tendencias/:id", element: <TrendDetailPage /> },
       { path: "alertas", element: <AlertsListPage /> },
       { path: "alertas/:id", element: <AlertDetailPage /> },
-      { path: "iniciar-sesion", element: <LoginPage /> },
-      { path: "registro", element: <RegisterPage /> },
+      { path: "iniciar-sesion", lazy:async()=>({Component:(await import("@/features/auth/LoginPage")).LoginPage}) },
+      { path: "registro", lazy:async()=>({Component:(await import("@/features/auth/RegisterPage")).RegisterPage}) },
+      ...(['terms','privacy'] as const).map(kind=>({path:kind==='terms'?'terminos':'privacidad',lazy:async()=>{const {LegalPage}=await import('@/features/legal/LegalPage');return {Component:()=> <LegalPage kind={kind}/>};}})),
+      {path:'recuperar-contrasena',lazy:async()=>({Component:(await import('@/features/auth/PasswordRecoveryPage')).ForgotPasswordPage})},
+      {path:'restablecer-contrasena',lazy:async()=>({Component:(await import('@/features/auth/PasswordRecoveryPage')).ResetPasswordPage})},
       { path: "sin-permiso", element: <PermissionDeniedPage /> },
       {
         element: <RequireAuth />,
@@ -93,6 +95,10 @@ export const appRoutes: RouteObject[] = [
         element: <AdminLayout />,
         children: [
           { index: true, element: <AdminIndexPage /> },
+          { path: 'datos/:kind', element: <RequireAnyPermission permissions={['data:read-internal']}/>, children: [
+            { index: true, lazy: async()=>({Component:(await import('@/features/observatory/AdminDataPage')).AdminDataPage}) },
+            { path: ':id', lazy: async()=>({Component:(await import('@/features/observatory/AdminDataPage')).AdminDataPage}) }
+          ] },
           { path: "senales/nueva", element: <RequireAnyPermission permissions={["signals:create"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/signals/SignalFormPage")).CreateSignalFormPage }) }] },
           { path: "senales/:id/editar", element: <RequireAnyPermission permissions={["signals:read-internal"]} />, children: [{ element: <RequireAnyPermission permissions={["signals:update-own", "signals:update-any"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/signals/SignalFormPage")).EditSignalFormPage }) }] }] },
           { path: "senales", element: <RequireAnyPermission permissions={["signals:read-internal"]} />, children: [{ index: true, lazy: async () => ({ Component: (await import("@/features/admin/AdminEntityPage")).SignalsAdminPage }) }, { path: ":id", lazy: async () => ({ Component: (await import("@/features/admin/AdminEntityPage")).SignalsAdminPage }) }] },

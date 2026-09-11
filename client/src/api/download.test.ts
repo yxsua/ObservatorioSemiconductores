@@ -41,12 +41,7 @@ describe("apiDownload", () => {
     expect(result.exportId).toBe(9);
     expect(result.rowCount).toBe(12);
     expect(result.checksum).toBe("a".repeat(64));
-    const contents = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsText(result.blob);
-    });
+    const contents = await result.blob.text();
     expect(contents).toBe("csv");
   });
 });

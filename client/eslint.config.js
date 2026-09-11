@@ -8,6 +8,7 @@ export default tseslint.config(
   { ignores: ["dist", "src/api/schema.d.ts"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  { files: ['scripts/check-observatory-live.mjs'], languageOptions: { globals: { ...globals.node, ...globals.browser } } },
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
