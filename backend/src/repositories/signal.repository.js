@@ -101,8 +101,12 @@ class SignalRepository {
             addFilter(filters, values, conditions, "status", "ss.code");
         }
 
-        addFilter(filters, values, conditions, "categoryId", "s.id_category");
-        addFilter(filters, values, conditions, "fcv", "f.code");
+        for (const [plural, singular, column, type] of [["categoryIds", "categoryId", "s.id_category", "bigint"], ["fcvCodes", "fcv", "f.code", "text"]]) {
+            if (filters[plural]?.length) {
+                values.push(filters[plural]);
+                conditions.push(`${column} = ANY($${values.length}::${type}[])`);
+            } else addFilter(filters, values, conditions, singular, column);
+        }
         addFilter(filters, values, conditions, "impact", "i.code");
         addFilter(filters, values, conditions, "urgency", "u.code");
         addFilter(filters, values, conditions, "reliability", "rl.code");

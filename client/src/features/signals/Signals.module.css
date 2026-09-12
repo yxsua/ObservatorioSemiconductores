@@ -558,3 +558,5 @@
     text-align: center;
   }
 }
+
+.multiFilter{min-width:0;max-height:19rem;overflow:auto;border:1px solid #ccd6e1;border-radius:8px;padding:1rem}.multiFilter label{display:flex;align-items:center;gap:.6rem;margin:.65rem 0}.multiFilter input[type="checkbox"]{width:1.15rem;min-height:1.15rem;height:1.15rem;flex:none}.multiFilter small{display:block;margin-bottom:.75rem}

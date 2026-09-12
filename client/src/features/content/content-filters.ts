@@ -32,6 +32,8 @@ export function parseContentFilters(params: URLSearchParams, lockedType?: string
     pageSize: 12,
     search: search(params.get("search")),
     type: lockedType ?? code(params.get("type")),
+    fcvCodes: params.get("fcvCodes") || undefined,
+    categoryIds: params.get("categoryIds") || undefined,
     categoryId: positive(params.get("categoryId")),
     fcv: code(params.get("fcv")),
     from,
@@ -46,6 +48,10 @@ export function contentFiltersFromForm(form: FormData) {
     const value = form.get(key);
     if (typeof value === "string" && value.trim()) params.set(key, value.trim());
   }
+  for (const key of ["fcvCodes", "categoryIds"]) {
+    const values = [...new Set(form.getAll(key).map(String).filter(Boolean))];
+    if (values.length) params.set(key, values.join(","));
+  }
   return params;
 }
 
@@ -53,8 +59,8 @@ export function countActiveContentFilters(filters: PublicContentListQuery, locke
   return [
     filters.search,
     lockedType ? undefined : filters.type,
-    filters.categoryId,
-    filters.fcv,
+    filters.categoryIds || filters.categoryId,
+    filters.fcvCodes || filters.fcv,
     filters.from,
     filters.to
   ].filter(Boolean).length;

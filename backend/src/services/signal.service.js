@@ -39,6 +39,8 @@ const FILTER_KEYS = new Set([
     "pageSize",
     "search",
     "status",
+    "categoryIds",
+    "fcvCodes",
     "categoryId",
     "fcv",
     "impact",
@@ -162,6 +164,15 @@ class SignalService {
                 );
             }
             filters.categoryId = categoryId;
+        }
+
+        for (const key of ["fcvCodes", "categoryIds"]) {
+            if (query[key] === undefined) continue;
+            const raw = query[key];
+            if (typeof raw !== "string" || raw.length > 2000) throw new ValidationError("Selección múltiple inválida.", [{field:key,message:"Utiliza una lista separada por comas."}]);
+            const entries = [...new Set(raw.split(",").map(value => value.trim().toUpperCase()))];
+            if (!entries.length || entries.length > 100 || entries.some(value => key === "categoryIds" ? !/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(Number(value)) : !/^[A-Z][A-Z0-9_]{0,19}$/.test(value))) throw new ValidationError("Selección múltiple inválida.", [{field:key,message:"Revisa las opciones seleccionadas."}]);
+            filters[key] = key === "categoryIds" ? entries.map(Number) : entries;
         }
 
         for (const key of ["from", "to"]) {

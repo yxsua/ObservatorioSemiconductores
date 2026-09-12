@@ -97,12 +97,14 @@ describe("señales públicas", () => {
     await screen.findByRole("heading", { name: signalFixture.title });
 
     fireEvent.change(screen.getByLabelText("Buscar"), { target: { value: "litografía" } });
-    fireEvent.change(screen.getByLabelText("Factor crítico de vigilancia"), { target: { value: "TEC" } });
+    fireEvent.click(screen.getByRole("button", { name: /Seleccionar factores/ }));
+    fireEvent.click(screen.getByLabelText("Tecnolog\u00eda"));
+    fireEvent.click(screen.getByText("Listo"));
     fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
 
     await waitFor(() => expect(router.state.location.search)
       .toContain("search=litograf%C3%ADa"));
-    expect(router.state.location.search).toContain("fcv=TEC");
+    expect(router.state.location.search).toContain("fcvCodes=TEC");
     expect(screen.queryByLabelText("Alcance")).not.toBeInTheDocument();
   });
 

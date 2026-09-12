@@ -53,6 +53,8 @@ export function parseSignalFilters(params: URLSearchParams): SignalListQuery {
   return {
     page: positiveInteger(params.get("page")) ?? 1,
     pageSize: DEFAULT_SIGNAL_PAGE_SIZE,
+    fcvCodes: params.get("fcvCodes") || undefined,
+    categoryIds: params.get("categoryIds") || undefined,
     search: boundedSearch(params.get("search")),
     categoryId: positiveInteger(params.get("categoryId")),
     fcv: code(params.get("fcv")),
@@ -74,14 +76,18 @@ export function signalFiltersFromForm(form: FormData) {
     const value = form.get(key);
     if (typeof value === "string" && value.trim()) params.set(key, value.trim());
   }
+  for (const key of ["fcvCodes", "categoryIds"]) {
+    const values = [...new Set(form.getAll(key).map(String).filter(Boolean))];
+    if (values.length) params.set(key, values.join(","));
+  }
   return params;
 }
 
 export function countActiveSignalFilters(filters: SignalListQuery) {
   return [
     filters.search,
-    filters.categoryId,
-    filters.fcv,
+    filters.categoryIds || filters.categoryId,
+    filters.fcvCodes || filters.fcv,
     filters.impact,
     filters.urgency,
     filters.reliability,

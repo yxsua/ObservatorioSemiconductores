@@ -58,16 +58,16 @@ class PublicContentRepository {
         };
 
         if (filters.type !== undefined) add(filters.type, "public_content.type_code =");
-        if (filters.categoryId !== undefined) {
-            values.push(filters.categoryId);
+        if (filters.categoryIds?.length || filters.categoryId !== undefined) {
+            values.push(filters.categoryIds?.length ? filters.categoryIds : filters.categoryId);
             conditions.push(`EXISTS (
                 SELECT 1 FROM content_version_category relation
                 WHERE relation.content_version_id = public_content.published_version_id
-                  AND relation.category_id = $${values.length}
+                  AND relation.category_id ${filters.categoryIds?.length ? `= ANY($${values.length}::bigint[])` : `= $${values.length}`}
             )`);
         }
-        if (filters.fcv !== undefined) {
-            values.push(filters.fcv);
+        if (filters.fcvCodes?.length || filters.fcv !== undefined) {
+            values.push(filters.fcvCodes?.length ? filters.fcvCodes : filters.fcv);
             conditions.push(`EXISTS (
                 SELECT 1
                 FROM content_version_category relation
@@ -75,7 +75,7 @@ class PublicContentRepository {
                     ON category.id_category = relation.category_id
                 INNER JOIN fcv ON fcv.id_fcv = category.id_fcv
                 WHERE relation.content_version_id = public_content.published_version_id
-                  AND fcv.code = $${values.length}
+                  AND fcv.code ${filters.fcvCodes?.length ? `= ANY($${values.length}::text[])` : `= $${values.length}`}
             )`);
         }
         if (filters.from !== undefined) add(filters.from, "public_content.published_at >=");

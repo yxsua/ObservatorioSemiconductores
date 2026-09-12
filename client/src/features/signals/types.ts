@@ -4,7 +4,7 @@ import type { CatalogOption } from "@/features/catalogs/catalogs.service";
 export type Signal = components["schemas"]["Signal"];
 export type SignalListQuery = NonNullable<
   operations["listPublicSignals"]["parameters"]["query"]
->;
+> & { fcvCodes?: string; categoryIds?: string };
 export type SignalSort = NonNullable<SignalListQuery["sort"]>;
 export type SignalLevel = "LOW" | "MEDIUM" | "HIGH";
 export type PaginatedSignalsResponse =
