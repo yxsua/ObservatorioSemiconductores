@@ -11,11 +11,10 @@ test("createTrendSchema normaliza catálogos y elimina relaciones duplicadas", (
     const result = createTrendSchema.parse({
         title: "Empaque avanzado",
         narrative: "Patrón sostenido de inversión.",
-        directionCode: "increasing",
-        maturityCode: "emerging",
+        assessment:{version:'2026-07-21',nature:'INCREMENTAL'},
         signalIds: [1, 1, 2]
     });
-    assert.equal(result.directionCode, "INCREASING");
+    assert.equal(result.assessment.nature, "INCREMENTAL");
     assert.deepEqual(result.signalIds, [1, 2]);
     assert.deepEqual(result.actorIds, []);
 });

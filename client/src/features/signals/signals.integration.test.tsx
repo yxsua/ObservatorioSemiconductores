@@ -97,12 +97,13 @@ describe("señales públicas", () => {
     await screen.findByRole("heading", { name: signalFixture.title });
 
     fireEvent.change(screen.getByLabelText("Buscar"), { target: { value: "litografía" } });
-    fireEvent.change(screen.getByLabelText("Alcance"), { target: { value: "REGIONAL" } });
+    fireEvent.change(screen.getByLabelText("Factor crítico de vigilancia"), { target: { value: "TEC" } });
     fireEvent.click(screen.getByRole("button", { name: "Aplicar filtros" }));
 
     await waitFor(() => expect(router.state.location.search)
       .toContain("search=litograf%C3%ADa"));
-    expect(router.state.location.search).toContain("scope=REGIONAL");
+    expect(router.state.location.search).toContain("fcv=TEC");
+    expect(screen.queryByLabelText("Alcance")).not.toBeInTheDocument();
   });
 
   it("distingue una colección vacía sin inventar contenido", async () => {

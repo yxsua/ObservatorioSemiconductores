@@ -36,8 +36,8 @@ class BlockResolverRepository {
                 signal.publication_date,
                 signal.ips,
                 CASE
-                    WHEN signal.ips <= 7 THEN 'LOW'
-                    WHEN signal.ips <= 17 THEN 'MEDIUM'
+                    WHEN signal.ips <= 9 THEN 'LOW'
+                    WHEN signal.ips <= 18 THEN 'MEDIUM'
                     ELSE 'HIGH'
                 END AS priority_code,
                 category.id_category,

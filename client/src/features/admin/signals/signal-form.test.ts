@@ -9,10 +9,7 @@ const values = {
   categoryId: "3",
   sourceId: "8",
   signalTypeCode: "TECH",
-  impactCode: "HIGH",
-  urgencyCode: "MEDIUM",
-  reliabilityCode: "HIGH",
-  scopeCode: "REGIONAL",
+  assessment:{version:"2026-07-21",impact:[2,2,2,2,2],urgency:[1,1,1,1,1],reliability:Array(19).fill("YES")},
   notes: "Seguimiento trimestral",
   keywordsText: "encapsulado, talento\npruebas"
 };
@@ -23,7 +20,7 @@ describe("formulario de señales", () => {
     expect(toSignalInput(parsed)).toEqual({
       title: values.title, summary: values.summary, publicationDate: values.publicationDate,
       evidenceUrl: values.evidenceUrl, categoryId: 3, sourceId: 8, signalTypeCode: "TECH",
-      impactCode: "HIGH", urgencyCode: "MEDIUM", reliabilityCode: "HIGH", scopeCode: "REGIONAL",
+      assessment:values.assessment,
       notes: values.notes, keywords: ["encapsulado", "talento", "pruebas"]
     });
     expect(toSignalInput(parsed)).not.toHaveProperty("ips");

@@ -1,6 +1,6 @@
 import type { components } from "@/api/schema";
 
-export type Signal = components["schemas"]["Signal"];
+export type Signal = components["schemas"]["Signal"] & {assessment?:import('@/features/assessment/assessment').SignalAssessment|null};
 
 export interface SignalFormOption {
   label: string;
@@ -11,9 +11,4 @@ export interface SignalFormOptions {
   categories: SignalFormOption[];
   sources: SignalFormOption[];
   signalTypes: SignalFormOption[];
-  impacts: SignalFormOption[];
-  urgencies: SignalFormOption[];
-  reliabilities: SignalFormOption[];
-  scopes: SignalFormOption[];
 }
-

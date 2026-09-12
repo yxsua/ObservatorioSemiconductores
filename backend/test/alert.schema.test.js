@@ -12,7 +12,7 @@ test("createAlertSchema normaliza códigos y relaciones", () => {
     const result = createAlertSchema.parse({
         title: "Riesgo de talento",
         executiveSummary: "La evidencia indica una posible escasez.",
-        levelCode: "orange",
+        assessment:{version:'2026-07-21',impact:[4,4,4,3],urgency:[3,3,3,3]},
         signalIds: [1, 1, 2],
         audienceCodes: ["industry", "INDUSTRY"]
     });

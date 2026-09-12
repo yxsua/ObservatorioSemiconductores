@@ -34,6 +34,7 @@ export interface AdminListFilters extends QueryParams {
 export interface AdminFact { label: string; value: string; }
 
 export interface AdminEntityView {
+  assessment?: {kind:'signal'|'alert';value:import('@/features/assessment/assessment').Assessment};
   id: number;
   businessCode: string;
   title: string;

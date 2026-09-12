@@ -19,10 +19,9 @@ export async function getPublicSignal(id: number, signal?: AbortSignal): Promise
 }
 
 export async function getSignalFilterCatalogs(signal?: AbortSignal): Promise<SignalFilterCatalogs> {
-  const [categories, fcv, scopes] = await Promise.all([
+  const [categories, fcv] = await Promise.all([
     getCatalogOptions("categories", signal),
-    getCatalogOptions("fcv", signal),
-    getCatalogOptions("scopes", signal)
+    getCatalogOptions("fcv", signal)
   ]);
-  return { categories, fcv, scopes };
+  return { categories, fcv };
 }

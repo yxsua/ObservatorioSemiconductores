@@ -15,5 +15,4 @@ export type SignalResponse =
 export interface SignalFilterCatalogs {
   categories: CatalogOption[];
   fcv: CatalogOption[];
-  scopes: CatalogOption[];
 }

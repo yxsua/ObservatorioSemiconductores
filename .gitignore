@@ -51,6 +51,8 @@ Desktop.ini
 
 # Testing & Coverage
 coverage/
+client/test-results/
+client/playwright-report/
 *.lcov
 .jest/
 .nyc_output/

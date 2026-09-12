@@ -408,6 +408,7 @@ class SignalService {
         };
 
         if (!publicOnly) {
+            signal.assessment = row.assessment ?? null;
             signal.analyst = {
                 id: Number(row.analyst_id),
                 name: row.analyst

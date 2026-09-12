@@ -4,7 +4,7 @@ import { alertFormSchema, alertReadiness, toAlertInput, type AlertFormValues } f
 const complete: AlertFormValues = {
   title: "Riesgo de suministro", executiveSummary: "Se requiere seguimiento.",
   implications: "Impacto regional", recommendations: "Diversificar proveedores",
-  responseDeadline: "2026-08-01", levelCode: "YELLOW",
+  responseDeadline: "2026-08-01", assessment: {version:"2026-07-21",impact:[3,3,3,3],urgency:[3,3,3,3]},
   activationRule: "Dos señales adicionales", notes: "Uso interno",
   signalIds: ["7"], trendIds: [], audienceCodes: ["GOVERNMENT"]
 };
@@ -13,7 +13,7 @@ describe("formulario de alertas", () => {
   it("convierte relaciones y textos vacíos al contrato de la API", () => {
     expect(toAlertInput({ ...complete, notes: "", responseDeadline: "" })).toMatchObject({
       signalIds: [7], trendIds: [], audienceCodes: ["GOVERNMENT"],
-      notes: null, responseDeadline: null, levelCode: "YELLOW"
+      notes: null, responseDeadline: null, assessment: {version:"2026-07-21",impact:[3,3,3,3],urgency:[3,3,3,3]}
     });
   });
 

@@ -12,14 +12,16 @@ import { createSignal, getSignalFormOptions, updateSignal } from "./signal-form.
 import { signalFormSchema, toSignalInput, type SignalFormValues } from "./signal-form.schema";
 import type { Signal, SignalFormOption, SignalFormOptions } from "./signal-form.types";
 import styles from "./SignalForm.module.css";
+import {AssessmentField} from '@/features/assessment/AssessmentField';
+import type {SignalAssessment} from '@/features/assessment/assessment';
 
 const EMPTY_VALUES: SignalFormValues = {
   title: "", summary: "", publicationDate: "", evidenceUrl: "", categoryId: "", sourceId: "",
-  signalTypeCode: "", impactCode: "", urgencyCode: "", reliabilityCode: "", scopeCode: "", notes: "", keywordsText: ""
+  signalTypeCode: "", assessment:null, notes: "", keywordsText: ""
 };
 
 const FIELD_HELP: Partial<Record<keyof SignalFormValues, string>> = {
-  signalTypeCode: "Clasifica la naturaleza del cambio observado; no sustituye al FCV ni a la categoría temática.", categoryId: "Selecciona la categoría más específica dentro de un Factor Crítico de Vigilancia.", sourceId: "Fuente activa donde se localizó la evidencia; debe permitir trazabilidad.", impactCode: "Valora magnitud, actores afectados, decisiones, alcance y permanencia. Popularidad no equivale a impacto.", urgencyCode: "Mide cuánto tiempo hay antes de perder valor de decisión; actualidad no equivale a urgencia alta.", reliabilityCode: "Considera trazabilidad, autoridad, calidad documental y corroboración.", scopeCode: "Ámbito geográfico o sectorial donde el cambio produce efectos observables."
+  signalTypeCode: "Clasifica la naturaleza del cambio observado; no sustituye al FCV ni a la categoría temática.", categoryId: "Selecciona la categoría más específica dentro de un Factor Crítico de Vigilancia.", sourceId: "Fuente activa donde se localizó la evidencia; debe permitir trazabilidad."
 };
 
 function valuesFromSignal(signal: Signal): SignalFormValues {
@@ -31,10 +33,7 @@ function valuesFromSignal(signal: Signal): SignalFormValues {
     categoryId: String(signal.category.id),
     sourceId: String(signal.source.id),
     signalTypeCode: signal.signalType.code,
-    impactCode: signal.impact.code,
-    urgencyCode: signal.urgency.code,
-    reliabilityCode: signal.reliability.code,
-    scopeCode: signal.scope.code,
+    assessment: signal.assessment ?? null,
     notes: signal.notes ?? "",
     keywordsText: signal.keywords.map((keyword) => keyword.name).join(", ")
   };
@@ -49,7 +48,7 @@ function SignalForm({ initial, mode, onReload, options, signal }: { initial: Sig
   const auth = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { formState: { errors }, handleSubmit, register, setError } = useForm<SignalFormValues>({ defaultValues: initial });
+  const { formState: { errors }, handleSubmit, register, setError, setValue, watch, clearErrors } = useForm<SignalFormValues>({ defaultValues: initial });
   const mutation = useMutation({ mutationFn: async (values: SignalFormValues) => {
     const input = toSignalInput(values);
     return mode === "create" ? createSignal(input, auth.token!) : updateSignal(signal!.id, { ...input, updatedAt: signal!.updatedAt }, auth.token!);
@@ -83,12 +82,7 @@ function SignalForm({ initial, mode, onReload, options, signal }: { initial: Sig
       <SelectField error={errors.categoryId?.message} label="Categoría y FCV" name="categoryId" options={options.categories} register={register} />
       <SelectField error={errors.sourceId?.message} label="Fuente" name="sourceId" options={options.sources} register={register} />
     </div></section>
-    <section className={styles.section} aria-labelledby="signal-assessment"><h2 id="signal-assessment">Valoración</h2><p>El backend calcula IPS y prioridad al guardar; el frontend no anticipa ni modifica ese resultado.</p><div className={styles.grid}>
-      <SelectField error={errors.impactCode?.message} label="Impacto" name="impactCode" options={options.impacts} register={register} />
-      <SelectField error={errors.urgencyCode?.message} label="Urgencia" name="urgencyCode" options={options.urgencies} register={register} />
-      <SelectField error={errors.reliabilityCode?.message} label="Confiabilidad" name="reliabilityCode" options={options.reliabilities} register={register} />
-      <SelectField error={errors.scopeCode?.message} label="Alcance" name="scopeCode" options={options.scopes} register={register} />
-    </div></section>
+    <AssessmentField kind="signal" value={watch('assessment')} error={errors.assessment?.message} onChange={value=>{setValue('assessment',value as SignalAssessment,{shouldDirty:true});clearErrors('assessment');}} />
     <section className={styles.section} aria-labelledby="signal-context"><h2 id="signal-context">Contexto interno</h2><div className={styles.grid}>
       <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Términos específicos que facilitan búsqueda y agrupación; evita repetir palabras genéricas del título." htmlFor="signal-keywords">Palabras clave</FieldLabel><small>Separa hasta 20 términos con comas o saltos de línea.</small><textarea aria-invalid={Boolean(errors.keywordsText)} id="signal-keywords" rows={3} {...register("keywordsText")} />{errors.keywordsText && <small className={styles.error}>{errors.keywordsText.message}</small>}</div>
       <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Registra dudas, contradicciones, evidencia pendiente o decisiones metodológicas. No se publica." htmlFor="signal-notes">Notas internas</FieldLabel><textarea aria-invalid={Boolean(errors.notes)} id="signal-notes" maxLength={5000} rows={4} {...register("notes")} />{errors.notes && <small className={styles.error}>{errors.notes.message}</small>}</div>

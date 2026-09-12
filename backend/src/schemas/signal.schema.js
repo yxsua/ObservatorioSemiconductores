@@ -1,4 +1,5 @@
 const { z } = require("zod");
+const { signalAssessmentSchema, evaluateSignal } = require('../domain/assessment');
 
 function isValidCalendarDate(value) {
     const [year, month, day] = value.split("-").map(Number);
@@ -38,17 +39,20 @@ const signalFields = {
     categoryId: z.number().int().positive(),
     sourceId: z.number().int().positive(),
     signalTypeCode: catalogCodeSchema,
-    impactCode: catalogCodeSchema,
-    urgencyCode: catalogCodeSchema,
-    reliabilityCode: catalogCodeSchema,
-    scopeCode: catalogCodeSchema,
+    assessment: signalAssessmentSchema,
     notes: z.string().trim().max(5000).nullable().optional(),
     keywords: z.array(keywordSchema).max(20).optional().default([])
 };
 
 const createSignalSchema = z
     .object(signalFields)
-    .strict("Se enviaron campos que no están permitidos.");
+    .strict("Se enviaron campos que no están permitidos.")
+    .transform(value => ({...value, ...levels(value.assessment), scopeCode:'IN_IMPACT'}));
+
+function levels(assessment) {
+    const {impactCode,urgencyCode,reliabilityCode}=evaluateSignal(assessment);
+    return {impactCode,urgencyCode,reliabilityCode};
+}
 
 const updateSignalSchema = z
     .object({
@@ -59,10 +63,7 @@ const updateSignalSchema = z
         categoryId: signalFields.categoryId.optional(),
         sourceId: signalFields.sourceId.optional(),
         signalTypeCode: signalFields.signalTypeCode.optional(),
-        impactCode: signalFields.impactCode.optional(),
-        urgencyCode: signalFields.urgencyCode.optional(),
-        reliabilityCode: signalFields.reliabilityCode.optional(),
-        scopeCode: signalFields.scopeCode.optional(),
+        assessment: signalAssessmentSchema.optional(),
         notes: signalFields.notes,
         keywords: z.array(keywordSchema).max(20).optional(),
         updatedAt: z.string().datetime({ offset: true }).optional()
@@ -71,7 +72,7 @@ const updateSignalSchema = z
     .refine(
         (value) => Object.keys(value).some((key) => key !== "updatedAt"),
         "Debe enviarse al menos un campo para actualizar."
-    );
+    ).transform(value => value.assessment ? {...value,...levels(value.assessment),scopeCode:'IN_IMPACT'} : value);
 
 const transitionSignalSchema = z
     .object({

@@ -17,9 +17,10 @@ const SELECT_FIELDS = `
     s.capture_date,
     s.evidence_url,
     s.ips,
+    s.assessment,
     CASE
-        WHEN s.ips <= 7 THEN 'LOW'
-        WHEN s.ips <= 17 THEN 'MEDIUM'
+        WHEN s.ips <= 9 THEN 'LOW'
+        WHEN s.ips <= 18 THEN 'MEDIUM'
         ELSE 'HIGH'
     END AS priority_code,
     c.id_category,
@@ -219,6 +220,7 @@ class SignalRepository {
             );
 
             const signalId = rows[0].id_signal;
+            await client.query('UPDATE signals SET assessment=$2::jsonb WHERE id_signal=$1',[signalId,JSON.stringify(input.assessment)]);
             await this.replaceKeywords(client, signalId, input.keywords);
             await client.query("COMMIT");
 
@@ -273,12 +275,13 @@ class SignalRepository {
                 summary: "summary",
                 publicationDate: "publication_date",
                 evidenceUrl: "evidence_url",
-                notes: "notes"
+                notes: "notes",
+                assessment: "assessment"
             };
 
             for (const [field, column] of Object.entries(directColumns)) {
                 if (Object.hasOwn(input, field)) {
-                    values.push(input[field]);
+                    values.push(field === 'assessment' ? JSON.stringify(input[field]) : input[field]);
                     setters.push(`${column} = $${values.length}`);
                 }
             }

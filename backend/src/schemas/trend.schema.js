@@ -1,4 +1,5 @@
 const { z } = require("zod");
+const {trendAssessmentSchema}=require('../domain/assessment');
 
 const codeSchema = z
     .string()
@@ -17,8 +18,7 @@ const createTrendSchema = z
         title: z.string().trim().min(1).max(200),
         narrative: z.string().trim().min(1).max(10000),
         implications: z.string().trim().max(10000).nullable().optional(),
-        directionCode: codeSchema.nullable().optional(),
-        maturityCode: codeSchema.nullable().optional(),
+        assessment: trendAssessmentSchema,
         methodologyNotes: z.string().trim().max(5000).nullable().optional(),
         signalIds: idArraySchema.optional().default([]),
         actorIds: idArraySchema.optional().default([])
@@ -30,8 +30,7 @@ const updateTrendSchema = z
         title: z.string().trim().min(1).max(200).optional(),
         narrative: z.string().trim().min(1).max(10000).optional(),
         implications: z.string().trim().max(10000).nullable().optional(),
-        directionCode: codeSchema.nullable().optional(),
-        maturityCode: codeSchema.nullable().optional(),
+        assessment: trendAssessmentSchema.optional(),
         methodologyNotes: z.string().trim().max(5000).nullable().optional(),
         updatedAt: z.string().datetime({ offset: true }).optional()
     })

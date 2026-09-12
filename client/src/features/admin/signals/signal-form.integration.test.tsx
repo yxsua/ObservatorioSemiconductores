@@ -2,6 +2,7 @@ import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { storeToken } from "@/features/auth/session-storage";
 import { renderApp } from "@/test/render-app";
+import methodology from '../../../../../backend/src/domain/assessment-methodology.json';
 
 const user = { id: 7, firstName: "Ana", lastName: "Analista", email: "ana@example.test", active: true, roles: ["ANALYST"], permissions: ["signals:read-internal", "signals:create", "signals:update-own"] };
 
@@ -14,6 +15,7 @@ function signal(overrides: Record<string, unknown> = {}) {
     impact: { code: "HIGH", name: "Alto" }, urgency: { code: "MEDIUM", name: "Media" }, reliability: { code: "HIGH", name: "Alta" },
     scope: { code: "REGIONAL", name: "Regional" }, status: { code: "NEW", name: "Nueva" }, keywords: [{ id: 1, name: "encapsulado" }],
     relations: { linkedToTrend: false, linkedToAlert: false }, analyst: { id: 7, name: "Ana Analista" }, validator: null, validationDate: null,
+    assessment:{version:'2026-07-21',impact:[2,2,2,2,2],urgency:[1,1,1,1,1],reliability:Array(19).fill('YES')},
     notes: "Nota inicial", createdAt: "2026-07-11T10:00:00Z", updatedAt: "2026-07-13T10:00:00Z", ...overrides
   };
 }
@@ -27,6 +29,7 @@ const catalogItems: Record<string, Record<string, unknown>[]> = {
 };
 
 function optionResponse(url: string) {
+  if(url.endsWith('/assessment-methodology'))return json({success:true,data:methodology});
   const name = url.replace("/api/catalogs/", "");
   return json({ success: true, message: "Catálogo", data: { name, items: catalogItems[name] ?? [] } });
 }
@@ -71,10 +74,11 @@ describe("captura administrativa de señales", () => {
     fireEvent.change(screen.getByLabelText("URL de evidencia"), { target: { value: "https://example.test/nueva" } });
     fireEvent.change(screen.getByLabelText("Categoría y FCV"), { target: { value: "3" } });
     fireEvent.change(screen.getByLabelText("Fuente"), { target: { value: "8" } });
-    fireEvent.change(screen.getByLabelText("Impacto"), { target: { value: "HIGH" } });
-    fireEvent.change(screen.getByLabelText("Urgencia"), { target: { value: "MEDIUM" } });
-    fireEvent.change(screen.getByLabelText("Confiabilidad"), { target: { value: "HIGH" } });
-    fireEvent.change(screen.getByLabelText("Alcance"), { target: { value: "REGIONAL" } });
+    await waitFor(()=>expect(screen.getByRole('button',{name:'Capturar valoración'})).toBeEnabled());
+    fireEvent.click(screen.getByRole('button',{name:'Capturar valoración'}));
+    const dialog=screen.getByRole('dialog');
+    dialog.querySelectorAll('select').forEach(select=>fireEvent.change(select,{target:{value:select.id.startsWith('reliability')?'YES':'2'}}));
+    fireEvent.click(screen.getByRole('button',{name:'Aplicar valoración'}));
     fireEvent.change(screen.getByLabelText("Palabras clave"), { target: { value: "encapsulado, talento" } });
     fireEvent.click(screen.getByRole("button", { name: "Crear señal" }));
     await waitFor(() => expect(router.state.location.pathname).toBe("/admin/senales/9"));
@@ -82,6 +86,8 @@ describe("captura administrativa de señales", () => {
     expect(body).not.toHaveProperty("ips");
     expect(body).not.toHaveProperty("priority");
     expect(body).not.toHaveProperty("status");
+    expect(body).toHaveProperty('assessment.impact',[2,2,2,2,2]);
+    expect(body).not.toHaveProperty('scopeCode');
   });
 
   it("conserva el formulario ante 409 y permite recargar la versión vigente", async () => {

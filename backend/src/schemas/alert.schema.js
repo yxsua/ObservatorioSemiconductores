@@ -1,4 +1,5 @@
 const { z } = require("zod");
+const { alertAssessmentSchema, evaluateAlert } = require('../domain/assessment');
 
 function isValidCalendarDate(value) {
     const [year, month, day] = value.split("-").map(Number);
@@ -25,13 +26,13 @@ const createAlertSchema = z.object({
     implications: nullableText(10000),
     recommendations: nullableText(10000),
     responseDeadline: dateSchema.nullable().optional(),
-    levelCode: codeSchema.nullable().optional(),
+    assessment: alertAssessmentSchema,
     activationRule: nullableText(5000),
     notes: nullableText(5000),
     signalIds: idArray.optional().default([]),
     trendIds: idArray.optional().default([]),
     audienceCodes: codeArray.optional().default([])
-}).strict("Se enviaron campos que no están permitidos.");
+}).strict("Se enviaron campos que no están permitidos.").transform(value => ({...value,levelCode:evaluateAlert(value.assessment).levelCode}));
 
 const updateAlertSchema = z.object({
     title: z.string().trim().min(1).max(150).optional(),
@@ -39,14 +40,14 @@ const updateAlertSchema = z.object({
     implications: nullableText(10000),
     recommendations: nullableText(10000),
     responseDeadline: dateSchema.nullable().optional(),
-    levelCode: codeSchema.nullable().optional(),
+    assessment: alertAssessmentSchema.optional(),
     activationRule: nullableText(5000),
     notes: nullableText(5000),
     updatedAt: z.string().datetime({ offset: true }).optional()
 }).strict("Se enviaron campos que no están permitidos.").refine(
     (value) => Object.keys(value).some((key) => key !== "updatedAt"),
     "Debe enviarse al menos un campo para actualizar."
-);
+).transform(value => value.assessment ? {...value,levelCode:evaluateAlert(value.assessment).levelCode} : value);
 
 const alertIdRelationsSchema = z.object({
     ids: z.array(z.number().int().positive()).min(1).max(100)

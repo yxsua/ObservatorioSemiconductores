@@ -346,6 +346,7 @@ class AlertService {
             updatedAt: row.updated_at
         };
         if (!publicOnly) {
+            alert.assessment = row.assessment ?? null;
             alert.notes = row.notes;
             alert.creator = row.creator_id === null
                 ? null

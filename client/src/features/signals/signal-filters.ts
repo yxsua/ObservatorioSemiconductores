@@ -59,7 +59,6 @@ export function parseSignalFilters(params: URLSearchParams): SignalListQuery {
     impact: level(params.get("impact")),
     urgency: level(params.get("urgency")),
     reliability: level(params.get("reliability")),
-    scope: code(params.get("scope")),
     from: date(params.get("from")),
     to: date(params.get("to")),
     sort: sort && validSorts.has(sort) ? sort as SignalSort : "-publicationDate"
@@ -70,7 +69,7 @@ export function signalFiltersFromForm(form: FormData) {
   const params = new URLSearchParams();
   for (const key of [
     "search", "categoryId", "fcv", "impact", "urgency",
-    "reliability", "scope", "from", "to", "sort"
+    "reliability", "from", "to", "sort"
   ]) {
     const value = form.get(key);
     if (typeof value === "string" && value.trim()) params.set(key, value.trim());
@@ -86,7 +85,6 @@ export function countActiveSignalFilters(filters: SignalListQuery) {
     filters.impact,
     filters.urgency,
     filters.reliability,
-    filters.scope,
     filters.from,
     filters.to
   ].filter(Boolean).length;

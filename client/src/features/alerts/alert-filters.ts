@@ -4,7 +4,7 @@ export const ALERT_SORT_OPTIONS: ReadonlyArray<{ value: AlertSort; label: string
   { value: "-updatedAt", label: "Actualización más reciente" }, { value: "-generationDate", label: "Generación más reciente" }, { value: "responseDeadline", label: "Respuesta más próxima" }, { value: "-level", label: "Mayor nivel" }, { value: "title", label: "Título A–Z" }
 ];
 export const ALERT_STATUS_OPTIONS: ReadonlyArray<{ value: AlertStatus; label: string }> = [{ value: "PUBLISHED", label: "Publicada" }, { value: "CLOSED", label: "Cerrada" }];
-const sorts = new Set<string>(ALERT_SORT_OPTIONS.map(({ value }) => value)); const levels = new Set(["YELLOW", "ORANGE", "RED"]); const statuses = new Set(["PUBLISHED", "CLOSED"]);
+const sorts = new Set<string>(ALERT_SORT_OPTIONS.map(({ value }) => value)); const levels = new Set(["GREEN", "YELLOW", "ORANGE", "RED"]); const statuses = new Set(["PUBLISHED", "CLOSED"]);
 const positive = (value: string | null) => { const n = Number(value); return value && Number.isSafeInteger(n) && n > 0 ? n : undefined; };
 const search = (value: string | null) => { const v = value?.trim(); return v && v.length >= 2 && v.length <= 200 ? v : undefined; };
 const code = (value: string | null) => value?.trim().toUpperCase();

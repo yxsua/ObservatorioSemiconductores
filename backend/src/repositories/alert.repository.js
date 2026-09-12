@@ -20,6 +20,7 @@ const SELECT_FIELDS = `
     a.publication_date,
     a.activation_rule,
     a.notes,
+    a.assessment,
     al.code AS level_code,
     al.name AS level,
     al.color AS level_color,
@@ -213,6 +214,7 @@ class AlertRepository {
                 ]
             );
             const id = rows[0].id_alert;
+            await client.query('UPDATE alerts SET assessment=$2::jsonb WHERE id_alert=$1',[id,JSON.stringify(input.assessment)]);
             await this.linkAll(client, id, input.signalIds, "signal");
             await this.linkAll(client, id, input.trendIds, "trend");
             await this.linkAll(client, id, input.audienceCodes, "audience");
@@ -236,11 +238,12 @@ class AlertRepository {
             recommendations: "recommendations",
             responseDeadline: "response_deadline",
             activationRule: "activation_rule",
-            notes: "notes"
+            notes: "notes",
+            assessment: "assessment"
         };
         for (const [field, column] of Object.entries(direct)) {
             if (Object.hasOwn(input, field)) {
-                values.push(input[field]);
+                values.push(field === 'assessment' ? JSON.stringify(input[field]) : input[field]);
                 setters.push(`${column} = $${values.length}`);
             }
         }

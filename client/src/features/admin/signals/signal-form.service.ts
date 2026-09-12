@@ -16,7 +16,7 @@ interface SourceResponse {
   data: Array<{ id: number; name: string; type: { code: string; name: string } }>;
 }
 
-type UpdateSignalInput = components["schemas"]["UpdateSignalInput"];
+type UpdateSignalInput = Omit<components["schemas"]["UpdateSignalInput"],'impactCode'|'urgencyCode'|'reliabilityCode'|'scopeCode'> & {assessment?:SignalInput['assessment']};
 
 const text = (item: Record<string, unknown>, key: string) => typeof item[key] === "string" ? item[key] : null;
 const number = (item: Record<string, unknown>, key: string) => typeof item[key] === "number" ? item[key] : null;
@@ -43,22 +43,14 @@ async function catalog(name: string, signal?: AbortSignal) {
 }
 
 export async function getSignalFormOptions(token: string, signal?: AbortSignal): Promise<SignalFormOptions> {
-  const [categories, signalTypes, impacts, urgencies, reliabilities, scopes, sources] = await Promise.all([
+  const [categories, signalTypes, sources] = await Promise.all([
     catalog("categories", signal),
     catalog("signal-types", signal),
-    catalog("impacts", signal),
-    catalog("urgencies", signal),
-    catalog("reliability-levels", signal),
-    catalog("scopes", signal),
     apiRequest<SourceResponse>("/admin/sources", { signal, token })
   ]);
   return {
     categories: categoryOptions(categories.data.items),
     signalTypes: codeOptions(signalTypes.data.items),
-    impacts: codeOptions(impacts.data.items),
-    urgencies: codeOptions(urgencies.data.items),
-    reliabilities: codeOptions(reliabilities.data.items),
-    scopes: codeOptions(scopes.data.items),
     sources: sources.data.map((source) => ({ value: String(source.id), label: `${source.name} · ${source.type.name}` }))
   };
 }
@@ -70,4 +62,3 @@ export function createSignal(input: SignalInput, token: string) {
 export function updateSignal(id: number, input: UpdateSignalInput, token: string) {
   return apiRequest<AdminDetailResponse>(`/admin/signals/${id}`, { method: "PATCH", body: input, token });
 }
-

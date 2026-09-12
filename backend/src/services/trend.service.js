@@ -341,13 +341,15 @@ class TrendService {
     maturitySuggestion(row) {
         const signals = Number(row.signal_count);
         const sources = Number(row.source_count);
-        const actors = Number(row.actor_count);
+        const dates=(row.signals ?? []).filter(s=>s.statusCode==='VALIDATED').map(s=>String(s.publicationDate).slice(0,10)).sort();
+        const first=new Date(dates[0] ?? row.first_signal_date), last=new Date(dates.at(-1) ?? row.last_signal_date);
+        const months=Number.isNaN(first.getTime())||Number.isNaN(last.getTime())?0:(last.getUTCFullYear()-first.getUTCFullYear())*12+last.getUTCMonth()-first.getUTCMonth()-(last.getUTCDate()<first.getUTCDate()?1:0);
         let code = null;
-        if (signals >= 8 && (actors >= 3 || sources >= 4)) {
+        if (signals >= 8 && months >= 24 && sources >= 5) {
             code = "ESTABLISHED";
-        } else if (signals >= 5 && (actors >= 2 || sources >= 3)) {
+        } else if (signals >= 5 && months >= 12 && sources >= 3) {
             code = "CONSOLIDATING";
-        } else if (signals >= 3 && sources >= 2) {
+        } else if (signals >= 3 && months >= 6 && sources >= 2) {
             code = "EMERGING";
         }
         return {
@@ -355,7 +357,8 @@ class TrendService {
             requirements: {
                 minimumSignals: signals >= 3,
                 sourceDiversity: sources >= 2,
-                actorOrSourceDiversity: actors >= 2 || sources >= 2
+                actorOrSourceDiversity: sources >= 2,
+                minimumAge: months >= 6
             }
         };
     }
@@ -380,7 +383,8 @@ class TrendService {
                 signal_count: signals.length,
                 source_count: publicSources.size,
                 actor_count: actors.length,
-                fcv_count: publicFcv.size
+                fcv_count: publicFcv.size,
+                signals
             }
             : row;
         const publicDates = signals
@@ -419,6 +423,7 @@ class TrendService {
             updatedAt: row.updated_at
         };
         if (!publicOnly) {
+            trend.assessment = row.assessment ?? null;
             trend.methodologyNotes = row.methodology_notes;
             trend.analyst = row.analyst_id === null
                 ? null

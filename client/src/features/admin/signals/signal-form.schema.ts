@@ -1,7 +1,8 @@
 import { z } from "zod";
 import type { components } from "@/api/schema";
+import {signalAssessmentSchema,type SignalAssessment} from '@/features/assessment/assessment';
 
-export type SignalInput = components["schemas"]["CreateSignalInput"];
+export type SignalInput = Omit<components["schemas"]["CreateSignalInput"],'impactCode'|'urgencyCode'|'reliabilityCode'|'scopeCode'> & {assessment:SignalAssessment};
 
 function keywords(value: string) {
   return value.split(/[\n,]/).map((keyword) => keyword.trim()).filter(Boolean);
@@ -19,10 +20,7 @@ export const signalFormSchema = z.object({
   categoryId: z.string().min(1, "Selecciona una categoría."),
   sourceId: z.string().min(1, "Selecciona una fuente."),
   signalTypeCode: z.string().min(1, "Selecciona un tipo de señal."),
-  impactCode: z.string().min(1, "Selecciona el impacto."),
-  urgencyCode: z.string().min(1, "Selecciona la urgencia."),
-  reliabilityCode: z.string().min(1, "Selecciona la confiabilidad."),
-  scopeCode: z.string().min(1, "Selecciona el alcance."),
+  assessment: signalAssessmentSchema.nullable().refine((v):boolean=>v!==null,'Completa la valoración por criterios.'),
   notes: z.string().trim().max(5000, "Las notas no pueden superar 5000 caracteres."),
   keywordsText: z.string().refine((value) => keywords(value).length <= 20, "Puedes registrar hasta 20 palabras clave.").refine((value) => keywords(value).every((keyword) => keyword.length <= 80), "Cada palabra clave puede tener hasta 80 caracteres.")
 });
@@ -38,12 +36,8 @@ export function toSignalInput(values: SignalFormValues): SignalInput {
     categoryId: Number(values.categoryId),
     sourceId: Number(values.sourceId),
     signalTypeCode: values.signalTypeCode,
-    impactCode: values.impactCode as SignalInput["impactCode"],
-    urgencyCode: values.urgencyCode as SignalInput["urgencyCode"],
-    reliabilityCode: values.reliabilityCode as SignalInput["reliabilityCode"],
-    scopeCode: values.scopeCode,
+    assessment: signalAssessmentSchema.parse(values.assessment),
     notes: values.notes || null,
     keywords: keywords(values.keywordsText)
   };
 }
-

@@ -3,8 +3,8 @@ import type { components } from "@/api/schema";
 import type { AdminDetailResponse } from "../types";
 import type { AlertFormOptions, Option } from "./alert-form.types";
 
-type CreateInput = components["schemas"]["CreateAlertInput"];
-type UpdateInput = components["schemas"]["UpdateAlertInput"];
+type CreateInput = Omit<components["schemas"]["CreateAlertInput"],"levelCode"> & {assessment:import("@/features/assessment/assessment").AlertAssessment};
+type UpdateInput = Omit<components["schemas"]["UpdateAlertInput"],"levelCode"> & {assessment?:import("@/features/assessment/assessment").AlertAssessment};
 interface CatalogResponse { success: true; data: { items: Array<{ code: string; name: string }> } }
 interface EntityListResponse { success: true; data: { items: Array<{ id: number; businessCode: string; title: string }> } }
 

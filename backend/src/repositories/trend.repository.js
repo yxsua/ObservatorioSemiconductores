@@ -14,6 +14,7 @@ const SELECT_FIELDS = `
     t.narrative,
     t.implications,
     t.methodology_notes,
+    t.assessment,
     t.first_signal_date,
     td.code AS direction_code,
     td.name AS direction,
@@ -57,6 +58,7 @@ const SELECT_FIELDS = `
             'businessCode', s.business_code,
             'title', s.title,
             'publicationDate', s.publication_date,
+            'captureDate', s.capture_date,
             'statusCode', ss.code,
             'status', ss.name,
             'ips', s.ips,
@@ -213,6 +215,7 @@ class TrendRepository {
                 ]
             );
             const id = rows[0].id_trend;
+            await client.query('UPDATE trends SET assessment=$2::jsonb WHERE id_trend=$1',[id,JSON.stringify(input.assessment)]);
             for (const signalId of input.signalIds) {
                 await client.query(
                     "SELECT sp_link_signal_to_trend($1, $2);",
@@ -225,6 +228,7 @@ class TrendRepository {
                     [actorId, id]
                 );
             }
+            await client.query('SELECT refresh_trend_assessment($1)',[id]);
             await client.query("COMMIT");
             return id;
         } catch (error) {
@@ -242,12 +246,13 @@ class TrendRepository {
             title: "title",
             narrative: "narrative",
             implications: "implications",
-            methodologyNotes: "methodology_notes"
+            methodologyNotes: "methodology_notes",
+            assessment: "assessment"
         };
 
         for (const [field, column] of Object.entries(direct)) {
             if (Object.hasOwn(input, field)) {
-                values.push(input[field]);
+                values.push(field === 'assessment' ? JSON.stringify(input[field]) : input[field]);
                 setters.push(`${column} = $${values.length}`);
             }
         }

@@ -15,10 +15,7 @@ const validSignal = {
     categoryId: 1,
     sourceId: 1,
     signalTypeCode: "strong",
-    impactCode: "high",
-    urgencyCode: "medium",
-    reliabilityCode: "high",
-    scopeCode: "national"
+    assessment:{version:'2026-07-21',impact:[2,2,2,2,2],urgency:[1,1,1,1,1],reliability:Array(19).fill('YES')}
 };
 
 test("createSignalSchema normaliza códigos de catálogo", () => {

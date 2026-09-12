@@ -6,6 +6,7 @@ export interface CatalogOption {
   code?: string;
   name: string;
   color?: string;
+  fcvCode?: string;
 }
 
 type CatalogName = paths["/catalogs/{catalog}"]["get"]["parameters"]["path"]["catalog"];
@@ -21,7 +22,8 @@ export async function getCatalogOptions(catalog: CatalogName, signal?: AbortSign
       id: typeof rawId === "number" ? rawId : undefined,
       code: typeof item.code === "string" ? item.code : undefined,
       name,
-      color: typeof item.color === "string" ? item.color : undefined
+      color: typeof item.color === "string" ? item.color : undefined,
+      fcvCode: typeof item.fcvCode === "string" ? item.fcvCode : undefined
     }];
   });
 }

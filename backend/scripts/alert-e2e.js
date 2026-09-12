@@ -70,6 +70,7 @@ async function transition(resource, id, transitionCode, token, expected = 200) {
 
 async function createValidatedSignals(analyst, validator, sourceIds) {
     const ids = [];
+    const categoryId=Number((await pool.query("SELECT id_category FROM categories WHERE active ORDER BY id_category LIMIT 1")).rows[0].id_category);
 
     for (let index = 1; index <= 3; index += 1) {
         const result = await request("/api/admin/signals", {
@@ -79,15 +80,12 @@ async function createValidatedSignals(analyst, validator, sourceIds) {
             body: {
                 title: `Señal E2E ${index}`,
                 summary: "Evidencia técnica independiente para validar el flujo integral.",
-                publicationDate: "2026-07-01",
+                publicationDate: ["2026-01-01","2026-04-01","2026-07-01"][index-1],
                 evidenceUrl: `https://example.com/evidence-${index}`,
-                categoryId: 1,
+                categoryId,
                 sourceId: sourceIds[index === 2 ? 1 : 0],
                 signalTypeCode: "STRONG",
-                impactCode: "HIGH",
-                urgencyCode: "HIGH",
-                reliabilityCode: "HIGH",
-                scopeCode: "GLOBAL",
+                assessment:{version:"2026-07-21",impact:[2,2,2,2,2],urgency:[2,2,2,2,2],reliability:Array(19).fill("YES")},
                 keywords: ["semiconductores", "e2e"]
             }
         });
@@ -109,8 +107,7 @@ async function createActiveTrend(signalIds, analyst, validator) {
             title: "Tendencia E2E",
             narrative: "Convergencia verificable de señales procedentes de fuentes independientes.",
             implications: "Cambio estructural relevante para el ecosistema.",
-            directionCode: "INCREASING",
-            maturityCode: "EMERGING",
+            assessment:{version:"2026-07-21",nature:"INCREMENTAL"},
             signalIds
         }
     });
@@ -138,7 +135,7 @@ async function main() {
             executiveSummary: "Caso que debe fallar al enviar a revisión.",
             implications: "Impacto.",
             recommendations: "Atender.",
-            levelCode: "YELLOW",
+            assessment:{version:"2026-07-21",impact:[3,3,3,3],urgency:[3,3,3,3]},
             activationRule: "Regla de prueba."
         }
     });
@@ -160,7 +157,7 @@ async function main() {
             implications: "Podría afectar capacidad y plazos de entrega.",
             recommendations: "Diversificar proveedores y monitorear inventarios.",
             responseDeadline: "2026-12-31",
-            levelCode: "ORANGE",
+            assessment:{version:"2026-07-21",impact:[4,4,4,3],urgency:[3,3,3,3]},
             activationRule: "Activar si dos fuentes independientes confirman la disrupción.",
             notes: "Nota interna no pública.",
             signalIds: [signalIds[0]],

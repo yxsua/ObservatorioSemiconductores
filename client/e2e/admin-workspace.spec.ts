@@ -1,3 +1,4 @@
+import {readFileSync} from "node:fs";
 import { expect, test } from "@playwright/test";
 
 const analyst = {
@@ -98,6 +99,7 @@ test("una cuenta sin permisos internos no puede abrir la vigilancia administrati
 test("una analista crea una señal y consulta el IPS calculado por el backend", async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem("observatorio.session.token", "jwt-analyst"));
   let requestBody: Record<string, unknown> | undefined;
+  const methodology=JSON.parse(readFileSync(new URL("../../backend/src/domain/assessment-methodology.json",import.meta.url),"utf8"));
   const catalogItems: Record<string, Record<string, unknown>[]> = {
     categories: [{ idCategory: 3, name: "Empaque", fcv: "Backend" }],
     "signal-types": [{ code: "TECH", name: "Tecnológica" }], impacts: [{ code: "HIGH", name: "Alto" }],
@@ -107,7 +109,7 @@ test("una analista crea una señal y consulta el IPS calculado por el backend", 
   await page.route("**/api/auth/me", (route) => route.fulfill({ json: { success: true, message: "Perfil", data: analyst } }));
   await page.route("**/api/catalogs/*", (route) => {
     const name = new URL(route.request().url()).pathname.split("/").at(-1)!;
-    return route.fulfill({ json: { success: true, message: "Catálogo", data: { name, items: catalogItems[name] ?? [] } } });
+    return route.fulfill({ json: { success: true, message: "Catálogo", data: name==="assessment-methodology"?methodology:{ name, items: catalogItems[name] ?? [] } } });
   });
   await page.route("**/api/admin/sources", (route) => route.fulfill({ json: { success: true, message: "Fuentes", data: [{ id: 8, name: "Fuente pública", type: { code: "NEWS", name: "Noticias" } }] } }));
   await page.route("**/api/admin/signals**", async (route) => {
@@ -125,10 +127,9 @@ test("una analista crea una señal y consulta el IPS calculado por el backend", 
   await page.getByLabel("URL de evidencia", { exact: true }).fill("https://example.test/nueva");
   await page.getByLabel("Categoría y FCV", { exact: true }).selectOption("3");
   await page.getByLabel("Fuente", { exact: true }).selectOption("8");
-  await page.getByLabel("Impacto", { exact: true }).selectOption("HIGH");
-  await page.getByLabel("Urgencia", { exact: true }).selectOption("MEDIUM");
-  await page.getByLabel("Confiabilidad", { exact: true }).selectOption("HIGH");
-  await page.getByLabel("Alcance", { exact: true }).selectOption("REGIONAL");
+  await page.getByRole("button",{name:"Capturar valoración"}).click();
+  for(const select of await page.getByRole("dialog").locator("select").all())await select.selectOption((await select.getAttribute("id"))!.startsWith("reliability")?"YES":"2");
+  await page.getByRole("button",{name:"Aplicar valoración"}).click();
   await page.getByLabel("Palabras clave", { exact: true }).fill("encapsulado, talento");
   await page.getByRole("button", { name: "Crear señal" }).click();
   await expect(page).toHaveURL(/\/admin\/senales\/9$/);
