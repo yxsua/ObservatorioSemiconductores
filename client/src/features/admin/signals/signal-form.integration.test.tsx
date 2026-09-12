@@ -2,7 +2,7 @@ import { cleanup, fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { storeToken } from "@/features/auth/session-storage";
 import { renderApp } from "@/test/render-app";
-import methodology from '../../../../../backend/src/domain/assessment-methodology.json';
+import methodology from '../../../shared/assessment-methodology.json';
 
 const user = { id: 7, firstName: "Ana", lastName: "Analista", email: "ana@example.test", active: true, roles: ["ANALYST"], permissions: ["signals:read-internal", "signals:create", "signals:update-own"] };
 
