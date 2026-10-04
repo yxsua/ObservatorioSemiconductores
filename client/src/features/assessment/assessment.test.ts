@@ -1,7 +1,7 @@
 import {expect,it} from 'vitest';
 import {assessmentSummary,signalAssessmentSchema} from './assessment';
 import {evaluateTrend} from './trend-assessment';
-import methodology from '../../../../backend/src/domain/assessment-methodology.json';
+import methodology from '../../shared/assessment-methodology.json';
 it('calcula cero como respuesta válida y excluye no aplicables',()=>{
  const value={version:'2026-07-21' as const,impact:[0,0,0,0,0],urgency:[2,2,2,2,2],reliability:Array<'YES'|'NO'|'NA'>(19).fill('NA')};value.reliability[0]='YES';value.reliability[1]='NO';
  expect(signalAssessmentSchema.safeParse(value).success).toBe(true);

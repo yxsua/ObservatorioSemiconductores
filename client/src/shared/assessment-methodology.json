@@ -1,0 +1,269 @@
+{
+  "version": "2026-07-21",
+  "signal": {
+    "impact": [
+      {
+        "label": "I_1. Magnitud del cambio sobre el FCV",
+        "help": "0 = cambio marginal;\n1 = cambio moderado con efectos identificables;\n2 = cambio sustancial que altera significativamente el FCV."
+      },
+      {
+        "label": "I_2. Relevancia de los actores afectados o involucrados",
+        "help": "0 = no afecta ni involucra actores estratégicos;\n1 = afecta o involucra actores de relevancia media;\n2 = afecta o involucra actores de alta relevancia para el ecosistema vigilado."
+      },
+      {
+        "label": "I_3. Potencial de modificar decisiones tecnológicas, regulatorias o de inversión",
+        "help": "0 = sin potencial identificado para modificar decisiones;\n1 = potencial moderado para influir en decisiones;\n2 = potencial alto para modificar decisiones tecnológicas, regulatorias, industriales o de inversión."
+      },
+      {
+        "label": "I_4. Alcance del efecto en el ecosistema de interés",
+        "help": "0 = efecto limitado sobre una organización, localidad o grupo reducido de actores;\n1 = efecto relevante sobre una región, sector o conjunto de actores;\n2 = efecto amplio sobre múltiples regiones, segmentos de la cadena de valor o actores estratégicos."
+      },
+      {
+        "label": "I_5. Permanencia esperada del efecto",
+        "help": "0 = efecto transitorio;\n1 = duración media;\n2 = efecto duradero o estructural."
+      }
+    ],
+    "urgency": [
+      {
+        "label": "U_1. Existencia de un hito temporal externo",
+        "help": "0 = no existe una fecha, vencimiento o hito temporal identificable;\n1 = existe un plazo aproximado o estimado;\n2 = existe una fecha, vencimiento, entrada en vigor, lanzamiento o cierre explícitamente establecido."
+      },
+      {
+        "label": "U_2. Velocidad de pérdida de valor informativo",
+        "help": "0 = la información conservará su utilidad durante varios meses;\n1 = la información puede perder utilidad en semanas;\n2 = la información puede perder utilidad en días o en un periodo muy breve."
+      },
+      {
+        "label": "U_3. Inmediatez del riesgo u oportunidad",
+        "help": "0 = el riesgo u oportunidad no presenta una proximidad temporal identificable;\n1 = podría materializarse en el mediano plazo;\n2 = puede materializarse de forma inmediata o en el corto plazo."
+      },
+      {
+        "label": "U_4. Tiempo disponible para responder o tomar decisión",
+        "help": "0 = existe tiempo suficiente para analizar y responder sin presión temporal;\n1 = existe una ventana intermedia que requiere seguimiento;\n2 = existe una ventana reducida que exige análisis, comunicación o respuesta inmediata."
+      },
+      {
+        "label": "U_5. Velocidad esperada de evolución del fenómeno",
+        "help": "0 = evolución lenta, estable o sin cambios observables;\n1 = evolución moderada sustentada en actualizaciones periódicas;\n2 = evolución acelerada demostrada mediante anuncios sucesivos, cambios frecuentes, nuevos datos o acontecimientos próximos."
+      }
+    ],
+    "reliability": [
+      {
+        "label": "Identificación inequívoca de la fuente",
+        "help": "La fuente presenta un nombre oficial o una denominación que permite distinguirla claramente de otras fuentes.",
+        "weight": 2,
+        "section": "A. Identificación y trazabilidad de la fuente"
+      },
+      {
+        "label": "Acceso y localización verificable",
+        "help": "La fuente puede localizarse mediante un sitio oficial, repositorio, catálogo, plataforma, base de datos o registro verificable.",
+        "weight": 3,
+        "section": "A. Identificación y trazabilidad de la fuente"
+      },
+      {
+        "label": "Origen de la información rastreable",
+        "help": "Es posible determinar el lugar, sección, registro o canal específico del que procede la información recuperada.",
+        "weight": 2,
+        "section": "A. Identificación y trazabilidad de la fuente"
+      },
+      {
+        "label": "Registro o identificador de la fuente, cuando aplique",
+        "help": "La fuente cuenta con un identificador o registro correspondiente a su naturaleza, como DOI, ISSN, ORCID, número de patente, dominio institucional, catálogo oficial o registro gubernamental.",
+        "weight": 2,
+        "section": "A. Identificación y trazabilidad de la fuente"
+      },
+      {
+        "label": "Permanencia y recuperación del acceso",
+        "help": "La fuente mantiene mecanismos que permiten consultar nuevamente la información, como enlaces permanentes, archivos históricos, repositorios o registros estables.",
+        "weight": 1,
+        "section": "A. Identificación y trazabilidad de la fuente"
+      },
+      {
+        "label": "Especialización temática",
+        "help": "La fuente desarrolla actividades, publicaciones o servicios directamente relacionados con el ámbito tecnológico, científico, industrial, regulatorio o económico analizado.",
+        "weight": 3,
+        "section": "B. Autoridad de la fuente"
+      },
+      {
+        "label": "Competencia de la entidad responsable",
+        "help": "La institución, organismo, empresa, medio o plataforma responsable cuenta con experiencia, atribuciones o capacidades demostrables para producir información sobre el tema.",
+        "weight": 3,
+        "section": "B. Autoridad de la fuente"
+      },
+      {
+        "label": "Reconocimiento institucional o sectorial",
+        "help": "La fuente es reconocida por comunidades científicas, organismos públicos, asociaciones industriales, empresas, universidades u otros actores especializados.",
+        "weight": 2,
+        "section": "B. Autoridad de la fuente"
+      },
+      {
+        "label": "Mecanismos de validación",
+        "help": "La fuente dispone de procesos editoriales, técnicos, científicos, jurídicos o institucionales para revisar la información antes de publicarla.",
+        "weight": 2,
+        "section": "B. Autoridad de la fuente"
+      },
+      {
+        "label": "Fecha de publicación o actualización",
+        "help": "El contenido indica una fecha verificable de publicación, emisión o actualización que permite determinar su vigencia.",
+        "weight": 1,
+        "section": "C. Calidad documental del contenido recuperado"
+      },
+      {
+        "label": "Claridad y precisión del contenido",
+        "help": "La información presenta de forma comprensible los hechos, datos, conceptos o resultados, sin ambigüedades relevantes.",
+        "weight": 2,
+        "section": "C. Calidad documental del contenido recuperado"
+      },
+      {
+        "label": "Sustento documental o metodológico",
+        "help": "El contenido explica sus fuentes, datos, antecedentes, metodología, procedimientos o fundamentos, de acuerdo con su tipo documental.",
+        "weight": 3,
+        "section": "C. Calidad documental del contenido recuperado"
+      },
+      {
+        "label": "Referencias o evidencias de respaldo",
+        "help": "El contenido incorpora referencias, enlaces, registros, estadísticas, normas, documentos oficiales u otras evidencias que sustentan sus afirmaciones.",
+        "weight": 2,
+        "section": "C. Calidad documental del contenido recuperado"
+      },
+      {
+        "label": "Integridad documental",
+        "help": "El contenido se encuentra completo y no presenta fragmentos faltantes, alteraciones evidentes o ausencia de elementos necesarios para su correcta interpretación.",
+        "weight": 2,
+        "section": "C. Calidad documental del contenido recuperado"
+      },
+      {
+        "label": "Coherencia interna",
+        "help": "Los datos, fechas, argumentos, resultados y conclusiones del contenido no presentan contradicciones internas relevantes.",
+        "weight": 2,
+        "section": "D. Consistencia y corroboración"
+      },
+      {
+        "label": "Corroboración con fuentes independientes",
+        "help": "La información principal puede confirmarse mediante al menos otra fuente confiable que no dependa directamente de la fuente evaluada.",
+        "weight": 3,
+        "section": "D. Consistencia y corroboración"
+      },
+      {
+        "label": "Concordancia con evidencia disponible",
+        "help": "La información es compatible con registros oficiales, datos técnicos, literatura especializada, estadísticas o antecedentes previamente documentados.",
+        "weight": 2,
+        "section": "D. Consistencia y corroboración"
+      },
+      {
+        "label": "Ausencia de contradicciones no explicadas",
+        "help": "No se identifican diferencias sustanciales con otras fuentes confiables o, cuando existen, el contenido las reconoce y explica.",
+        "weight": 2,
+        "section": "D. Consistencia y corroboración"
+      },
+      {
+        "label": "Independencia de intereses evidentes",
+        "help": "No se observan intereses comerciales, políticos, institucionales o promocionales que comprometan directamente la interpretación de la información.",
+        "weight": 1,
+        "section": "D. Consistencia y corroboración"
+      }
+    ]
+  },
+  "alert": {
+    "impact": [
+      {
+        "label": "Impacto tecnológico",
+        "help": "Evalúa el potencial del fenómeno para modificar capacidades tecnológicas, procesos de fabricación, desarrollo científico, innovación o competitividad tecnológica del ecosistema de semiconductores."
+      },
+      {
+        "label": "Impacto económico",
+        "help": "Valora las posibles repercusiones sobre inversión, cadenas de suministro, mercados, empleo especializado, costos, productividad o desarrollo económico relacionado con la industria."
+      },
+      {
+        "label": "Impacto en talento y conocimiento",
+        "help": "Analiza la influencia del fenómeno sobre la formación de capital humano, investigación, colaboración académica, desarrollo de competencias o generación de conocimiento especializado."
+      },
+      {
+        "label": "Impacto regional o estratégico",
+        "help": "Determina el alcance territorial e institucional del fenómeno considerando su posible influencia sobre políticas públicas, infraestructura, capacidades regionales o posicionamiento estratégico del ecosistema."
+      }
+    ],
+    "urgency": [
+      {
+        "label": "Proximidad temporal",
+        "help": "Evalúa qué tan cercano se encuentra el evento o la condición que origina la alerta."
+      },
+      {
+        "label": "Velocidad de evolución",
+        "help": "Valora la rapidez con la que el fenómeno puede modificarse o generar nuevas condiciones."
+      },
+      {
+        "label": "Ventana de oportunidad",
+        "help": "Determina el periodo durante el cual la información conserva utilidad para apoyar decisiones estratégicas."
+      },
+      {
+        "label": "Necesidad de respuesta",
+        "help": "Analiza el grado de inmediatez con el que los actores del ecosistema deberían considerar la información para reducir riesgos o aprovechar oportunidades."
+      }
+    ],
+    "impactScale": [
+      {
+        "label": "1",
+        "help": "Impacto insignificante o sin evidencia suficiente para demostrar efectos relevantes."
+      },
+      {
+        "label": "2",
+        "help": "Impacto limitado, con efectos localizados o de baja trascendencia estratégica."
+      },
+      {
+        "label": "3",
+        "help": "Impacto moderado, con implicaciones identificables para uno o varios actores estratégicos."
+      },
+      {
+        "label": "4",
+        "help": "Impacto alto, con efectos importantes para el ecosistema de semiconductores o para sectores estratégicos relacionados."
+      },
+      {
+        "label": "5",
+        "help": "Impacto muy alto o transformador, con capacidad para modificar de manera significativa las condiciones tecnológicas, económicas, institucionales o regionales del ecosistema."
+      }
+    ],
+    "urgencyScale": [
+      {
+        "label": "1",
+        "help": "La información conserva utilidad durante un periodo amplio y no requiere atención inmediata."
+      },
+      {
+        "label": "2",
+        "help": "Existe un amplio margen para la toma de decisiones, aunque conviene mantener seguimiento."
+      },
+      {
+        "label": "3",
+        "help": "El fenómeno requiere atención en el corto plazo debido a la reducción progresiva de la oportunidad de actuación."
+      },
+      {
+        "label": "4",
+        "help": "El tiempo disponible para actuar es limitado y la comunicación oportuna resulta prioritaria."
+      },
+      {
+        "label": "5",
+        "help": "La oportunidad para actuar es inmediata; cualquier demora puede reducir significativamente el valor estratégico de la información."
+      }
+    ]
+  },
+  "trend": {
+    "thresholds": [
+      {
+        "code": "EMERGING",
+        "signals": 3,
+        "months": 6,
+        "sources": 2
+      },
+      {
+        "code": "CONSOLIDATING",
+        "signals": 5,
+        "months": 12,
+        "sources": 3
+      },
+      {
+        "code": "ESTABLISHED",
+        "signals": 8,
+        "months": 24,
+        "sources": 5
+      }
+    ]
+  }
+}
