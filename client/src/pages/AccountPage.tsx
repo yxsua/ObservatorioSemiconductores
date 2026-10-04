@@ -18,7 +18,7 @@ export function AccountPage() {
   };
   return (
     <section className={styles.page} aria-labelledby="account-title">
-      <header className={styles.header}><p>Cuenta registrada</p><h1 id="account-title">Mi cuenta</h1><span>Consulta tus datos y accede a las herramientas habilitadas para tu perfil.</span></header>
+      <header className={styles.header}><p>Tu espacio en el Observatorio</p><h1 id="account-title">Mi cuenta</h1><span>Hola, {user.firstName}. Aquí puedes consultar tus datos y continuar explorando el Observatorio.</span></header>
       <div className={styles.grid}>
         <section className={styles.profile} aria-labelledby="profile-title">
           <h2 id="profile-title">Perfil</h2>
@@ -32,17 +32,11 @@ export function AccountPage() {
           </dl>
         </section>
         <aside className={styles.access} aria-labelledby="access-title">
-          <h2 id="access-title">Accesos disponibles</h2>
-          {user.permissions.includes("exports:download") ? <><p>Tu cuenta puede exportar las colecciones públicas y consultar su historial.</p><Link className={styles.primaryLink} to="/cuenta/exportaciones">Historial de exportaciones →</Link></> : <p>Tu cuenta no tiene funciones adicionales disponibles.</p>}
-          {user.roles.length > 0 && <p className={styles.roles}>Perfiles: {user.roles.join(", ")}</p>}
+          <h2 id="access-title">Continúa explorando</h2>
+          {user.permissions.includes("exports:download") ? <><p>Consulta y descarga de nuevo tus exportaciones.</p><Link className={styles.primaryLink} to="/cuenta/exportaciones">Historial de exportaciones →</Link></> : <p>Explora las noticias, publicaciones e indicadores del Observatorio.</p>}
+          <Link className={styles.primaryLink} to="/noticias">Explorar noticias</Link><Link className={styles.primaryLink} to="/publicaciones">Ver publicaciones</Link>
         </aside>
       </div>
-      <details className={styles.permissions}>
-        <summary>Permisos efectivos</summary>
-        <ul>{user.permissions.map((permission) => (
-          <li key={permission}><code>{permission}</code></li>
-        ))}</ul>
-      </details>
       <div className={styles.sessionActions}><Button onClick={logout}>Cerrar sesión en este dispositivo</Button></div>
     </section>
   );

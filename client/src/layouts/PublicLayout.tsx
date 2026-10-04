@@ -55,11 +55,6 @@ export function PublicLayout() {
           >
             <nav aria-label="Navegación principal">
               <ul className={styles.navigation}>
-                <li>
-                  <NavLink className={({ isActive }) => isActive ? styles.active : undefined} end to="/">
-                    Inicio
-                  </NavLink>
-                </li>
                 <li><NavLink className={({ isActive }) => isActive ? styles.active : undefined} to="/dashboard">Dashboard</NavLink></li>
                 {NAVIGATION_GROUPS.slice(0, 1).map((group) => <li className={styles.menuGroup} key={group.id}>
                   <NavLink className={({ isActive }) => isActive ? styles.active : undefined} to={group.path}>{group.label}</NavLink>
@@ -73,6 +68,7 @@ export function PublicLayout() {
                   <NavLink className={({ isActive }) => `${isActive ? styles.active : ""} ${styles.surveillanceLink}`} to={group.path}>{group.label}</NavLink>
                   <ul className={`${styles.submenu} ${styles.submenuRight}`}>{group.items.map((item) => <li key={item.path}><NavLink to={item.path}>{item.label}</NavLink></li>)}</ul>
                 </li>)}
+                <li><NavLink className={styles.siipLink} to="/indicadores-pertinencia">SIIP</NavLink></li>
               </ul>
             </nav>
             <div className={styles.accountActions}>

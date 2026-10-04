@@ -1,3 +1,5 @@
+import {SiipSupport} from '@/features/siip/SiipSupport';
+import {readSupport,writeSupport} from '@/features/siip/notes';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -83,9 +85,9 @@ function SignalForm({ initial, mode, onReload, options, signal }: { initial: Sig
       <SelectField error={errors.sourceId?.message} label="Fuente" name="sourceId" options={options.sources} register={register} />
     </div></section>
     <AssessmentField kind="signal" value={watch('assessment')} error={errors.assessment?.message} onChange={value=>{setValue('assessment',value as SignalAssessment,{shouldDirty:true});clearErrors('assessment');}} />
-    <section className={styles.section} aria-labelledby="signal-context"><h2 id="signal-context">Contexto interno</h2><div className={styles.grid}>
+    <SiipSupport value={watch('notes')} onChange={value=>setValue('notes',value,{shouldDirty:true})}/><section className={styles.section} aria-labelledby="signal-context"><h2 id="signal-context">Contexto interno</h2><div className={styles.grid}>
       <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Términos específicos que facilitan búsqueda y agrupación; evita repetir palabras genéricas del título." htmlFor="signal-keywords">Palabras clave</FieldLabel><small>Separa hasta 20 términos con comas o saltos de línea.</small><textarea aria-invalid={Boolean(errors.keywordsText)} id="signal-keywords" rows={3} {...register("keywordsText")} />{errors.keywordsText && <small className={styles.error}>{errors.keywordsText.message}</small>}</div>
-      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Registra dudas, contradicciones, evidencia pendiente o decisiones metodológicas. No se publica." htmlFor="signal-notes">Notas internas</FieldLabel><textarea aria-invalid={Boolean(errors.notes)} id="signal-notes" maxLength={5000} rows={4} {...register("notes")} />{errors.notes && <small className={styles.error}>{errors.notes.message}</small>}</div>
+      <div className={`${styles.field} ${styles.wide}`}><FieldLabel help="Registra dudas, contradicciones, evidencia pendiente o decisiones metodológicas. No se publica." htmlFor="signal-notes">Notas internas</FieldLabel><textarea aria-invalid={Boolean(errors.notes)} id="signal-notes" maxLength={5000} rows={4} value={readSupport(watch('notes')).notes} onChange={e=>setValue('notes',writeSupport(e.target.value,readSupport(watch('notes')).support),{shouldDirty:true})} />{errors.notes && <small className={styles.error}>{errors.notes.message}</small>}</div>
     </div></section>
     <div className={styles.actions}><Link to={signal ? `/admin/senales/${signal.id}` : "/admin/senales"}>Cancelar</Link><Button disabled={mutation.isPending} type="submit" variant="primary">{mutation.isPending ? "Guardando…" : mode === "create" ? "Crear señal" : "Guardar cambios"}</Button></div>
   </form>;

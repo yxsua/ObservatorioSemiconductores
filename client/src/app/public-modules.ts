@@ -23,7 +23,6 @@ export interface NavigationGroup {
 
 export const NAVIGATION_GROUPS: readonly NavigationGroup[] = [
   { id: "industry", label: "Industria", path: "/industria", items: [
-    { label: "Indicadores de pertinencia", path: "/indicadores-pertinencia" },
     { label: "Ecosistema regional", path: "/ecosistema-regional" },
     { label: "Cadena de valor", path: "/cadena-de-valor" },
     { label: "Inversiones y Expansión", path: "/inversiones" }

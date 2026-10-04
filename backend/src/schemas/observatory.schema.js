@@ -7,7 +7,7 @@ const optionalUrl = url.nullable().default(null);
 const amount = z.number().finite().min(-1e15).max(1e15);
 const definitions = {
     indicators: { table: 'indicator_observations', schema: z.object({
-        series_code: text(80).regex(/^[A-Z0-9_]+$/),
+        series_code: text(80).regex(/^[A-Z0-9_-]+$/, 'La clave de la serie debe usar mayúsculas, números, guion (-) o guion bajo (_), sin espacios. Ejemplo: WEB-01.'),
         dimension: z.enum(['ECONOMIC','TECHNOLOGICAL','SOCIAL','REGULATORY','SUSTAINABILITY']),
         period: z.number().int().min(1900).max(2200), value: amount.nullable().default(null),
         assessment: optionalText(),

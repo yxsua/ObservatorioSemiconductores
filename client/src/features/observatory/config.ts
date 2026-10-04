@@ -3,7 +3,7 @@ export type DetailField = { key: string; label: string; type?: "number" | "date"
 export const NATURES = [["OBSERVED","Observado"],["ESTIMATE","Estimación"],["PROJECTION","Proyección"]] as const;
 export const DOMAINS: Record<Domain,{ title:string; path:string; fields:DetailField[] }> = {
   indicators: {title:"Indicadores de pertinencia",path:"/indicadores-pertinencia",fields:[
-    {key:"series_code",label:"Clave de la serie (mayúsculas, números y guion bajo)"},
+    {key:"series_code",label:"Clave de la serie (mayúsculas, números, guion o guion bajo; ejemplo: WEB-01)"},
     {key:"dimension",label:"Dimensión",options:[["ECONOMIC","Económica"],["TECHNOLOGICAL","Tecnológica"],["SOCIAL","Social"],["REGULATORY","Normativa"],["SUSTAINABILITY","Sostenible"]]},
     {key:"period",label:"Año del dato",type:"number"},{key:"value",label:"Valor o límite inferior",type:"number",optional:true},
     {key:"upper_value",label:"Límite superior",type:"number",optional:true},{key:"assessment",label:"Evaluación cualitativa (si no hay cifra)",optional:true},

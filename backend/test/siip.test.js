@@ -1,0 +1,22 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const express=require('express');
+const fs=require('node:fs/promises');
+const {adminRouter}=require('../src/routes/observatory.routes');
+test('SIIP download requires authentication and returns the original workbook',async(t)=>{
+ const app=express();app.use('/api/admin/data',adminRouter);app.use((err,req,res,next)=>res.status(err.statusCode||500).json({message:err.message}));
+ const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));
+ t.after(()=>server.close());const url=`http://127.0.0.1:${server.address().port}/api/admin/data/siip/calculadora`;
+ assert.equal((await fetch(url)).status,401);
+ const previousSecret=process.env.JWT_SECRET;process.env.JWT_SECRET='siip-test-only-secret';
+ t.after(()=>{if(previousSecret===undefined)delete process.env.JWT_SECRET;else process.env.JWT_SECRET=previousSecret;});
+ t.mock.method(require('../src/config/database'),'query',async()=>({rows:[{active:true,auth_version:0}]}));
+ let permissions=[];
+ t.mock.method(require('../src/repositories/authorization.repository'),'getUserAuthorization',async()=>({active:true,permissions}));
+ const token=require('../src/utils/jwt').generateToken({id:1,authVersion:0});const headers={authorization:`Bearer ${token}`};
+ assert.equal((await fetch(url,{headers})).status,403);
+ permissions=['data:read-internal'];
+ const response=await fetch(url,{headers});
+ assert.equal(response.status,200);assert.match(response.headers.get('content-disposition'),/Calculadora-SIIP.xlsx/);assert.equal(response.headers.get('cache-control'),'private, no-store');
+ assert.deepEqual(Buffer.from(await response.arrayBuffer()),await fs.readFile(require('node:path').join(__dirname,'../storage/Calculadora.xlsx')));
+});

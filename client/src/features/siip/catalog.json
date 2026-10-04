@@ -1,0 +1,771 @@
+{
+  "indicators": [
+    {
+      "code": "PE1",
+      "name": "Tamaño del SAM regional",
+      "dimension": "Económica"
+    },
+    {
+      "code": "PE2",
+      "name": "Crecimiento proyectado del SAM",
+      "dimension": "Económica"
+    },
+    {
+      "code": "PE3",
+      "name": "Encadenamientos industriales",
+      "dimension": "Económica"
+    },
+    {
+      "code": "PE4",
+      "name": "Multiplicador económico",
+      "dimension": "Económica"
+    },
+    {
+      "code": "DM1",
+      "name": "Demanda inducida automotriz",
+      "dimension": "Demanda"
+    },
+    {
+      "code": "DM2",
+      "name": "Demanda inducida aeroespacial",
+      "dimension": "Demanda"
+    },
+    {
+      "code": "DM3",
+      "name": "Demanda inducida centros de datos",
+      "dimension": "Demanda"
+    },
+    {
+      "code": "DM4",
+      "name": "Concentración de sectores estratégicos",
+      "dimension": "Demanda"
+    },
+    {
+      "code": "DM5",
+      "name": "Elasticidad del crecimiento sectorial",
+      "dimension": "Demanda"
+    },
+    {
+      "code": "PT1",
+      "name": "Laboratorios especializados existentes",
+      "dimension": "Tecnológica"
+    },
+    {
+      "code": "PT2",
+      "name": "Nivel de madurez tecnológica (TRL)",
+      "dimension": "Tecnológica"
+    },
+    {
+      "code": "PT3",
+      "name": "Programas de diseño y pruebas",
+      "dimension": "Tecnológica"
+    },
+    {
+      "code": "PT4",
+      "name": "Capacidad instalada EMS/PCBA",
+      "dimension": "Tecnológica"
+    },
+    {
+      "code": "PT5",
+      "name": "Proyectos activos del ecosistema",
+      "dimension": "Tecnológica"
+    },
+    {
+      "code": "PC1",
+      "name": "Costo energético competitivo",
+      "dimension": "Competitividad"
+    },
+    {
+      "code": "PC2",
+      "name": "Disponibilidad de energéticos (MW)",
+      "dimension": "Competitividad"
+    },
+    {
+      "code": "PC3",
+      "name": "Infraestructura logística",
+      "dimension": "Competitividad"
+    },
+    {
+      "code": "PC4",
+      "name": "Especialización manufacturera",
+      "dimension": "Competitividad"
+    },
+    {
+      "code": "PC5",
+      "name": "Lead time de nuevas inversiones",
+      "dimension": "Competitividad"
+    },
+    {
+      "code": "PS1",
+      "name": "Ingenieros formados al año",
+      "dimension": "Social"
+    },
+    {
+      "code": "PS2",
+      "name": "Brechas de talento",
+      "dimension": "Social"
+    },
+    {
+      "code": "PS3",
+      "name": "Empleabilidad STEM",
+      "dimension": "Social"
+    },
+    {
+      "code": "PS4",
+      "name": "Actualización docente",
+      "dimension": "Social"
+    },
+    {
+      "code": "PS5",
+      "name": "Formación especializada",
+      "dimension": "Social"
+    },
+    {
+      "code": "PN1",
+      "name": "Políticas estatales",
+      "dimension": "Normativa"
+    },
+    {
+      "code": "PN2",
+      "name": "Regulación energética",
+      "dimension": "Normativa"
+    },
+    {
+      "code": "PN3",
+      "name": "Alineación T-MEC",
+      "dimension": "Normativa"
+    },
+    {
+      "code": "PN4",
+      "name": "Colaboraciones tipo CHIPS Act",
+      "dimension": "Normativa"
+    },
+    {
+      "code": "PN5",
+      "name": "Gobernanza educativa",
+      "dimension": "Normativa"
+    },
+    {
+      "code": "PSO1",
+      "name": "% energía renovable",
+      "dimension": "Sostenible"
+    },
+    {
+      "code": "PSO2",
+      "name": "Certificaciones LEED/ICREA",
+      "dimension": "Sostenible"
+    },
+    {
+      "code": "PSO3",
+      "name": "Consumo energético por MW",
+      "dimension": "Sostenible"
+    },
+    {
+      "code": "PSO4",
+      "name": "Huella ambiental",
+      "dimension": "Sostenible"
+    },
+    {
+      "code": "PSO5",
+      "name": "Gestión hídrica",
+      "dimension": "Sostenible"
+    },
+    {
+      "code": "PI1",
+      "name": "MW energizados",
+      "dimension": "Infraestructural"
+    },
+    {
+      "code": "PI2",
+      "name": "Fibra óptica disponible",
+      "dimension": "Infraestructural"
+    },
+    {
+      "code": "PI3",
+      "name": "Espacio industrial especializado",
+      "dimension": "Infraestructural"
+    },
+    {
+      "code": "PI4",
+      "name": "Conectividad logística internacional",
+      "dimension": "Infraestructural"
+    },
+    {
+      "code": "PI5",
+      "name": "Pruebas y prototipos",
+      "dimension": "Infraestructural"
+    }
+  ],
+  "sources": [
+    {
+      "id": "FM-001",
+      "name": "DOF (Diario Oficial de la Federación)",
+      "direct": [
+        "PN1",
+        "PN3",
+        "PN4"
+      ],
+      "complementary": [
+        "PE4",
+        "PSO4"
+      ]
+    },
+    {
+      "id": "FM-002",
+      "name": "BIS (Bureau of Industry and Security, U.S. Dept. of Commerce)",
+      "direct": [
+        "PN3"
+      ],
+      "complementary": []
+    },
+    {
+      "id": "FM-003",
+      "name": "Secretaría de Economía (México)",
+      "direct": [
+        "PE4",
+        "PN1",
+        "PN4"
+      ],
+      "complementary": [
+        "PC5"
+      ]
+    },
+    {
+      "id": "FM-004",
+      "name": "Gobierno de Querétaro / SEDESU (Secretaría de Desarrollo Sustentable)",
+      "direct": [
+        "PN1",
+        "PN4"
+      ],
+      "complementary": [
+        "PE4"
+      ]
+    },
+    {
+      "id": "FM-005",
+      "name": "COFECE (Comisión Federal de Competencia Económica)",
+      "direct": [],
+      "complementary": [
+        "PC5",
+        "PE3",
+        "PE4"
+      ]
+    },
+    {
+      "id": "FM-006",
+      "name": "INECC (Instituto Nacional de Ecología y Cambio Climático)",
+      "direct": [
+        "PSO4"
+      ],
+      "complementary": []
+    },
+    {
+      "id": "FM-007",
+      "name": "INEGI (Instituto Nacional de Estadística y Geografía)",
+      "direct": [
+        "PC3",
+        "PI4"
+      ],
+      "complementary": []
+    },
+    {
+      "id": "FM-008",
+      "name": "SEMI (Semiconductor Equipment and Materials International)",
+      "direct": [
+        "PC4",
+        "PC5",
+        "PI3",
+        "PI5",
+        "PS4",
+        "PS5",
+        "PT1",
+        "PT4",
+        "PT5"
+      ],
+      "complementary": [
+        "PE3",
+        "PS2",
+        "PT2"
+      ]
+    },
+    {
+      "id": "FM-009",
+      "name": "SIA (Semiconductor Industry Association)",
+      "direct": [
+        "DM1",
+        "PC4",
+        "PT4"
+      ],
+      "complementary": [
+        "DM4",
+        "DM5",
+        "PE1",
+        "PE2",
+        "PI3"
+      ]
+    },
+    {
+      "id": "FM-010",
+      "name": "CANIETI (Cámara Nacional de la Industria Electrónica, de Telecomunicaciones y Tecnologías de la Información)",
+      "direct": [
+        "PN1",
+        "PN4",
+        "PS2",
+        "PS3",
+        "PS5"
+      ],
+      "complementary": [
+        "PN5"
+      ]
+    },
+    {
+      "id": "FM-011",
+      "name": "FUMEC (Fundación México-Estados Unidos para la Ciencia)",
+      "direct": [
+        "PE3"
+      ],
+      "complementary": [
+        "PC4",
+        "PC5",
+        "PE2"
+      ]
+    },
+    {
+      "id": "FM-012",
+      "name": "IEEE Xplore (Institute of Electrical and Electronics Engineers)",
+      "direct": [
+        "PI5",
+        "PT3"
+      ],
+      "complementary": [
+        "PT2",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-013",
+      "name": "Deloitte Insights (contenido público)",
+      "direct": [],
+      "complementary": [
+        "PC5",
+        "PE2",
+        "PE3",
+        "PSO2",
+        "PSO4"
+      ]
+    },
+    {
+      "id": "FM-014",
+      "name": "McKinsey & Company Insights (contenido público)",
+      "direct": [
+        "DM1"
+      ],
+      "complementary": [
+        "DM4",
+        "DM5"
+      ]
+    },
+    {
+      "id": "FM-015",
+      "name": "WSTS (World Semiconductor Trade Statistics)",
+      "direct": [],
+      "complementary": [
+        "DM4",
+        "DM5",
+        "PE1",
+        "PE2"
+      ]
+    },
+    {
+      "id": "FM-016",
+      "name": "EE Times",
+      "direct": [
+        "DM5",
+        "PC5",
+        "PI3",
+        "PT5"
+      ],
+      "complementary": [
+        "DM3",
+        "DM4",
+        "PE3"
+      ]
+    },
+    {
+      "id": "FM-017",
+      "name": "Semiconductor Engineering",
+      "direct": [
+        "DM5",
+        "PC4",
+        "PI5",
+        "PT1",
+        "PT4"
+      ],
+      "complementary": [
+        "DM3",
+        "DM4",
+        "PC5",
+        "PT2"
+      ]
+    },
+    {
+      "id": "FM-018",
+      "name": "USGS (United States Geological Survey) – National Minerals Information Center",
+      "direct": [],
+      "complementary": [
+        "DM5",
+        "PE3",
+        "PT2",
+        "PT4",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-019",
+      "name": "IEA (International Energy Agency)",
+      "direct": [
+        "PSO3"
+      ],
+      "complementary": [
+        "PC1",
+        "PC2",
+        "PI1",
+        "PSO1"
+      ]
+    },
+    {
+      "id": "FM-020",
+      "name": "OVTT (Observatorio Virtual de Transferencia de Tecnología)",
+      "direct": [],
+      "complementary": [
+        "PSO4"
+      ]
+    },
+    {
+      "id": "FM-021",
+      "name": "WIPO (World Intellectual Property Organization) / PATENTSCOPE",
+      "direct": [],
+      "complementary": [
+        "PN4",
+        "PT2",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-022",
+      "name": "USPTO (United States Patent and Trademark Office)",
+      "direct": [],
+      "complementary": [
+        "PN3",
+        "PN4",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-023",
+      "name": "IMPI (Instituto Mexicano de la Propiedad Industrial)",
+      "direct": [],
+      "complementary": [
+        "PN4",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-024",
+      "name": "CONAHCYT (Consejo Nacional de Humanidades, Ciencias y Tecnologías)",
+      "direct": [],
+      "complementary": [
+        "PN4",
+        "PN5",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-025",
+      "name": "Universidades / TecNM (Tecnológico Nacional de México)",
+      "direct": [
+        "PS1",
+        "PS5"
+      ],
+      "complementary": [
+        "PN4",
+        "PN5",
+        "PS2",
+        "PT3",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-026",
+      "name": "SEC EDGAR (U.S. Securities and Exchange Commission)",
+      "direct": [],
+      "complementary": [
+        "PC5",
+        "PE3",
+        "PE4"
+      ]
+    },
+    {
+      "id": "FM-027",
+      "name": "CourtListener (RECAP Archive)",
+      "direct": [],
+      "complementary": [
+        "PN3"
+      ]
+    },
+    {
+      "id": "FM-028",
+      "name": "Yole Group",
+      "direct": [
+        "PI5",
+        "PT4"
+      ],
+      "complementary": [
+        "PT2",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-029",
+      "name": "TrendForce / DRAMeXchange",
+      "direct": [],
+      "complementary": [
+        "DM5",
+        "PE1",
+        "PE2"
+      ]
+    },
+    {
+      "id": "FM-030",
+      "name": "Omdia (Informa Tech)",
+      "direct": [],
+      "complementary": [
+        "DM3",
+        "DM4",
+        "DM5"
+      ]
+    },
+    {
+      "id": "FM-031",
+      "name": "TechInsights",
+      "direct": [
+        "PC4",
+        "PT4"
+      ],
+      "complementary": [
+        "PI3"
+      ]
+    },
+    {
+      "id": "FM-032",
+      "name": "DIGITIMES Asia",
+      "direct": [
+        "PC5",
+        "PI3",
+        "PT5"
+      ],
+      "complementary": [
+        "PE3"
+      ]
+    },
+    {
+      "id": "FM-033",
+      "name": "JEDEC (JEDEC Solid State Technology Association)",
+      "direct": [
+        "PI5",
+        "PT1",
+        "PT4"
+      ],
+      "complementary": []
+    },
+    {
+      "id": "FM-034",
+      "name": "IPC (Global Electronics Association)",
+      "direct": [
+        "PI5",
+        "PT1"
+      ],
+      "complementary": []
+    },
+    {
+      "id": "FM-035",
+      "name": "TSMC — Newsroom / Investor Relations",
+      "direct": [
+        "PC5",
+        "PI3",
+        "PT5"
+      ],
+      "complementary": [
+        "PE3"
+      ]
+    },
+    {
+      "id": "FM-036",
+      "name": "Samsung Semiconductor Newsroom",
+      "direct": [
+        "PC4",
+        "PT4"
+      ],
+      "complementary": [
+        "PI3"
+      ]
+    },
+    {
+      "id": "FM-037",
+      "name": "PitchBook",
+      "direct": [
+        "PE4"
+      ],
+      "complementary": [
+        "PC5"
+      ]
+    },
+    {
+      "id": "FM-038",
+      "name": "Crunchbase",
+      "direct": [],
+      "complementary": [
+        "PC5",
+        "PE2",
+        "PE3"
+      ]
+    },
+    {
+      "id": "FM-039",
+      "name": "CB Insights",
+      "direct": [],
+      "complementary": [
+        "PC5",
+        "PE3",
+        "PE4"
+      ]
+    },
+    {
+      "id": "FM-040",
+      "name": "NIST — CHIPS for America",
+      "direct": [
+        "PN1",
+        "PN4"
+      ],
+      "complementary": [
+        "PE4"
+      ]
+    },
+    {
+      "id": "FM-041",
+      "name": "Comisión Europea — European Chips Act",
+      "direct": [
+        "PN1",
+        "PN4"
+      ],
+      "complementary": [
+        "PN5"
+      ]
+    },
+    {
+      "id": "FM-042",
+      "name": "Espacenet (European Patent Office)",
+      "direct": [],
+      "complementary": [
+        "PN4",
+        "PT2",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-043",
+      "name": "IMCO (Instituto Mexicano para la Competitividad)",
+      "direct": [
+        "PE4"
+      ],
+      "complementary": [
+        "PC5"
+      ]
+    },
+    {
+      "id": "FM-044",
+      "name": "LinkedIn Talent Insights",
+      "direct": [
+        "PS2",
+        "PS5"
+      ],
+      "complementary": [
+        "PS3"
+      ]
+    },
+    {
+      "id": "FM-045",
+      "name": "ANUIES (Asociación Nacional de Universidades e Instituciones de Educación Superior)",
+      "direct": [
+        "PS1",
+        "PS5"
+      ],
+      "complementary": [
+        "PS2",
+        "PT3"
+      ]
+    },
+    {
+      "id": "FM-046",
+      "name": "S&P Global Mobility",
+      "direct": [
+        "DM1"
+      ],
+      "complementary": [
+        "DM4",
+        "DM5"
+      ]
+    },
+    {
+      "id": "FM-047",
+      "name": "CDP (antes Carbon Disclosure Project)",
+      "direct": [],
+      "complementary": [
+        "PSO2",
+        "PSO4"
+      ]
+    },
+    {
+      "id": "FM-048",
+      "name": "ScienceDirect (Elsevier) — Microelectronics Journal",
+      "direct": [
+        "PI5",
+        "PT3"
+      ],
+      "complementary": [
+        "PT2",
+        "PT5"
+      ]
+    },
+    {
+      "id": "FM-049",
+      "name": "Everstream Analytics",
+      "direct": [
+        "DM5"
+      ],
+      "complementary": [
+        "PC5"
+      ]
+    },
+    {
+      "id": "FM-050",
+      "name": "IEC — TC47 (Semiconductor Devices)",
+      "direct": [
+        "PN1"
+      ],
+      "complementary": [
+        "PSO4"
+      ]
+    },
+    {
+      "id": "FM-051",
+      "name": "Gartner — Forecast: Semiconductors and Electronics",
+      "direct": [],
+      "complementary": [
+        "DM4",
+        "PE1",
+        "PE2"
+      ]
+    }
+  ]
+}

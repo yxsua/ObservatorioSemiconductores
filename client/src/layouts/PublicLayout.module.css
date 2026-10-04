@@ -362,3 +362,7 @@
 
 .footerLegal a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
 .footerLegal a:hover { color: #fff; }
+
+.navigation .siipLink {display:flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.65rem 1rem;border-radius:var(--radius-control);background:#15365b;color:#fff;font-weight:800;text-decoration:none;border:1px solid #15365b}
+.navigation .siipLink:hover,.navigation .siipLink[aria-current="page"] {background:#0b2542;color:#fff;border-color:#0b2542}
+.navigation .siipLink:focus-visible {outline:3px solid var(--color-focus);outline-offset:3px}

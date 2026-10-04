@@ -31,3 +31,15 @@ test('la descarga CSV protege fórmulas y conserva negativos numéricos',()=>{
  assert.equal(csvCell(-4.5),'"-4.5"');
  assert.equal(csvCell('  =SUM(A1:A2)'),'"\'  =SUM(A1:A2)"');
 });
+
+test('indicator series accepts SIIP codes and preserves existing identifiers',()=>{
+ for(const series_code of ['WEB-01','WEB-07','PE1','SAM_2030']) {
+  const parsed=inputSchema('indicators').parse({...base,details:{...base.details,series_code}});
+  assert.equal(parsed.details.series_code,series_code);
+ }
+ for(const series_code of ['WEB 01','web-01','WEB/01','A'.repeat(81)]) {
+  const result=inputSchema('indicators').safeParse({...base,details:{...base.details,series_code}});
+  assert.equal(result.success,false);
+  assert.deepEqual(result.error.issues[0].path,['details','series_code']);
+ }
+});

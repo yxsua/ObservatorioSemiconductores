@@ -6,3 +6,16 @@
 .metric{text-decoration:none;color:#174879}.metric:hover,.metric:focus-visible{border-color:#087f8c;box-shadow:0 2px 8px #173a4915}.card h2 a{text-decoration:none}.card h2 a:hover{text-decoration:underline}
 
 .eventPhoto{display:block;width:100%;max-height:28rem;object-fit:contain;background:#edf2f5;border-radius:.7rem}.summary{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.more{padding:.65rem 1rem;border:1px solid #087f8c;border-radius:.4rem;background:#edf5f7;color:#056b7b;cursor:pointer}.overlay{width:min(850px,calc(100% - 2rem));max-height:90dvh;padding:0;border:1px solid #cad7df;border-radius:1rem;overscroll-behavior:contain;overflow:auto}.overlay::backdrop{background:#102b48b3}.overlayBar{position:sticky;top:0;display:flex;justify-content:flex-end;padding:.7rem 1rem;background:white;border-bottom:1px solid #cad7df;z-index:1}.overlayBar button{padding:.6rem 1rem}.overlay h2{font-size:1.7rem}.overlay .page{min-width:0}.card .eventPhoto{height:13rem}
+
+.adminPage .hero {border:1px solid var(--color-border);border-radius:var(--radius-card);padding:1.5rem;background:var(--color-surface)}
+.adminPage .tabs {padding:.5rem;background:var(--color-primary-soft);border-radius:var(--radius-control);align-items:center;gap:.5rem}
+.adminPage .tabs a {padding:.7rem 1rem;text-decoration:none;border-radius:var(--radius-control);font-weight:750}
+.adminPage .tabs a[aria-current="page"] {background:var(--color-primary);color:var(--color-primary-contrast)}
+.adminPage button,.adminPage .actions a,.adminPage .actionLink {display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.6rem 1rem;border:1px solid var(--color-primary);border-radius:var(--radius-control);background:var(--color-surface);color:var(--color-primary);font:inherit;font-weight:750;text-decoration:none;cursor:pointer;gap:.5rem}
+.adminPage .actions a:first-child,.adminPage button[type="submit"],.adminPage .filters button {background:var(--color-primary);color:var(--color-primary-contrast)}
+.adminPage button:hover,.adminPage .actions a:hover,.adminPage .actionLink:hover {box-shadow:0 2px 8px #15365b25}
+.adminPage button:disabled {opacity:.5;cursor:not-allowed;box-shadow:none}
+.adminPage button:focus-visible,.adminPage a:focus-visible {outline:3px solid var(--color-focus);outline-offset:3px}
+.adminPage .filters,.adminPage>aside {padding:1.25rem;border:1px solid var(--color-border);border-radius:var(--radius-card);background:var(--color-surface)}
+.adminPage .table {border:1px solid var(--color-border);border-radius:var(--radius-card)}.adminPage .table thead {background:var(--color-primary-soft)}.adminPage .table tbody tr:hover {background:#f5f9fc}
+.adminPage .form fieldset {background:var(--color-surface)}

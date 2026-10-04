@@ -1,5 +1,6 @@
 import {
   createBrowserRouter,
+  Navigate,
   type RouteObject
 } from "react-router-dom";
 import { INTERNAL_PERMISSIONS } from "./permissions";
@@ -95,6 +96,7 @@ export const appRoutes: RouteObject[] = [
         element: <AdminLayout />,
         children: [
           { index: true, element: <AdminIndexPage /> },
+          { path: 'datos', element: <Navigate to="/admin/datos/indicators" replace /> },
           { path: 'datos/:kind', element: <RequireAnyPermission permissions={['data:read-internal']}/>, children: [
             { index: true, lazy: async()=>({Component:(await import('@/features/observatory/AdminDataPage')).AdminDataPage}) },
             { path: ':id', lazy: async()=>({Component:(await import('@/features/observatory/AdminDataPage')).AdminDataPage}) }

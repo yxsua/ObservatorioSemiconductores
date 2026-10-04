@@ -9,6 +9,7 @@ const publicRouter=express.Router();const adminRouter=express.Router();const dis
 publicRouter.get('/:kind',asyncHandler(async(req,res)=>res.json(successResponse(await service.list(req.params.kind,req.query)))));
 publicRouter.get('/:kind/:id',asyncHandler(async(req,res)=>res.json(successResponse(await service.get(req.params.kind,req.params.id)))));
 adminRouter.use(authenticate,requirePermissions('data:read-internal'));
+adminRouter.get('/siip/calculadora',asyncHandler(require('../controllers/siip.controller').downloadCalculator));
 adminRouter.get('/:kind',asyncHandler(async(req,res)=>res.json(successResponse(await service.list(req.params.kind,req.query,true)))));
 adminRouter.get('/:kind/:id',asyncHandler(async(req,res)=>res.json(successResponse(await service.get(req.params.kind,req.params.id,true)))));
 adminRouter.get('/:kind/:id/history',asyncHandler(async(req,res)=>res.json(successResponse(await service.history(req.params.kind,req.params.id)))));
